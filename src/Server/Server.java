@@ -4,7 +4,7 @@
 package Server;
 
 /**
- * @author Valentin
+ * @author Valentin and Seb
  *
  */
 public class Server {
