@@ -4,6 +4,7 @@
 package Client;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,11 +27,11 @@ import javax.swing.border.EmptyBorder;
 public class GUI extends JFrame implements ActionListener{
 	
 	private Client client;
+	private Font font = new Font("Arial",Font.BOLD,45);
 	
 	public GUI(Client client)
 	{
 		this.client= client;
-		new Connexion();
 		new Connexion_GUI(client, this);
 		initialize();
 	}
@@ -54,14 +55,20 @@ public class GUI extends JFrame implements ActionListener{
 		setJMenuBar(menu_bar);
 		
 		
-		JButton btnNewButton_2 = new JButton("Wall");
-		panel.add(btnNewButton_2);
+		JButton button_wall = new JButton("Wall");
+		button_wall.setFont(font);
+		button_wall.addActionListener(this);
+		panel.add(button_wall);
 		
-		JButton btnNewButton = new JButton("List");
-		panel.add(btnNewButton);
+		JButton button_list = new JButton("List");
+		button_list.setFont(font);
+		button_list.addActionListener(this);
+		panel.add(button_list);
 		
-		JButton btnNewButton_1 = new JButton("Create");
-		panel.add(btnNewButton_1);
+		JButton button_create = new JButton("Create");
+		button_create.setFont(font);
+		button_create.addActionListener(this);
+		panel.add(button_create);
 		
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		

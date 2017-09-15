@@ -16,7 +16,7 @@ public class Client {
 	
 	private Socket sock;
 	public GUI gui;
-	private ClientListener listerner;
+	private ClientListener listener;
 	private DataOutputStream out;
 
 	
@@ -47,13 +47,15 @@ public class Client {
 			e.printStackTrace();
 		}
 		
-		listerner = new ClientListener(sock, this);
+		listener = new ClientListener(sock, this);
 		sendRequest(1, id);
 		
 	}
 	
 	public void stopClient()
 	{
+		listener.close();
+		
 		try
 		{
 			out.close();
