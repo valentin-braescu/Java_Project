@@ -45,16 +45,48 @@ public class Worker implements Runnable{
 			deconnection();
 			break;
 		case 1:
-			//Create an account
+			// Creating a new account
+			boolean crea;
+			crea = server.creaCompte(data);
+			if(crea) {
+				// Creation accepted
+				sendResponse(11,"");
+			}
+			else {
+				// Creation refused
+				sendResponse(10,"");
+			}
+			deconnection();
 			break;
 		case 2:
-			//Connect to an existing account
+			//Connecting to an account
+			boolean conn;
+			conn = server.conCompte(data);
+			if(conn) {
+				// Connection accepted
+				sendResponse(21,"");
+			}
+			else {
+				// Connection refused
+				sendResponse(20,"");
+				deconnection();
+			}
 			break;
 		case 3:
 			//Looking for a food in the BDD
 			break;
 		case 4:
 			//Modify infos about the account
+			boolean modif;
+			modif = server.modifCompte(data);
+			if(modif) {
+				// Modifications accepted
+				sendResponse(41,"");
+			}
+			else {
+				// Modifications refused
+				sendResponse(40,"");
+			}
 			break;
 		case 5:
 			//Refresh the wall

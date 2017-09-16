@@ -58,13 +58,15 @@ public class Listener implements Runnable {
 				System.out.println("Erreur lors de l'acceptation de connexion");
 				e.printStackTrace();
 			}
-			try {
-				gestSock.close();
-			} catch (IOException e) {
-				System.out.println("Erreur lors de la cloture des connexions");
-				e.printStackTrace();
-			}
 		}
 	}
+	
+	public void stopListener() {
+		run = false;
+		th = null;
+	}
 
+	public void removeUser() {
+		nbUsers--;
+	}
 }
