@@ -35,7 +35,7 @@ public class Inscription implements ActionListener{
 	{
 		this.client = client;
 		this.gui=gui;
-		font = new Font("Arial", Font.BOLD, 24);
+		font = new Font("Arial", Font.BOLD, 18);
 		initialize();
 	}
 	
@@ -54,18 +54,18 @@ public class Inscription implements ActionListener{
 		JPanel panel_6 = new JPanel();
 		panel_6.setLayout(new GridLayout(3, 0,0,0));
 		
-		JLabel bienvenu = new JLabel("Bienvenu sur le reseau social XXXXXX");
+		JLabel bienvenu = new JLabel("Bienvenue sur le réseau social XXXXXX");
 		bienvenu.setHorizontalAlignment(SwingConstants.CENTER);
+		bienvenu.setFont(font);
 		panel_6.add(bienvenu);
 		JLabel instruction_1 = new JLabel("Pour vous inscrire veuillez remplir les champs 'ID' et 'Mot de passe'");
 		instruction_1.setHorizontalAlignment(SwingConstants.CENTER);
+		instruction_1.setFont(font);
 		panel_6.add(instruction_1);
 		JLabel instruction_2 = new JLabel("Cliquez ensuite sur 'Valider' pour finaliser l'inscription");
 		instruction_2.setHorizontalAlignment(SwingConstants.CENTER);
+		instruction_2.setFont(font);
 		panel_6.add(instruction_2);
-		
-		
-		
 		
 		
 		panel.add(panel_6, BorderLayout.NORTH);

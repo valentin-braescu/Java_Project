@@ -38,7 +38,7 @@ public class Client {
 	{
 		/*try
 		{
-			sock = new Socket("localhost", 3456);
+			sock = new Socket("192.168.43.4", 3456);
 			out = new DataOutputStream(sock.getOutputStream());
 			
 		}
@@ -48,7 +48,7 @@ public class Client {
 		}
 		
 		listener = new ClientListener(sock, this);
-		sendRequest(, id);*/
+		sendRequest( req, id);*/
 		
 	}
 	

@@ -25,13 +25,11 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.EmptyBorder;
 import javax.swing.BoxLayout;
 import javax.swing.SwingConstants;
+import java.awt.Font;
 
 public class Test {
 
 	private JFrame frame;
-	private JTextField text_field_user;
-	private JTextField text_field_password;
-	private JButton button_valider;
 
 	/**
 	 * Launch the application.
@@ -61,64 +59,24 @@ public class Test {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setBackground(Color.WHITE);
+		frame.setFont(new Font("Arial", Font.PLAIN, 18));
+		frame.setForeground(Color.WHITE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("Inscription");
 		//frame.setBounds(100, 100, 450, 300);
 
 		JPanel panel = new JPanel();
+		panel.setBackground(Color.WHITE);
 		panel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		panel.setLayout(new BorderLayout(0, 0));
 		frame.setContentPane(panel);
 		
-		JPanel panel_6 = new JPanel();
-		panel_6.setLayout(new GridLayout(3, 0, 0, 0));
+		JButton btnNewButton = new JButton("New button");
+		panel.add(btnNewButton, BorderLayout.SOUTH);
 		
-		JLabel lblNewLabel_1 = new JLabel("New label");
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_6.add(lblNewLabel_1);
-		
-		JLabel lblNewLabel = new JLabel("New label");
-		panel_6.add(lblNewLabel);
-		
-		JLabel lblNewLabel_2 = new JLabel("New label");
-		panel_6.add(lblNewLabel_2);
-		panel.add(panel_6, BorderLayout.NORTH);
-
-		
-		JPanel panel_1 = new JPanel();
-		panel.add(panel_1, BorderLayout.SOUTH);
-		
-		JPanel panel_4 = new JPanel();
-		panel.add(panel_4, BorderLayout.CENTER);
-		panel_4.setLayout(new BorderLayout(0, 0));
-		
-		JPanel panel_3 = new JPanel();
-		panel_4.add(panel_3);
-		
-		JPanel panel_2 = new JPanel();
-		panel_4.add(panel_2);
-		
-		JLabel label_user = new JLabel("User :");
-		label_user.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		text_field_user = new JTextField();
-		text_field_user.setColumns(10);
-		
-		JLabel label_password = new JLabel("Password");
-		label_password.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		text_field_password = new JTextField();
-		text_field_password.setColumns(10);
-		panel_2.setLayout(new GridLayout(0, 1, 0, 0));
-		panel_2.add(label_user);
-		panel_2.add(text_field_user);
-		panel_2.add(label_password);
-		panel_2.add(text_field_password);
-		
-		JPanel panel_5 = new JPanel();
-		panel_2.add(panel_5);
-		button_valider = new JButton("Valider");
-		panel_5.add(button_valider);
+		JButton btnNewButton_1 = new JButton("New button");
+		panel.add(btnNewButton_1, BorderLayout.NORTH);
 		
 		frame.setVisible(true);
 		frame.pack();
