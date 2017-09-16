@@ -34,9 +34,9 @@ public class Client {
 		new Client();
 	}
 	
-	public void startClient(String id)
+	public void startClient(int req,String id)
 	{
-		try
+		/*try
 		{
 			sock = new Socket("localhost", 3456);
 			out = new DataOutputStream(sock.getOutputStream());
@@ -48,7 +48,7 @@ public class Client {
 		}
 		
 		listener = new ClientListener(sock, this);
-		sendRequest(1, id);
+		sendRequest(, id);*/
 		
 	}
 	

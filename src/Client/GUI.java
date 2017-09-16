@@ -4,21 +4,17 @@
 package Client;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 
 /**
  * @author Valentin
@@ -27,11 +23,15 @@ import javax.swing.border.EmptyBorder;
 public class GUI extends JFrame implements ActionListener{
 	
 	private Client client;
-	private Font font = new Font("Arial",Font.BOLD,45);
+	private Font font;
+	private Font font_menu;
 	
 	public GUI(Client client)
 	{
 		this.client= client;
+		font = new Font("Arial",Font.BOLD,22);
+		font_menu = new Font("Arial",Font.BOLD, 18);
+		
 		new Connexion_GUI(client, this);
 		initialize();
 	}
@@ -41,15 +41,17 @@ public class GUI extends JFrame implements ActionListener{
 	public void initialize()
 	{
 		new JFrame();	
-	
+		
 		JPanel panel = new JPanel();
 		//add(panel, BorderLayout.NORTH);
 	
 		JMenuBar menu_bar = new JMenuBar();
 		
 		JMenu mon_compte = new JMenu("Mon Compte");
+		mon_compte.setFont(font_menu);
 		menu_bar.add(mon_compte);
 		JMenu deco = new JMenu("Déconnexion");
+		deco.setFont(font_menu);
 		menu_bar.add(deco);
 		
 		setJMenuBar(menu_bar);
@@ -79,6 +81,9 @@ public class GUI extends JFrame implements ActionListener{
 		setVisible(false);
 		setBounds(100, 100, 450, 300);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		pack();
+		repaint();
 		
 		System.out.println("start gui");
 		
