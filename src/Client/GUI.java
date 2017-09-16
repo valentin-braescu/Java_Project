@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -32,59 +33,64 @@ public class GUI extends JFrame implements ActionListener{
 	private Client client;
 	private Font font;
 	private Font font_menu;
-	private JMenu deco;
+	private JMenuItem deco;
+	private JMenuItem deconnexion;
 	private JMenu mon_compte;
 	private JButton connect;
 	private JButton inscription;
 	private JFrame frame_accueil;
+	private JPanel panel_wall;
+	private JPanel panel_create;
+	private JPanel panel_list;
+	private JPanel main_panel;
+	private JButton button_wall;
+	private JButton button_list;
+	private JButton button_create;
+	
 	
 	public GUI(Client client)
 	{
 		this.client= client;
-		font = new Font("Arial",Font.BOLD,22);
+		font = new Font("Arial",Font.ITALIC|Font.BOLD,18);
 		font_menu = new Font("Arial",Font.BOLD, 18);
-		//connexion();
-		//showLogin(this);
+
 		initialize();
 		accueil();
-		//new Connexion_GUI(client,this);
-		
 	}
-	
-	
 	
 	public void initialize()
 	{
 		new JFrame();	
 		
 		JPanel panel = new JPanel();
-		//add(panel, BorderLayout.NORTH);
 	
 		JMenuBar menu_bar = new JMenuBar();
 		
 		mon_compte = new JMenu("Mon Compte");
 		mon_compte.setFont(font_menu);
 		mon_compte.addActionListener(this);
+
 		menu_bar.add(mon_compte);
-		deco = new JMenu("Déconnexion");
+		deco = new JMenuItem("Déconnexion");
 		deco.setFont(font_menu);
 		deco.addActionListener(this);
+		//deconnexion = new JMenuItem("Déconnexion");
 		menu_bar.add(deco);
 		
 		setJMenuBar(menu_bar);
 		
 		
-		JButton button_wall = new JButton("Wall");
+		button_wall = new JButton("Wall");
 		button_wall.setFont(font);
 		button_wall.addActionListener(this);
 		panel.add(button_wall);
 		
-		JButton button_list = new JButton("List");
+		button_list = new JButton("List");
 		button_list.setFont(font);
 		button_list.addActionListener(this);
 		panel.add(button_list);
 		
-		JButton button_create = new JButton("Create");
+		button_create = new JButton("Create");
 		button_create.setFont(font);
 		button_create.addActionListener(this);
 		panel.add(button_create);
@@ -98,8 +104,14 @@ public class GUI extends JFrame implements ActionListener{
 		setVisible(false);
 		setBounds(100, 100, 450, 300);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	
 		
+		main_panel = new JPanel();
+		main_panel.add(new JLabel("Veuillez choisir un onglet"));
+		main_panel.add(new JLabel("Wall : affiche l'ensemble des recettes publiées par les autres internautes"));
+		main_panel.add(new JLabel("List : rechercher un aliment"));
+		main_panel.add(new JLabel("Create : publiez une recette"));
+		
+		add(main_panel, BorderLayout.CENTER);
 	}
 	
 	
@@ -120,27 +132,6 @@ public class GUI extends JFrame implements ActionListener{
 	    {
 	    	inscription(this);
 	    }
-
-
-		/*frame_accueil = new JFrame();
-		frame_accueil.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		connect = new JButton("Se connecter");
-		inscription = new JButton("S'inscrire");
-		connect.addActionListener(this);
-		inscription.addActionListener(this);
-		
-		JPanel panel = new JPanel();
-		panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		panel.setLayout(new BorderLayout(0,0));
-		panel.add(connect, BorderLayout.NORTH);
-		panel.add(inscription, BorderLayout.SOUTH);
-		
-		frame_accueil.add(panel);
-		
-		frame_accueil.setVisible(true);
-		frame_accueil.pack();*/
-		
-		
 	}
 	
 	 private void connexion(JFrame frame) {
@@ -162,7 +153,8 @@ public class GUI extends JFrame implements ActionListener{
 	        
 	        JOptionPane.showMessageDialog( frame, p, "Connexion", JOptionPane.QUESTION_MESSAGE);
 	        setVisible(true);
-	        client.startClient(2, username.getText()+'\t'+password.getParent());
+	        client.setIDs(username.getText(), String.valueOf(password.getPassword()));
+	        client.startClient(2, username.getText()+'\t'+String.valueOf(password.getPassword()));
 	        
 	    }
 
@@ -188,7 +180,8 @@ public class GUI extends JFrame implements ActionListener{
         JOptionPane.showMessageDialog( frame, p, "Inscription", JOptionPane.QUESTION_MESSAGE);
         
         setVisible(true);
-        client.startClient(2, username.getText()+'\t'+password.getParent());
+        client.setIDs(username.getText(), String.valueOf(password.getPassword()));
+        client.startClient(1, username.getText()+'\t'+String.valueOf(password.getPassword()));
 	}
 	
 	
@@ -202,6 +195,12 @@ public class GUI extends JFrame implements ActionListener{
 		if(s == mon_compte)
 		{
 			System.out.println("compte");
+		}
+		if( s == button_wall)
+		{
+			main_panel.removeAll();
+			main_panel.updateUI();
+
 		}
 
 	}
