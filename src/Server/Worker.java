@@ -4,6 +4,7 @@
 
 package Server;
 
+import java.awt.image.BufferedImage;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -33,7 +34,7 @@ public class Worker implements Runnable {
 		System.out.println("Worker created");
 		//Creating a Listener for each client
 		listWorker = new ListWorker(this, socket);
-		//Creating a stream from the worker to the client to send the responses
+		//Creating an output data stream to send the responses
 		try {
 			out = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e1) {
@@ -115,14 +116,14 @@ public class Worker implements Runnable {
 				sendResponse(60,"");
 			}
 			break;
-		case 7:
-			System.out.println("Request 7");
-			//Client uploading a picture
-			break;
 		default:
 			System.out.println("Request default");
 			//The id of the request is unknown, just skip the request
 		}
+	}
+	
+	public void storeImage(BufferedImage img) {
+		server.uploadImage(img, clientLogin);
 	}
 	
 	public void sendResponse(int req, String data) {

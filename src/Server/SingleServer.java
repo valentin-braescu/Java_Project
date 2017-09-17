@@ -3,6 +3,7 @@
  */
 package Server;
 
+import java.awt.image.BufferedImage;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -258,6 +259,10 @@ public class SingleServer extends JFrame {
 		} catch (SQLException e) {
 			return false;
 		}
+		
+	}
+	
+	public void uploadImage(BufferedImage img, String clientLogin) {
 		
 	}
 	
