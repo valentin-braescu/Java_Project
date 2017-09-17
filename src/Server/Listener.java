@@ -22,7 +22,6 @@ public class Listener implements Runnable {
 	private boolean run = true; //Boucle d'écoute des clients
 	private Socket socket;
 	private int nbUsers;
-	private Worker worker;
 	
 	Listener(SingleServer server) {
 		this.server = server;
@@ -46,16 +45,11 @@ public class Listener implements Runnable {
 		while(run) {
 			try {
 				socket = null;
-				this.worker = null;
 				//Listening connections
 				socket = gestSock.accept();
 				//Provide a worker for each connected client
-				this.worker = new Worker(server, socket);
-				System.out.println("Worker created");
-				server.addWorker(this.worker);
-				System.out.println("Worker added to the collection");
-				Thread th = new Thread(worker);
-				th.start();
+				Worker worker = new Worker(server, socket);
+				server.addWorker(worker);
 				nbUsers++;
 				while(nbUsers>=MAXUSER) {
 					//Wait here until a client release its place.

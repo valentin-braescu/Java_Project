@@ -19,14 +19,18 @@ public class Worker implements Runnable {
 	private Thread th;
 	private ListWorker listWorker;
 	private DataOutputStream out;
+	private String clientLogin;
 	
 	Worker(SingleServer server, Socket socket) {
 		this.server = server;
 		this.socket = socket;
+		Thread th = new Thread(this);
+		th.start();
 	}
 	
 	@Override
 	public void run() {
+		System.out.println("Worker created");
 		//Creating a Listener for each client
 		listWorker = new ListWorker(this, socket);
 		//Creating a stream from the worker to the client to send the responses
@@ -66,6 +70,8 @@ public class Worker implements Runnable {
 			if(conn) {
 				// Connection accepted
 				sendResponse(21,"");
+				String[] parts = data.split("\t");
+				clientLogin = parts[0];
 			}
 			else {
 				// Connection refused
@@ -98,6 +104,16 @@ public class Worker implements Runnable {
 		case 6:
 			System.out.println("Request 6");
 			//Client uploading Text
+			boolean upload = false;
+			upload = server.uploadText(data, clientLogin);
+			if(upload) {
+				// Text uploaded accepted
+				sendResponse(61,"");
+			}
+			else {
+				// Text uploaded refused
+				sendResponse(60,"");
+			}
 			break;
 		case 7:
 			System.out.println("Request 7");
@@ -105,7 +121,7 @@ public class Worker implements Runnable {
 			break;
 		default:
 			System.out.println("Request default");
-			//The request's id is unknown, just skip the request
+			//The id of the request is unknown, just skip the request
 		}
 	}
 	
@@ -127,6 +143,7 @@ public class Worker implements Runnable {
 		} catch (IOException e) {
 			System.out.println("Worker aborted");
 		}
+		System.out.println("Worker deleted");
 		th = null;
 	}
 

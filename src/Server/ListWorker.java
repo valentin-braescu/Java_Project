@@ -42,7 +42,8 @@ public class ListWorker implements Runnable {
 				req = in.readInt();
 				data = in.readUTF();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Client aborted");
+				worker.deconnection();
 			}
 			worker.analyzeReq(req, data);
 		}
