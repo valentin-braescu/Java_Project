@@ -38,7 +38,7 @@ public class Client {
 	
 	public void startClient(int req,String id)
 	{
-		try
+		/*try
 		{
 			sock = new Socket("localhost", 3456);
 			//sock = new Socket("192.168.43.4", 3456);
@@ -51,12 +51,14 @@ public class Client {
 		}
 		
 		listener = new ClientListener(sock, this);
-		sendRequest( req, id);
+		sendRequest( req, id);*/
 		
 	}
 	
 	public void stopClient()
 	{
+		//sendRequest(0,"");
+		
 		listener.close();
 		
 		try
@@ -69,11 +71,23 @@ public class Client {
 			e.printStackTrace();
 		}
 		
+		System.exit(0);
+		
+		
+		
 	}
 	
 	public void sendRequest(int req, String data)
 	{
 		System.out.println(data);
+		try {
+			out.writeInt(req);
+			out.writeUTF(data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void analyseReq(int req, String data)
@@ -94,8 +108,10 @@ public class Client {
 			System.out.println("Connection ok");
 			break;
 		case 40 :
+			System.out.println("Modification accepted");
 			break;
 		case 41 :
+			System.out.println("Modification refused");
 			break;
 		case 30 :
 			break;
@@ -122,6 +138,16 @@ public class Client {
 	{
 		user_id = id;
 		user_password=password;
+	}
+	
+	public String getIDUser()
+	{
+		return user_id;
+	}
+	
+	public String getIDPassoword()
+	{
+		return user_password;
 	}
 
 }
