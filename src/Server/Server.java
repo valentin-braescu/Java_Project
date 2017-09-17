@@ -4,17 +4,14 @@
 package Server;
 
 /**
- * @author Valentin
+ * @author Valentin and Sebastien
  *
  */
 public class Server {
-
-	/**
-	 * @param args
-	 */
+	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		//Get the only object available
+		SingleServer server = SingleServer.getInstance();
 	}
 
 }
