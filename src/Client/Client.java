@@ -16,8 +16,10 @@ public class Client {
 	
 	private Socket sock;
 	public GUI gui;
-	private ClientListener listerner;
+	private ClientListener listener;
 	private DataOutputStream out;
+	private String user_id;
+	private String user_password;
 
 	
 	Client()
@@ -34,11 +36,12 @@ public class Client {
 		new Client();
 	}
 	
-	public void startClient(String id)
+	public void startClient(int req,String id)
 	{
 		try
 		{
-			sock = new Socket("localhost", 3456);
+			sock = new Socket("10.0.0.6", 3456);
+			//sock = new Socket("192.168.43.4", 3456);
 			out = new DataOutputStream(sock.getOutputStream());
 			
 		}
@@ -47,13 +50,15 @@ public class Client {
 			e.printStackTrace();
 		}
 		
-		listerner = new ClientListener(sock, this);
-		sendRequest(1, id);
+		listener = new ClientListener(sock, this);
+		sendRequest( req, id);
 		
 	}
 	
 	public void stopClient()
 	{
+		listener.close();
+		
 		try
 		{
 			out.close();
@@ -76,12 +81,17 @@ public class Client {
 		switch(req)
 		{
 		case 10 :
+			System.out.println("Creation failed");
 			break;
 		case 11 :
+			System.out.println("Creation ok");
+			sendRequest(2, user_id+'\t'+user_password);
 			break;
 		case 20 :
+			System.out.println("Connection failed");
 			break;
 		case 21 :
+			System.out.println("Connection ok");
 			break;
 		case 40 :
 			break;
@@ -106,6 +116,12 @@ public class Client {
 		default :
 			break;
 		}
+	}
+	
+	public void setIDs(String id, String password)
+	{
+		user_id = id;
+		user_password=password;
 	}
 
 }

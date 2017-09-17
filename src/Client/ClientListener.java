@@ -13,9 +13,9 @@ import java.net.Socket;
  */
 public class ClientListener implements Runnable {
 
-	private Thread thread						;
-	private DataInputStream entree				;
-	private Socket sock							;
+	private Thread thread;
+	private DataInputStream entree;
+	private Socket sock	;
 	private Client client;
 	
 	ClientListener(Socket sock, Client client)
@@ -51,9 +51,20 @@ public class ClientListener implements Runnable {
 			{
 				
 			}
-			
 		}
-		
+	}
+	
+	public void close()
+	{
+		try
+		{
+			entree.close();
+		}
+		catch( IOException e)
+		{
+			e.printStackTrace();
+		}
+		thread = null;
 	}
 
 }
