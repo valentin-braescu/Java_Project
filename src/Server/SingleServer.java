@@ -3,6 +3,7 @@
  */
 package Server;
 
+import java.awt.image.BufferedImage;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
+import java.util.LinkedList;
 
 import javax.swing.JFrame;
 
@@ -33,6 +35,7 @@ public class SingleServer extends JFrame {
 	//Make the constructor private so that this class cannot be instanciated
 	private SingleServer() {
 		// Server interface
+		colWorker = new LinkedList<Worker>();
 		setTitle("Server");
 		gui = new ServerGUI(this);
 		setContentPane(gui);
@@ -175,6 +178,8 @@ public class SingleServer extends JFrame {
 		
 		return creation;
 	}
+	
+	
 	public boolean conCompte(String data) {
 		boolean connection = false;
 		// Check if the user exists in the database
@@ -229,6 +234,36 @@ public class SingleServer extends JFrame {
 		}
 		
 		return modif;
+	}
+	
+	public boolean uploadText(String data, String clientLogin) {
+		String[] parts = data.split("\t");
+		String title = parts[0];
+		String description = parts[1];
+		PreparedStatement prepst;
+		String query;
+		prepst = null;
+		query = "";
+		// mysql INSERT prepared statement
+		query = "INSERT INTO posts (id,title,desc) VALUES (?,?,?)";
+		// create mysql INSERT prepared Statement
+		try {
+			prepst = con.prepareStatement(query);
+			prepst.setString(1,"SELECT id FROM users WHERE login="+clientLogin);
+			prepst.setString(2,title);
+			prepst.setString(3,description);
+			// execute the prepared Statement
+			prepst.execute();
+			prepst.close();
+			return true;
+		} catch (SQLException e) {
+			return false;
+		}
+		
+	}
+	
+	public void uploadImage(BufferedImage img, String clientLogin) {
+		
 	}
 	
 	public void stopServer() {
