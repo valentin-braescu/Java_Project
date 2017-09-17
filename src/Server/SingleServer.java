@@ -56,10 +56,13 @@ public class SingleServer extends JFrame {
 	    String user = "root";
 	    String pass = "root";
 	    try{
-		    Class.forName(driver).newInstance();
+		    Class.forName(driver);
 		    con = DriverManager.getConnection(url+db, user, pass);
 	    } catch (SQLException s){
 	    	System.out.println("Fail to connect to the database.");
+	    } catch(ClassNotFoundException e) {
+	    	System.out.println("Connot find the driver in the classpath !");
+	    	
 	    } catch (Exception e){
 	    	e.printStackTrace();
 	    }
@@ -230,6 +233,8 @@ public class SingleServer extends JFrame {
 	
 	public void stopServer() {
 		try {
+			System.out.println("[-] Disconnecting from database");
+			System.out.println("[-] Closing server");
 			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

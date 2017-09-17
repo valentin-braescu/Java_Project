@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package Server;
 
 import java.io.DataOutputStream;
@@ -11,7 +12,7 @@ import java.net.Socket;
  * @author Sebastien and Valentin
  *
  */
-public class Worker implements Runnable{
+public class Worker implements Runnable {
 
 	private SingleServer server;
 	private Socket socket;
@@ -22,9 +23,6 @@ public class Worker implements Runnable{
 	Worker(SingleServer server, Socket socket) {
 		this.server = server;
 		this.socket = socket;
-		th = new Thread(this);
-		th.start();
-		
 	}
 	
 	@Override
@@ -42,9 +40,11 @@ public class Worker implements Runnable{
 	public void analyzeReq(int req, String data) {
 		switch(req) {
 		case 0:
+			System.out.println("Request 0");
 			deconnection();
 			break;
 		case 1:
+			System.out.println("Request 1");
 			// Creating a new account
 			boolean crea;
 			crea = server.creaCompte(data);
@@ -56,9 +56,10 @@ public class Worker implements Runnable{
 				// Creation refused
 				sendResponse(10,"");
 			}
-			deconnection();
+			//deconnection();
 			break;
 		case 2:
+			System.out.println("Request 2");
 			//Connecting to an account
 			boolean conn;
 			conn = server.conCompte(data);
@@ -73,9 +74,11 @@ public class Worker implements Runnable{
 			}
 			break;
 		case 3:
+			System.out.println("Request 3");
 			//Looking for a food in the BDD
 			break;
 		case 4:
+			System.out.println("Request 4");
 			//Modify infos about the account
 			boolean modif;
 			modif = server.modifCompte(data);
@@ -89,15 +92,19 @@ public class Worker implements Runnable{
 			}
 			break;
 		case 5:
+			System.out.println("Request 5");
 			//Refresh the wall
 			break;
 		case 6:
+			System.out.println("Request 6");
 			//Client uploading Text
 			break;
 		case 7:
+			System.out.println("Request 7");
 			//Client uploading a picture
 			break;
 		default:
+			System.out.println("Request default");
 			//The request's id is unknown, just skip the request
 		}
 	}
@@ -118,7 +125,7 @@ public class Worker implements Runnable{
 			out.close();
 			socket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Worker aborted");
 		}
 		th = null;
 	}

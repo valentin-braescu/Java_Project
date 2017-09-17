@@ -22,10 +22,10 @@ public class Listener implements Runnable {
 	private boolean run = true; //Boucle d'écoute des clients
 	private Socket socket;
 	private int nbUsers;
+	private Worker worker;
 	
 	Listener(SingleServer server) {
 		this.server = server;
-		this.socket = null;
 		//Initialy, no client
 		this.nbUsers = 0;
 		//Running the thread to listen to the connections
@@ -42,14 +42,20 @@ public class Listener implements Runnable {
 			System.out.println("Erreur ouverture du port"+PORT);
 			e.printStackTrace();
 		}
+		
 		while(run) {
 			try {
 				socket = null;
+				this.worker = null;
 				//Listening connections
 				socket = gestSock.accept();
 				//Provide a worker for each connected client
-				Worker worker = new Worker(server, socket);
-				server.addWorker(worker);
+				this.worker = new Worker(server, socket);
+				System.out.println("Worker created");
+				server.addWorker(this.worker);
+				System.out.println("Worker added to the collection");
+				Thread th = new Thread(worker);
+				th.start();
 				nbUsers++;
 				while(nbUsers>=MAXUSER) {
 					//Wait here until a client release its place.
