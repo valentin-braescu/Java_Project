@@ -140,6 +140,7 @@ public class Client {
 		case 21 :
 			System.out.println("Connection ok");
 			gui.setVisible(true);
+			sendRequest(6,"Mon titre !"+"\t"+"Ma description.");
 			sendRequest(7,"C:\\Users\\Public\\Pictures\\greenLed.png");
 			break;
 		case 40 :

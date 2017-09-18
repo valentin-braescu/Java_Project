@@ -4,13 +4,11 @@
 package Server;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -89,7 +87,7 @@ public class SingleServer extends JFrame {
 		listener.removeUser();
 	}
 	
-	public boolean checkLoginPass(String data) {
+	public int checkLoginPass(String data) {
 		String[] parts = data.split("\t");
 		String login = parts[0];
 		String pass = parts[1];
@@ -97,11 +95,11 @@ public class SingleServer extends JFrame {
 		String query;
 		prepst = null;
 		query = "";
-		boolean exist = false;
+		int userId = 0;
 		// Check if the user already exists in the database
 		
 		// mysql SELECT prepared statement
-		query = "SELECT COUNT(login) as account FROM users WHERE login=? AND password=?";
+		query = "SELECT id FROM users WHERE login=? AND password=?";
 		// create mysql SELECT prepared Statement
 		try {
 			prepst = con.prepareStatement(query);
@@ -111,13 +109,13 @@ public class SingleServer extends JFrame {
 			ResultSet res = prepst.executeQuery();
 			// Get the first line
 			res.next();
-			if(res.getInt("account") == 1) {
+			if(!res.wasNull()) {
 				// The user exists in the database
-				exist = true;
+				userId = res.getInt("id");
 			}
 			else {
 				// The user doesn't exist in the database
-				exist = false;
+				userId = 0;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -128,7 +126,7 @@ public class SingleServer extends JFrame {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return exist;
+		return userId;
 	}
 	
 	public boolean creaCompte(String data) {
@@ -187,17 +185,11 @@ public class SingleServer extends JFrame {
 	}
 	
 	
-	public boolean conCompte(String data) {
-		boolean connection = false;
+	public int conCompte(String data) {
 		// Check if the user exists in the database
-		boolean exist = checkLoginPass(data);
-		if(exist) {
-			connection = true;
-		}
-		else {
-			connection = false;
-		}
-		return connection;
+		// If id == 0, the user doesn't exist
+		int id = checkLoginPass(data);
+		return id;
 	}
 	
 	public boolean modifCompte(String data) {
@@ -212,8 +204,8 @@ public class SingleServer extends JFrame {
 		query = "";
 		boolean modif = false;
 		// Check if the user exists in the database
-		boolean exist = checkLoginPass(oldLogin+"\t"+oldPass);
-		if(exist) {
+		int id = checkLoginPass(oldLogin+"\t"+oldPass);
+		if(id!=0) {
 			try {
 				// mysql UPDATE prepared statement
 				query = "UPDATE users SET login=? AND password=? WHERE login=? AND password=?";
@@ -243,68 +235,124 @@ public class SingleServer extends JFrame {
 		return modif;
 	}
 	
-	public boolean uploadText(String data, String clientLogin) {
+	public boolean uploadText(String data, String clientLogin,int clientId, String date) {
 		String[] parts = data.split("\t");
 		String title = parts[0];
 		String description = parts[1];
-		PreparedStatement prepst;
-		String query;
-		prepst = null;
-		query = "";
+		PreparedStatement prepstInsert;
+		String queryInsert;
+		prepstInsert = null;
+		queryInsert = "";
 		// mysql INSERT prepared statement
-		query = "INSERT INTO posts (id,title,desc,image) VALUES (?,?,?,?)";
+		queryInsert = "INSERT INTO posts (id,title,description,imageName,date) VALUES (?,?,?,?,?)";
 		// create mysql INSERT prepared Statement
 		try {
-			prepst = con.prepareStatement(query);
-			prepst.setString(1,"SELECT id FROM users WHERE login="+clientLogin);
-			prepst.setString(2,title);
-			prepst.setString(3,description);
-			prepst.setString(4,"");
+			// Build the sql INSERT query
+			prepstInsert = con.prepareStatement(queryInsert);
+			prepstInsert.setInt(1,clientId);
+			prepstInsert.setString(2,title);
+			prepstInsert.setString(3,description);
+			prepstInsert.setString(4,clientLogin+"_temp.png");		// temporary name
+			prepstInsert.setString(5,date);
 			// execute the prepared Statement
-			prepst.execute();
-			prepst.close();
+			prepstInsert.execute();
+			prepstInsert.close();
 			return true;
 		} catch (SQLException e) {
+			System.out.println("[x] SQL Error (req6)");
+			e.printStackTrace();
 			return false;
 		}
 		
 	}
 	
-	public void uploadImage(BufferedImage img, String clientLogin) {
-		// The default extension is JPG (need to work on that)
+	public void uploadImage(BufferedImage img, String clientLogin, int clientId, String date) {
+		// The default extension is PNG (need to work on that)
         try {
-        	
-        	
-        	// ATTENTION, les upload de texte et d'images sont en décalé. Comment on gère dans la bdd ? Texte d'abord et UPDATE 
-        	// pour l'image ?
-        	// Penser à rajouter la date de l'upload aussi ;)
-            System.out.println("uploadImage Server.");
-            // Apply a hash MD5 function on the image
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(img, "png", outputStream);
-            byte[] data = outputStream.toByteArray(); 
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(data);
-            outputStream.close();
-            //
-            System.out.println(hash);
-            System.out.println(String.valueOf(hash));
-            //Create the file
-            File outputFile = new File("..\\..\\images\\"+String.valueOf(hash));
+            // Save the image with a temporary name
+            File outputFile = new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
             if (outputFile.createNewFile()){
             	System.out.println("File is created!");
             }else{
             	System.out.println("File already exists.");
             }
-        	
             ImageIO.write(img, "png", outputFile);
-            
+          
+            // Open the image as a file and hash it
+            File tempImage = new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
+            // Create message digest
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            // Get the checksum
+            String checksum = getFileChecksum(md,tempImage);
+
+            // Rename the image previously saved
+            File oldfile =new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
+    		File newfile =new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+checksum+".png");
+    		if(oldfile.renameTo(newfile)){
+    			System.out.println("Rename succesful");
+    		}else{
+    			System.out.println("Rename failed");
+    		}
+    		
+    		// Store the checksum with the associated client in the database
+    		PreparedStatement prepst;
+    		String query;
+    		prepst = null;
+    		query = "";
+    		// mysql UPDATE prepared statement
+    		query = "UPDATE posts SET imageName=? WHERE id=? AND date=?";
+    		// create mysql UPDATE prepared Statement
+    		try {
+    			prepst = con.prepareStatement(query);
+    			prepst.setString(1,checksum);
+    			prepst.setInt(2,clientId);
+    			prepst.setString(3,date);
+    			// execute the prepared Statement
+    			prepst.execute();
+    			prepst.close();
+    		} catch (SQLException e) {
+    		}
 		} catch (NoSuchAlgorithmException e) {
 			System.out.println("[x] Error when hashing an image.");
 		} catch (IOException e) {
 			System.out.println("[x] IO error.");
 		}
 	}
+	
+	
+	private static String getFileChecksum(MessageDigest digest, File file) throws IOException
+	{
+		// GetFileChecksum function implemented here: https://howtodoinjava.com/core-java/io/how-to-generate-sha-or-md5-file-checksum-hash-in-java/ 
+	    // Get file input stream for reading the file content
+	    FileInputStream fis = new FileInputStream(file);
+	     
+	    // Create byte array to read data in chunks
+	    byte[] byteArray = new byte[1024];
+	    int bytesCount = 0;
+	      
+	    // Read file data and update in message digest
+	    while ((bytesCount = fis.read(byteArray)) != -1) {
+	        digest.update(byteArray, 0, bytesCount);
+	    };
+	     
+	    // close the stream
+	    fis.close();
+	     
+	    // Get the hash's bytes
+	    byte[] bytes = digest.digest();
+	     
+	    // This bytes[] has bytes in decimal format;
+	    // Convert it to hexadecimal format
+	    StringBuilder sb = new StringBuilder();
+	    for(int i=0; i< bytes.length ;i++)
+	    {
+	        sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+	    }
+	     
+	    // return complete hash
+	    return sb.toString();
+	}
+	
 	
 	public void stopServer() {
 		try {

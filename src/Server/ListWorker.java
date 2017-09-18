@@ -6,14 +6,13 @@ package Server;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 
 /**
  * @author Sebastien and Valentin 
@@ -27,6 +26,8 @@ public class ListWorker implements Runnable {
 	private boolean run;
 	private DataInputStream in;
 	private InputStream inputStream;
+	
+	private String uploadDate;
 
 	
 	ListWorker(Worker worker, Socket socket){
@@ -54,7 +55,17 @@ public class ListWorker implements Runnable {
 			try {
 				req = in.readInt();
 				data = in.readUTF();
-				if(req == 7) {
+				// Get the date-time of the upload
+		        Date date = new Date();
+		        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		        String currentTime = sdf.format(date);
+
+		        if(req == 6) {
+		        	// Text is uploaded
+		        	worker.storeText(data, currentTime);
+		        	uploadDate = currentTime;
+		        }
+		        else if(req == 7) {
 					// An image is uploaded
 					byte[] sizeAr = new byte[4];
 			        inputStream.read(sizeAr);
@@ -63,7 +74,7 @@ public class ListWorker implements Runnable {
 			        inputStream.read(imageAr);
 			        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
 			        // Send the image to the worker
-			        worker.storeImage(image);
+			        worker.storeImage(image,uploadDate);	// The date is the same as the upload Text date (to match in the bdd).
 				}
 				else {
 					// Analyzing string data

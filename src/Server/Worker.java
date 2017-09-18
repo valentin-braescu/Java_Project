@@ -21,6 +21,7 @@ public class Worker implements Runnable {
 	private ListWorker listWorker;
 	private DataOutputStream out;
 	private String clientLogin;
+	private int clientId;
 	
 	Worker(SingleServer server, Socket socket) {
 		this.server = server;
@@ -66,11 +67,13 @@ public class Worker implements Runnable {
 		case 2:
 			System.out.println("Request 2");
 			//Connecting to an account
-			boolean conn;
+			int conn;
+			// The server return the id of the connected user. If he's not connected, return 0.
 			conn = server.conCompte(data);
-			if(conn) {
+			if(conn != 0) {
 				// Connection accepted
 				sendResponse(21,"");
+				clientId = conn;
 				String[] parts = data.split("\t");
 				clientLogin = parts[0];
 			}
@@ -102,28 +105,30 @@ public class Worker implements Runnable {
 			System.out.println("Request 5");
 			// Refresh the wall
 			break;
-		case 6:
-			System.out.println("Request 6");
-			// Client uploading Text
-			boolean upload = false;
-			upload = server.uploadText(data, clientLogin);
-			if(upload) {
-				// Text uploaded accepted
-				sendResponse(61,"");
-			}
-			else {
-				// Text uploaded refused
-				sendResponse(60,"");
-			}
-			break;
 		default:
 			System.out.println("Request default");
 			//The id of the request is unknown, just skip the request
 		}
 	}
 	
-	public void storeImage(BufferedImage img) {
-		server.uploadImage(img, clientLogin);
+	public void storeText(String data, String date) {
+		System.out.println("Request 6");
+		// Client uploading Text
+		boolean upload = false;
+		upload = server.uploadText(data, clientLogin, clientId, date);
+		if(upload) {
+			// Text uploaded accepted
+			sendResponse(61,"");
+		}
+		else {
+			// Text uploaded refused
+			sendResponse(60,"");
+		}
+	}
+	
+	public void storeImage(BufferedImage img, String date) {
+		System.out.println("Request 7");
+		server.uploadImage(img, clientLogin, clientId, date);
 	}
 	
 	public void sendResponse(int req, String data) {
