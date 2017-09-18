@@ -26,8 +26,6 @@ public class ListWorker implements Runnable {
 	private boolean run;
 	private DataInputStream in;
 	private InputStream inputStream;
-	
-	private String uploadDate;
 
 	
 	ListWorker(Worker worker, Socket socket){
@@ -61,12 +59,7 @@ public class ListWorker implements Runnable {
 		        String currentTime = sdf.format(date);
 
 		        if(req == 6) {
-		        	// Text is uploaded
-		        	worker.storeText(data, currentTime);
-		        	uploadDate = currentTime;
-		        }
-		        else if(req == 7) {
-					// An image is uploaded
+		        	// Text and image are uploaded
 					byte[] sizeAr = new byte[4];
 			        inputStream.read(sizeAr);
 			        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
@@ -74,8 +67,8 @@ public class ListWorker implements Runnable {
 			        inputStream.read(imageAr);
 			        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
 			        // Send the image to the worker
-			        worker.storeImage(image,uploadDate);	// The date is the same as the upload Text date (to match in the bdd).
-				}
+			        worker.storeInfos(data, image, currentTime);
+		        }
 				else {
 					// Analyzing string data
 					worker.analyzeReq(req, data);

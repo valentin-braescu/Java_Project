@@ -235,7 +235,7 @@ public class SingleServer extends JFrame {
 		return modif;
 	}
 	
-	public boolean uploadText(String data, String clientLogin,int clientId, String date) {
+	public boolean upload(String data, BufferedImage img, String clientLogin,int clientId, String date) {
 		String[] parts = data.split("\t");
 		String title = parts[0];
 		String description = parts[1];
@@ -243,30 +243,7 @@ public class SingleServer extends JFrame {
 		String queryInsert;
 		prepstInsert = null;
 		queryInsert = "";
-		// mysql INSERT prepared statement
-		queryInsert = "INSERT INTO posts (id,title,description,imageName,date) VALUES (?,?,?,?,?)";
-		// create mysql INSERT prepared Statement
-		try {
-			// Build the sql INSERT query
-			prepstInsert = con.prepareStatement(queryInsert);
-			prepstInsert.setInt(1,clientId);
-			prepstInsert.setString(2,title);
-			prepstInsert.setString(3,description);
-			prepstInsert.setString(4,clientLogin+"_temp.png");		// temporary name
-			prepstInsert.setString(5,date);
-			// execute the prepared Statement
-			prepstInsert.execute();
-			prepstInsert.close();
-			return true;
-		} catch (SQLException e) {
-			System.out.println("[x] SQL Error (req6)");
-			e.printStackTrace();
-			return false;
-		}
-		
-	}
-	
-	public void uploadImage(BufferedImage img, String clientLogin, int clientId, String date) {
+		// Image treatment
 		// The default extension is PNG (need to work on that)
         try {
             // Save the image with a temporary name
@@ -289,34 +266,33 @@ public class SingleServer extends JFrame {
             File oldfile =new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
     		File newfile =new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+checksum+".png");
     		if(oldfile.renameTo(newfile)){
-    			System.out.println("Rename succesful");
+    			System.out.println("[+] Rename succesful");
     		}else{
-    			System.out.println("Rename failed");
+    			System.out.println("[-] Rename failed");
     		}
     		
-    		// Store the checksum with the associated client in the database
-    		PreparedStatement prepst;
-    		String query;
-    		prepst = null;
-    		query = "";
-    		// mysql UPDATE prepared statement
-    		query = "UPDATE posts SET imageName=? WHERE id=? AND date=?";
-    		// create mysql UPDATE prepared Statement
-    		try {
-    			prepst = con.prepareStatement(query);
-    			prepst.setString(1,checksum);
-    			prepst.setInt(2,clientId);
-    			prepst.setString(3,date);
-    			// execute the prepared Statement
-    			prepst.execute();
-    			prepst.close();
-    		} catch (SQLException e) {
-    		}
-		} catch (NoSuchAlgorithmException e) {
-			System.out.println("[x] Error when hashing an image.");
-		} catch (IOException e) {
-			System.out.println("[x] IO error.");
+    		// INSERT the infos in the Database
+			// mysql INSERT prepared statement
+			queryInsert = "INSERT INTO posts (id,title,description,imageName,date) VALUES (?,?,?,?,?)";
+			// create mysql INSERT prepared Statement
+			// Build the SQL INSERT query
+			prepstInsert = con.prepareStatement(queryInsert);
+			prepstInsert.setInt(1,clientId);
+			prepstInsert.setString(2,title);
+			prepstInsert.setString(3,description);
+			prepstInsert.setString(4,checksum);
+			prepstInsert.setString(5,date);
+			// execute the prepared Statement
+			prepstInsert.execute();
+			prepstInsert.close();
+        } catch(IOException | SQLException e) {
+        	System.out.println("[x] IO error.");
+        	return false;
+        } catch (NoSuchAlgorithmException e) {
+        	System.out.println("[x] Algorithm error.");
+        	return false;
 		}
+        return true;
 	}
 	
 	
@@ -353,6 +329,39 @@ public class SingleServer extends JFrame {
 	    return sb.toString();
 	}
 	
+	public String getUploadedText(int line) {
+		// Return a line with: "username,title,description,nutriScore,date,imageName"
+		// If line = 2, return the second last line uploaded.
+		String response = "";
+		PreparedStatement prepst;
+		String query;
+		prepst = null;
+		query = "";
+		boolean lineFound = true;
+		// mysql SELECT prepared statement
+		query = "SELECT u.login, p.title, p.description, p.date, p.imageName FROM users AS u INNER JOIN posts AS p ON u.id = p.id ORDER BY p.date DESC";
+		// create mysql SELECT prepared Statement
+		try {
+			prepst = con.prepareStatement(query);
+			// execute the prepared Statement
+			ResultSet res = prepst.executeQuery();
+			// Get the good line
+			for(int i=0; i<line;i++) {
+				res.next();
+				if(res.wasNull()) {
+					// Not enough lines to find the expected one
+					i = line;
+					lineFound = false;
+				}
+			}
+			if(lineFound) {
+				response+=res.getString("login")+"\t"+res.getString("title")+"\t"+res.getString("description")+"\t"+res.getString("date")+"\t"+res.getString("imageName");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
 	
 	public void stopServer() {
 		try {

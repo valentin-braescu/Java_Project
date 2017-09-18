@@ -93,12 +93,18 @@ public class Client {
 		System.out.println(data);
 		try {
 			out.writeInt(req);
-			out.writeUTF(data);
 			// If the user wants to upload an image
-			if(req == 7) {
-				// The server is warned that a picture is being sent: sendRequest(7,filePath)
+			if(req == 6) {
+				// The server is warned that text and picture are being sent
+				// sendRequest(6,NomDuPlat,Description,filePath)
+				String[] parts = data.split("\t");
+				String title = parts[0];
+				String description = parts[1];
+				String filePath = parts[2];
+				String newData = title+"\t"+description;
+				out.writeUTF(newData);
 				try {
-					BufferedImage image = ImageIO.read(new File(data));
+					BufferedImage image = ImageIO.read(new File(filePath));
 			        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			        // Need to check the extension of the file uploaded (by now, the default is JPG)
 			        ImageIO.write(image, "jpg", byteArrayOutputStream);
@@ -110,6 +116,9 @@ public class Client {
 				} catch (IOException e) {
 					System.out.println("[x] Error when uploading an image.");
 				}
+			}
+			else {
+				out.writeUTF(data);
 			}
 		} catch (IOException e) {
 			System.out.println("[x] Server down");
@@ -139,9 +148,8 @@ public class Client {
 			break;
 		case 21 :
 			System.out.println("Connection ok");
+			sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"C:\\Users\\Public\\Pictures\\greenLed.png");
 			gui.setVisible(true);
-			sendRequest(6,"Mon titre !"+"\t"+"Ma description.");
-			sendRequest(7,"C:\\Users\\Public\\Pictures\\greenLed.png");
 			break;
 		case 40 :
 			System.out.println("Modification accepted");

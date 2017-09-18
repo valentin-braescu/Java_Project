@@ -5,9 +5,15 @@
 package Server;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
 
 /**
  * @author Sebastien and Valentin
@@ -20,6 +26,7 @@ public class Worker implements Runnable {
 	private Thread th;
 	private ListWorker listWorker;
 	private DataOutputStream out;
+	private OutputStream outputStream;
 	private String clientLogin;
 	private int clientId;
 	
@@ -38,6 +45,7 @@ public class Worker implements Runnable {
 		//Creating an output data stream to send the responses
 		try {
 			out = new DataOutputStream(socket.getOutputStream());
+			outputStream = socket.getOutputStream();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -104,6 +112,27 @@ public class Worker implements Runnable {
 		case 5:
 			System.out.println("Request 5");
 			// Refresh the wall
+			// Send the last 10 descriptions/images stored on the server
+			boolean loop = true;
+			int i=0;
+			String text = "";
+			while(loop && i<10) {
+				// Get the 10 last lines stored on the server
+				// Return a line with: "username,title,description,nutriScore,date,imageName"
+				text = server.getUploadedText(i+1);
+				if(text == "") loop = false;
+				else {
+					String[] parts = text.split("\t");
+					//String login = parts[0];
+					//String title = parts[1];
+					//String description = parts[2];
+					//String nutriScore = parts[3];
+					//String date = parts[4];
+					String imageName = parts[5];
+					sendResponse(8,text);
+					sendResponse(9,imageName);
+				}
+			}
 			break;
 		default:
 			System.out.println("Request default");
@@ -111,40 +140,51 @@ public class Worker implements Runnable {
 		}
 	}
 	
-	public void storeText(String data, String date) {
+	public void storeInfos(String data,BufferedImage img, String date) {
 		System.out.println("Request 6");
 		// Client uploading Text
 		boolean upload = false;
-		upload = server.uploadText(data, clientLogin, clientId, date);
+		upload = server.upload(data, img, clientLogin, clientId, date);
 		if(upload) {
-			// Text uploaded accepted
+			// Data uploaded accepted
 			sendResponse(61,"");
 		}
 		else {
-			// Text uploaded refused
+			// Data uploaded refused
 			sendResponse(60,"");
 		}
 	}
 	
 	public void storeImage(BufferedImage img, String date) {
-		System.out.println("Request 7");
-		server.uploadImage(img, clientLogin, clientId, date);
 	}
 	
 	public void sendResponse(int req, String data) {
 		try {
 			out.writeInt(req);
 			out.writeUTF(data);
+			if(req == 9) {
+				BufferedImage image = ImageIO.read(new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+data+".png"));
+		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		        // Need to check the extension of the file uploaded (by now, the default is PNG)
+		        ImageIO.write(image, "png", byteArrayOutputStream);
+		        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+		        outputStream.write(size);
+		        outputStream.write(byteArrayOutputStream.toByteArray());
+		        outputStream.flush();
+		        byteArrayOutputStream.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
 	
 	public void deconnection() {
 		listWorker.stop();
 		server.delWorker(this);
 		try {
 			out.close();
+			outputStream.close();
 			socket.close();
 		} catch (IOException e) {
 			System.out.println("[x] Worker aborted");
