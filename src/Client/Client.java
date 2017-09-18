@@ -45,7 +45,7 @@ public class Client {
 	
 	public void startClient(int req,String id)
 	{
-		try
+		/*try
 		{
 			sock = new Socket("localhost", 3456);
 			//sock = new Socket("192.168.43.4", 3456);
@@ -60,7 +60,7 @@ public class Client {
 		
 		listener = new ClientListener(sock, this);
 		
-		sendRequest( req, id);
+		sendRequest( req, id);*/
 		
 	}
 	

@@ -32,7 +32,7 @@ import javax.swing.border.EmptyBorder;
 public class GUI extends JFrame implements ActionListener{
 	
 	private Client client;
-	//private Wall wall;
+	private Wall wall;
 	private CreateTab createTab;
 	
 	
@@ -61,7 +61,7 @@ public class GUI extends JFrame implements ActionListener{
 		font = new Font("Arial",Font.ITALIC|Font.BOLD,18);
 		font_menu = new Font("Arial",Font.BOLD, 18);
 		
-		//wall = new Wall();
+		wall = new Wall(this);
 		createTab = new CreateTab();
 
 		initialize();
@@ -201,6 +201,7 @@ public class GUI extends JFrame implements ActionListener{
 	    	        client.setIDs(login, pass);
 	    	        // Starting client - Send login and password to the server
 	    	        client.startClient(mode, login+'\t'+pass);
+	    	        setVisible(true);
 	            }
 	        }
 	        else if(connexionBox == JOptionPane.CANCEL_OPTION) {
@@ -251,7 +252,7 @@ public class GUI extends JFrame implements ActionListener{
 		{
 			
 			remove(main_panel);
-			//main_panel = wall;
+			main_panel = wall;
 			add(main_panel);
 			revalidate();
 			repaint();
@@ -276,6 +277,11 @@ public class GUI extends JFrame implements ActionListener{
 		{
 			modifierCompte(this);
 		}
+	}
+	
+	public Wall getWall()
+	{
+		return wall;
 	}
 	
 }

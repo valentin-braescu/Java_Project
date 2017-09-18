@@ -28,7 +28,7 @@ public class Recette extends JPanel{
 	
 	public void Recette_GUI()
 	{
-		setBounds(100,100,450,300);
+		//setBounds(100,100,450,300);
 		
 		//Photo
 		JPanel panel_photo = new JPanel();
@@ -48,6 +48,8 @@ public class Recette extends JPanel{
 		JLabel label_titre = new JLabel(titre);
 		panel_titre.add(label_titre);
 		add(panel_titre, BorderLayout.NORTH);
+		
+		setVisible(true);
 		
 		
 	}
