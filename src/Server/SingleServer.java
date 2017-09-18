@@ -357,10 +357,64 @@ public class SingleServer extends JFrame {
 			if(lineFound) {
 				response+=res.getString("login")+"\t"+res.getString("title")+"\t"+res.getString("description")+"\t"+res.getString("date")+"\t"+res.getString("imageName");
 			}
+			prepst.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return response;
+	}
+	
+	
+	public int searchFoodLines(String food) {
+		// Looking for the number of lines corresponding to this food in the database
+		PreparedStatement prepst;
+		String query;
+		prepst = null;
+		query = "";
+		int nbLines = 0;
+		// mysql SELECT prepared statement
+		query = "SELECT count(code) as nbLines FROM food WHERE nom LIKE ?";
+		// create mysql SELECT prepared Statement
+		try {
+			prepst = con.prepareStatement(query);
+			prepst.setString(1,"%"+food+"%");
+			// execute the prepared Statement
+			ResultSet res = prepst.executeQuery();
+			res.next();
+			if(!res.wasNull()) {
+				nbLines = res.getInt("nbLines");
+			}
+			prepst.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return nbLines;
+	}
+	
+	public String searchFoodInfos(String food, int line) {
+		// Looking for information about this food/line in the database
+		PreparedStatement prepst;
+		String query;
+		prepst = null;
+		query = "";
+		String info = "";
+		// mysql SELECT prepared statement
+		query = "SELECT * FROM food WHERE nom LIKE ?";
+		// create mysql SELECT prepared Statement
+		try {
+			prepst = con.prepareStatement(query);
+			prepst.setString(1,"%"+food+"%");
+			// execute the prepared Statement
+			ResultSet res = prepst.executeQuery();
+			for(int i=0; i<line; i++) {
+				res.next();
+			}
+			info += res.getString("code")+"\t"+res.getString("type_de_produit")+"\t"+res.getString("nom")+"\t"+res.getString("marque")+"\t"+res.getString("categorie")+"\t"+res.getString("score")+"\t"+res.getInt("valeur_energetique")+"\t"+res.getFloat("acides_gras_satures")+"\t"+res.getFloat("sucres")+"\t"+res.getFloat("proteines")+"\t"+res.getFloat("fibres")+"\t"+res.getFloat("sel_ou_sodium")+"\t"+res.getInt("teneur_fruits_legumes");
+			prepst.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return info;
 	}
 	
 	public void stopServer() {

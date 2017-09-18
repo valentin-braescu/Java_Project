@@ -92,8 +92,21 @@ public class Worker implements Runnable {
 			}
 			break;
 		case 3:
-			System.out.println("Request 3");
-			//Looking for a food in the BDD
+			// The user is looking for information about the food
+			int nbLines = server.searchFoodLines(data);
+			String info = "";
+			if(nbLines==0) {
+				// Nothing found
+				sendResponse(30,"");
+			}
+			else {
+				// Send the infos
+				for(int i = 0; i<nbLines;i++) {
+					info = server.searchFoodInfos(data, nbLines-i);
+					// The line number is sent so that the client knows when to stop
+					sendResponse(31,String.valueOf(nbLines-i)+"\t"+info);
+				}
+			}
 			break;
 		case 4:
 			System.out.println("Request 4");
@@ -122,16 +135,15 @@ public class Worker implements Runnable {
 				text = server.getUploadedText(i+1);
 				if(text == "") loop = false;
 				else {
-					String[] parts = text.split("\t");
+					//String[] parts = text.split("\t");
 					//String login = parts[0];
 					//String title = parts[1];
 					//String description = parts[2];
-					//String nutriScore = parts[3];
-					//String date = parts[4];
-					String imageName = parts[5];
+					//String date = parts[3];
+					//String imageName = parts[4];
 					sendResponse(8,text);
-					sendResponse(9,imageName);
 				}
+				i++;
 			}
 			break;
 		default:
@@ -162,8 +174,14 @@ public class Worker implements Runnable {
 		try {
 			out.writeInt(req);
 			out.writeUTF(data);
-			if(req == 9) {
-				BufferedImage image = ImageIO.read(new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+data+".png"));
+			if(req == 8) {
+				String[] parts = data.split("\t");
+				//String login = parts[0];
+				//String title = parts[1];
+				//String description = parts[2];
+				//String date = parts[3];
+				String imageName = parts[4];
+				BufferedImage image = ImageIO.read(new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+imageName+".png"));
 		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		        // Need to check the extension of the file uploaded (by now, the default is PNG)
 		        ImageIO.write(image, "png", byteArrayOutputStream);
