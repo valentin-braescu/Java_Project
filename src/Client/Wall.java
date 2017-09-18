@@ -33,14 +33,16 @@ public class Wall extends JPanel implements ActionListener{
 		Object s=e.getSource();
 		if( s == actualiser)
 		{
-			
+			Recette recette = new Recette();
+			add(recette);
 		}
 	} 
 	
-	private void affciher()
+	private void afficher()
 	{
 		
 	}
+	
 	
 	
 }

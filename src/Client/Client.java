@@ -59,6 +59,7 @@ public class Client {
 		}
 		
 		listener = new ClientListener(sock, this);
+		
 		sendRequest( req, id);
 		
 	}
@@ -125,7 +126,7 @@ public class Client {
 			System.out.println("Creation failed");
 			// Reset login and password
 			setIDs("","");
-			gui.inscription(false,false,"");
+			gui.connexion(false,false,"",1);
 			break;
 		case 11 :
 			System.out.println("Creation ok");
@@ -135,7 +136,7 @@ public class Client {
 			System.out.println("Connection failed");
 			// Reset login and password
 			setIDs("","");
-			gui.connexion(false,false,"");
+			gui.connexion(false,false,"",2);
 			break;
 		case 21 :
 			System.out.println("Connection ok");
