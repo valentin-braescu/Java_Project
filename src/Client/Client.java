@@ -3,9 +3,16 @@
  */
 package Client;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
 
 /**
  * @author Valentin
@@ -18,6 +25,7 @@ public class Client {
 	public GUI gui;
 	private ClientListener listener;
 	private DataOutputStream out;
+	private OutputStream outputStream;
 	private String user_id;
 	private String user_password;
 
@@ -32,17 +40,17 @@ public class Client {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		new Client();
 	}
 	
 	public void startClient(int req,String id)
 	{
-		/*try
+		try
 		{
 			sock = new Socket("localhost", 3456);
 			//sock = new Socket("192.168.43.4", 3456);
 			out = new DataOutputStream(sock.getOutputStream());
+			outputStream = sock.getOutputStream();
 			
 		}
 		catch(IOException e)
@@ -51,24 +59,27 @@ public class Client {
 		}
 		
 		listener = new ClientListener(sock, this);
-		sendRequest( req, id);*/
+		sendRequest( req, id);
 		
 	}
 	
 	public void stopClient()
 	{
-		//sendRequest(0,"");
-		
+		sendRequest(0,"");
 		listener.close();
 		
 		try
 		{
+			// Closing data stream
 			out.close();
+			// Closing Image stream
+			outputStream.close();
+			// Closing the socket
 			sock.close();
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			System.out.println("[x] Client aborted");
 		}
 		
 		System.exit(0);
@@ -83,9 +94,25 @@ public class Client {
 		try {
 			out.writeInt(req);
 			out.writeUTF(data);
+			// If the user wants to upload an image
+			if(req == 7) {
+				// The server is warned that a picture is being sent: sendRequest(7,filePath)
+				try {
+					BufferedImage image = ImageIO.read(new File(data));
+			        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			        // Need to check the extension of the file uploaded (by now, the default is JPG)
+			        ImageIO.write(image, "jpg", byteArrayOutputStream);
+			        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+			        outputStream.write(size);
+			        outputStream.write(byteArrayOutputStream.toByteArray());
+			        outputStream.flush();
+			        byteArrayOutputStream.close();
+				} catch (IOException e) {
+					System.out.println("[x] Error when uploading an image.");
+				}
+			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("[x] Server down");
 		}
 		
 	}
@@ -96,6 +123,9 @@ public class Client {
 		{
 		case 10 :
 			System.out.println("Creation failed");
+			// Reset login and password
+			setIDs("","");
+			gui.inscription(false,false,"");
 			break;
 		case 11 :
 			System.out.println("Creation ok");
@@ -103,9 +133,14 @@ public class Client {
 			break;
 		case 20 :
 			System.out.println("Connection failed");
+			// Reset login and password
+			setIDs("","");
+			gui.connexion(false,false,"");
 			break;
 		case 21 :
 			System.out.println("Connection ok");
+			gui.setVisible(true);
+			sendRequest(7,"C:\\Users\\Public\\Pictures\\greenLed.png");
 			break;
 		case 40 :
 			System.out.println("Modification accepted");

@@ -25,13 +25,13 @@ public class Worker implements Runnable {
 	Worker(SingleServer server, Socket socket) {
 		this.server = server;
 		this.socket = socket;
-		Thread th = new Thread(this);
+		th = new Thread(this);
 		th.start();
 	}
 	
 	@Override
 	public void run() {
-		System.out.println("Worker created");
+		System.out.println("[+] Worker created");
 		//Creating a Listener for each client
 		listWorker = new ListWorker(this, socket);
 		//Creating an output data stream to send the responses
@@ -100,11 +100,11 @@ public class Worker implements Runnable {
 			break;
 		case 5:
 			System.out.println("Request 5");
-			//Refresh the wall
+			// Refresh the wall
 			break;
 		case 6:
 			System.out.println("Request 6");
-			//Client uploading Text
+			// Client uploading Text
 			boolean upload = false;
 			upload = server.uploadText(data, clientLogin);
 			if(upload) {
@@ -142,9 +142,9 @@ public class Worker implements Runnable {
 			out.close();
 			socket.close();
 		} catch (IOException e) {
-			System.out.println("Worker aborted");
+			System.out.println("[x] Worker aborted");
 		}
-		System.out.println("Worker deleted");
+		System.out.println("[-] Worker deleted");
 		th = null;
 	}
 
