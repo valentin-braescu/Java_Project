@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * @author Valentin
+ * @author Valentin and Sébastien 
  *
  */
 public class Recette extends JPanel{

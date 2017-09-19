@@ -26,7 +26,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 /**
- * @author Valentin
+ * @author Valentin and Sébastien 
  *
  */
 public class GUI extends JFrame implements ActionListener{

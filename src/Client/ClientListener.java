@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 
 /**
- * @author Valentin
+ * @author Valentin and S�bastien 
  *
  */
 public class ClientListener implements Runnable {
@@ -39,8 +39,9 @@ public class ClientListener implements Runnable {
 		try
 		{
 			entree = new DataInputStream(sock.getInputStream());
-			inputStream = sock.getInputStream()
-;		}
+			//Creating an input image stream to download pictures
+			inputStream = sock.getInputStream();
+		}
 		catch(IOException e)
 		{
 			e.printStackTrace();
@@ -52,32 +53,21 @@ public class ClientListener implements Runnable {
 			{
 				int req = entree.readInt();
 				String data = entree.readUTF();
-				if( req != 8)
-				{
+				if(req == 8) {
+					// The server is sending text and pictures to display on the wall
+					byte[] sizeAr = new byte[4];
+			        inputStream.read(sizeAr);
+			        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+			        byte[] imageAr = new byte[size];
+			        inputStream.read(imageAr);
+			        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
+			        // Send the image to the worker
+			        client.displayPanel(data, image);
+				}
+				else {
+					// the other requests are treated normally
 					client.analyseReq( req, data);
 				}
-				else
-				{
-					try
-					{
-						byte[] sizeAr = new byte[4];
-						inputStream.read(sizeAr);
-						int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-						byte[] imageAr = new byte[size];
-						inputStream.read(imageAr);
-						BufferedImage Image = ImageIO.read(new ByteArrayInputStream(imageAr));
-						
-						newRecette(data, Image);
-
-						
-					}	
-					catch( IOException e)
-					{
-						e.printStackTrace();
-					}
-				}
-				
-				
 			}
 			catch(IOException e)
 			{
@@ -91,6 +81,7 @@ public class ClientListener implements Runnable {
 		try
 		{
 			entree.close();
+			inputStream.close();
 		}
 		catch( IOException e)
 		{
