@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,10 +32,16 @@ import javax.swing.border.EmptyBorder;
 public class GUI extends JFrame implements ActionListener{
 	
 	private Client client;
+	private Wall wall;
+	private CreateTab createTab;
+	
+	
+	
 	private Font font;
 	private Font font_menu;
-	private JMenuItem deco;
+	private JMenu deco;
 	private JMenuItem deconnexion;
+	private JMenuItem modifier_compte;
 	private JMenu mon_compte;
 	private JButton connect;
 	private JButton inscription;
@@ -53,6 +60,9 @@ public class GUI extends JFrame implements ActionListener{
 		this.client= client;
 		font = new Font("Arial",Font.ITALIC|Font.BOLD,18);
 		font_menu = new Font("Arial",Font.BOLD, 18);
+		
+		wall = new Wall(this);
+		createTab = new CreateTab();
 
 		initialize();
 		accueil();
@@ -69,12 +79,16 @@ public class GUI extends JFrame implements ActionListener{
 		mon_compte = new JMenu("Mon Compte");
 		mon_compte.setFont(font_menu);
 		mon_compte.addActionListener(this);
+		modifier_compte = new JMenuItem("Modifier compte");
+		modifier_compte.addActionListener(this);
+		mon_compte.add(modifier_compte);
 
 		menu_bar.add(mon_compte);
-		deco = new JMenuItem("Déconnexion");
+		deco = new JMenu("Déconnexion");
 		deco.setFont(font_menu);
-		deco.addActionListener(this);
-		//deconnexion = new JMenuItem("Déconnexion");
+		deconnexion = new JMenuItem("Deconnexion");
+		deconnexion.addActionListener(this);
+		deco.add(deconnexion);
 		menu_bar.add(deco);
 		
 		setJMenuBar(menu_bar);
@@ -110,6 +124,7 @@ public class GUI extends JFrame implements ActionListener{
 		main_panel.add(new JLabel("Wall : affiche l'ensemble des recettes publiées par les autres internautes"));
 		main_panel.add(new JLabel("List : rechercher un aliment"));
 		main_panel.add(new JLabel("Create : publiez une recette"));
+
 		
 		add(main_panel, BorderLayout.CENTER);
 	}
@@ -126,40 +141,78 @@ public class GUI extends JFrame implements ActionListener{
 
 	    if( choix == 0)
 	    {
-	    	connexion(this);
+	    	connexion(true,true,"", 2);
 	    }
 	    else if( choix == 1)
 	    {
-	    	inscription(this);
+	    	connexion(true,true,"", 1);
 	    }
 	}
 	
-	 private void connexion(JFrame frame) {
+	// NOTE : les fonctions "connexion" et "inscription" se ressemblent de ouf. Rassembler tout ça en une serait mieux.
+	
+	 public void connexion(boolean loginField, boolean passwordField, String defaultLogin, int mode) {
 	        JPanel p = new JPanel(new BorderLayout(5,5));
-	        
-
+	       
 	        JPanel labels = new JPanel(new GridLayout(0,1,2,2));
 	        labels.add(new JLabel("User Name", SwingConstants.RIGHT));
 	        labels.add(new JLabel("Password", SwingConstants.RIGHT));
 	        p.add(labels, BorderLayout.WEST);
 
 	        JPanel controls = new JPanel(new GridLayout(0,1,2,2));
-	        JTextField username = new JTextField("");
+	        JTextField username = new JTextField(defaultLogin);
 	        controls.add(username);
+	        // If the login field was empty the last time
+	        if(!loginField) username.setBorder(BorderFactory.createLineBorder(Color.RED));
+	        
 	        JPasswordField password = new JPasswordField();
 	        controls.add(password);
 	        p.add(controls, BorderLayout.CENTER);
+	        // If the password field was empty the last time
+	        if(!passwordField) password.setBorder(BorderFactory.createLineBorder(Color.RED));
 
+	        // Dialog : OK to send the credentials, or CANCEL the operation
+	        int connexionBox;
+	        if( mode == 2)
+	        {
+	        	connexionBox = JOptionPane.showConfirmDialog( this, p, "Connexion", JOptionPane.OK_CANCEL_OPTION);
+	        }
+	        else
+	        {
+	        	connexionBox = JOptionPane.showConfirmDialog( this, p, "Inscription", JOptionPane.OK_CANCEL_OPTION);
+	        }
 	        
-	        JOptionPane.showMessageDialog( frame, p, "Connexion", JOptionPane.QUESTION_MESSAGE);
-	        setVisible(true);
-	        client.setIDs(username.getText(), String.valueOf(password.getPassword()));
-	        client.startClient(2, username.getText()+'\t'+String.valueOf(password.getPassword()));
-	        
+	        if(connexionBox == JOptionPane.OK_OPTION) {
+	        	// Parsing the entries login/password
+	        	String login = username.getText();
+	        	String pass = String.valueOf(password.getPassword());
+	            if(login.isEmpty() || pass.isEmpty()) {
+	            	// One of the fields is empty
+	            	boolean newLoginField, newPasswordField;
+	            	// By default, the fields are considered filled
+	            	newLoginField = true;
+	            	newPasswordField = true;
+	            	if(login.isEmpty()) newLoginField = false;
+	            	if(pass.isEmpty()) newPasswordField = false;
+	            	connexion(newLoginField,newPasswordField,login, mode);
+	            }
+	            else {
+	            	// Saving login and password (temporarily, waiting for the server to acknowledge)
+	    	        client.setIDs(login, pass);
+	    	        // Starting client - Send login and password to the server
+	    	        client.startClient(mode, login+'\t'+pass);
+	    	        setVisible(true);
+	            }
+	        }
+	        else if(connexionBox == JOptionPane.CANCEL_OPTION) {
+	        	accueil();
+	        }
+	        else {
+	        	System.exit(0);
+	        }
 	    }
-
 	
-	public void inscription(JFrame frame)
+	public void modifierCompte(JFrame frame)
 	{
         JPanel p = new JPanel(new BorderLayout(5,5));
 
@@ -169,28 +222,27 @@ public class GUI extends JFrame implements ActionListener{
         p.add(labels, BorderLayout.WEST);
 
         JPanel controls = new JPanel(new GridLayout(0,1,2,2));
-        JTextField username = new JTextField("");
+        JTextField username = new JTextField(client.getIDUser());
         controls.add(username);
-        JPasswordField password = new JPasswordField();
+       JTextField password = new JTextField(client.getIDPassoword());
         controls.add(password);
         p.add(controls, BorderLayout.CENTER);
 
-        //LayoutManager l = new GroupLayout(p);
-        //p.setLayout(l);
-        JOptionPane.showMessageDialog( frame, p, "Inscription", JOptionPane.QUESTION_MESSAGE);
+        JOptionPane.showMessageDialog( frame, p, "Modification du compte", JOptionPane.QUESTION_MESSAGE);
         
         setVisible(true);
-        client.setIDs(username.getText(), String.valueOf(password.getPassword()));
-        client.startClient(1, username.getText()+'\t'+String.valueOf(password.getPassword()));
+        client.setIDs(username.getText(), password.getText());
+        client.startClient(4, username.getText()+'\t'+password.getText());
 	}
 	
 	
 	public void actionPerformed(ActionEvent e)
 	{
 		Object s=e.getSource()	;	
-		if( s== deco)
+		if( s== deconnexion)
 		{
-			System.out.println("deco");
+			client.stopClient();
+			
 		}
 		if(s == mon_compte)
 		{
@@ -198,10 +250,38 @@ public class GUI extends JFrame implements ActionListener{
 		}
 		if( s == button_wall)
 		{
-			main_panel.removeAll();
-			main_panel.updateUI();
-
+			
+			remove(main_panel);
+			main_panel = wall;
+			add(main_panel);
+			revalidate();
+			repaint();
+			
 		}
-
+		if( s == button_create)
+		{
+			
+			remove(main_panel);
+			main_panel = createTab;
+			add(main_panel);
+			revalidate();
+			repaint();
+		}
+		if( s == button_list)
+		{
+			remove(main_panel);
+			revalidate();
+			repaint();
+		}
+		if( s == modifier_compte)
+		{
+			modifierCompte(this);
+		}
 	}
+	
+	public Wall getWall()
+	{
+		return wall;
+	}
+	
 }

@@ -4,6 +4,7 @@
 
 package Server;
 
+import java.awt.image.BufferedImage;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -19,17 +20,21 @@ public class Worker implements Runnable {
 	private Thread th;
 	private ListWorker listWorker;
 	private DataOutputStream out;
+	private String clientLogin;
 	
 	Worker(SingleServer server, Socket socket) {
 		this.server = server;
 		this.socket = socket;
+		th = new Thread(this);
+		th.start();
 	}
 	
 	@Override
 	public void run() {
+		System.out.println("[+] Worker created");
 		//Creating a Listener for each client
 		listWorker = new ListWorker(this, socket);
-		//Creating a stream from the worker to the client to send the responses
+		//Creating an output data stream to send the responses
 		try {
 			out = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e1) {
@@ -66,6 +71,8 @@ public class Worker implements Runnable {
 			if(conn) {
 				// Connection accepted
 				sendResponse(21,"");
+				String[] parts = data.split("\t");
+				clientLogin = parts[0];
 			}
 			else {
 				// Connection refused
@@ -93,20 +100,30 @@ public class Worker implements Runnable {
 			break;
 		case 5:
 			System.out.println("Request 5");
-			//Refresh the wall
+			// Refresh the wall
 			break;
 		case 6:
 			System.out.println("Request 6");
-			//Client uploading Text
-			break;
-		case 7:
-			System.out.println("Request 7");
-			//Client uploading a picture
+			// Client uploading Text
+			boolean upload = false;
+			upload = server.uploadText(data, clientLogin);
+			if(upload) {
+				// Text uploaded accepted
+				sendResponse(61,"");
+			}
+			else {
+				// Text uploaded refused
+				sendResponse(60,"");
+			}
 			break;
 		default:
 			System.out.println("Request default");
-			//The request's id is unknown, just skip the request
+			//The id of the request is unknown, just skip the request
 		}
+	}
+	
+	public void storeImage(BufferedImage img) {
+		server.uploadImage(img, clientLogin);
 	}
 	
 	public void sendResponse(int req, String data) {
@@ -125,8 +142,9 @@ public class Worker implements Runnable {
 			out.close();
 			socket.close();
 		} catch (IOException e) {
-			System.out.println("Worker aborted");
+			System.out.println("[x] Worker aborted");
 		}
+		System.out.println("[-] Worker deleted");
 		th = null;
 	}
 
