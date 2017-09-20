@@ -12,6 +12,11 @@ import javax.swing.JList;
 import javax.swing.JScrollBar;
 import javax.swing.JButton;
 import javax.swing.BoxLayout;
+import java.awt.GridLayout;
+import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.ScrollPaneConstants;
 
 public class Test {
 
@@ -48,23 +53,43 @@ public class Test {
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		JPanel image_panel = new JPanel();
+		frame.getContentPane().add(image_panel, BorderLayout.WEST);
+		image_panel.setLayout(new BorderLayout(0, 0));
+		
+		JEditorPane image = new JEditorPane();
+		image_panel.add(image);
+		
+		JPanel text_panel = new JPanel();
+		frame.getContentPane().add(text_panel, BorderLayout.CENTER);
+		text_panel.setLayout(new BorderLayout(0, 0));
+		
+		JPanel titre_panel = new JPanel();
+		text_panel.add(titre_panel, BorderLayout.NORTH);
+		
+		JLabel titre_label = new JLabel("\u00B5Titre");
+		titre_panel.add(titre_label);
+		
+		JPanel aliments_panel = new JPanel();
+		text_panel.add(aliments_panel, BorderLayout.SOUTH);
+		aliments_panel.setLayout(new GridLayout(0, 1, 2, 0));
+		
 		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.CENTER);
-		panel.setLayout(new BorderLayout(0, 0));
+		aliments_panel.add(panel);
 		
 		JPanel panel_1 = new JPanel();
-		panel.add(panel_1, BorderLayout.NORTH);
+		aliments_panel.add(panel_1);
 		
-		JButton btnNewButton = new JButton("New button");
-		panel_1.add(btnNewButton);
+		JPanel description_panel = new JPanel();
+		text_panel.add(description_panel, BorderLayout.CENTER);
+		description_panel.setLayout(new BorderLayout(0, 0));
 		
-		JScrollBar scrollBar = new JScrollBar();
-		panel.add(scrollBar, BorderLayout.EAST);
+		JLabel label_note = new JLabel("Note nutritionnelle");
+		description_panel.add(label_note, BorderLayout.SOUTH);
 		
-		JPanel panel_2 = new JPanel();
-		panel.add(panel_2, BorderLayout.CENTER);
+		JLabel label_description = new JLabel("Description");
+		description_panel.add(label_description, BorderLayout.CENTER);
 	}
 
 }
-
 

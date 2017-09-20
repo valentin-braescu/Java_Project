@@ -62,6 +62,7 @@ public class ClientListener implements Runnable {
 			        inputStream.read(imageAr);
 			        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
 			        // Send the image to the worker
+			        newRecette(data, image);
 			        client.displayPanel(data, image);
 				}
 				else {
@@ -90,10 +91,21 @@ public class ClientListener implements Runnable {
 		thread = null;
 	}
 	
-	public void newRecette(String string, BufferedImage image)
+	public void newRecette(String data, BufferedImage image)
 	{
-		Recette recette = new Recette();
-
+		//Parsing of the string data
+		String[] parts = data.split("\t");
+		String titre = parts[0];
+		String description = parts[1];
+		int nb_aliments = Integer.parseInt(parts[2]);
+		
+		Recette recette = new Recette(nb_aliments, titre, description);
+		
+		//Detection of the aliments in the recipe
+		for( int i = 0; i < nb_aliments; i++)
+		{
+			recette.addAliment(parts[i+3]);
+		}
 		
 		Wall wall = client.gui.getWall();
 		wall.addRecette(recette);

@@ -4,7 +4,9 @@
 package Client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +15,8 @@ import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 import com.sun.javafx.tk.Toolkit;
 
@@ -28,9 +31,11 @@ public class Wall extends JPanel implements ActionListener{
 	private JButton actualiser;
 	private LinkedList<Recette> fil; 
 	private GUI gui;
-	JPanel list;
+	private Client client;
+	JPanel panel_list;
+	JScrollPane scroll_pane;
 	
-	Wall(GUI gui)
+	Wall(GUI gui, Client client)
 	{
 		this.gui= gui;
 		
@@ -46,12 +51,16 @@ public class Wall extends JPanel implements ActionListener{
 		
 		
 		
+		//Panel with a scroll pane
+		scroll_pane = new JScrollPane();
+		scroll_pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll_pane.setPreferredSize(new Dimension(100, 100));
+		add(scroll_pane, BorderLayout.CENTER);
 		
-		JScrollBar scroll = new JScrollBar();
-		add(scroll, BorderLayout.EAST);
 		
-		list = new JPanel();
-		add(list, BorderLayout.CENTER);
+		panel_list = new JPanel();
+		scroll_pane.setViewportView(panel_list);
+		panel_list.setLayout(new GridLayout(10, 1,0,0));
 		
 		
 	}
@@ -63,9 +72,12 @@ public class Wall extends JPanel implements ActionListener{
 		Object s=e.getSource();
 		if( s == actualiser)
 		{
-			Recette recette = new Recette();
-			System.out.println("actualiser clicked");
-			list.add(recette);
+			/*Recette recette = new Recette(2,"Recette example", "Miam une recette qu'elle est bonne");
+			System.out.println("actualiser clicked");*/
+			
+			client.sendRequest(5, "");
+			//panel_list.add(recette);
+			//gui.pack();
 			gui.revalidate();
 			gui.repaint();
 			
@@ -74,19 +86,20 @@ public class Wall extends JPanel implements ActionListener{
 	
 	private void afficher()
 	{
+		panel_list.removeAll();
 		int size= fil.size();
 		if( size < 10)
 		{
 			for( int i = 0; i < size; i++)
 			{
-				list.add( fil.get(i));
+				panel_list.add( fil.get(i));
 			}
 		}
 		else
 		{
 			for(int i=0; i < 10; i++)
 			{
-				list.add( fil.get(i));
+				panel_list.add( fil.get(i));
 			}
 		}
 	}
