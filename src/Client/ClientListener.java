@@ -99,16 +99,18 @@ public class ClientListener implements Runnable {
 		//Parsing of the string data
 		System.out.println(data);
 		String[] parts = data.split("\t");
-		String titre = parts[0];
-		String description = parts[1];
+		String username = parts[0];
+		String titre = parts[1];
+		String description = parts[2];
+		String date = parts[4];
 		int nb_aliments = Integer.parseInt(parts[5]);
 		
-		Recette recette = new Recette(nb_aliments, titre, description);
+		Recette recette = new Recette(nb_aliments, titre, description, username, date, image);
 		
 		//Detection of the aliments in the recipe
 		for( int i = 0; i < nb_aliments; i++)
 		{
-			recette.addAliment(parts[i+5]);
+			recette.addAliment(parts[i+6]);
 		}
 		
 		Wall wall = client.gui.getWall();

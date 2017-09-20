@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,21 +24,26 @@ import com.mysql.fabric.xmlrpc.base.Array;
  */
 public class Recette extends JPanel{
 	
-	private Image photo;
+	private BufferedImage photo;
 	private String titre;
 	private String description;
 	private String note;
 	private int nb_aliments;
 	private JPanel aliments_panel;
+	private String date;
+	private String username;
 	
 	private List<String> aliment_list;
 	
-	Recette(int nb_aliment, String titre, String description)
+	Recette(int nb_aliment, String titre, String description, String username, String date, BufferedImage image)
 	{
 		this.titre= titre;
 		nb_aliments = nb_aliment;
 		this.description=description;
 		aliment_list = new ArrayList<String>();
+		this.photo = image;
+		this.username=username;
+		this.date = date;
 		
 		
 		/*########################################### 
@@ -69,8 +75,8 @@ public class Recette extends JPanel{
 		add(image_panel, BorderLayout.WEST);
 		image_panel.setLayout(new BorderLayout(0, 0));
 		
-		JLabel image = new JLabel(new ImageIcon("index.jpg"));
-		image_panel.add(image);
+		JLabel image_label = new JLabel(new ImageIcon(photo));
+		image_panel.add(image_label);
 		
 		//Text area of the panel
 		JPanel text_panel = new JPanel();
@@ -80,8 +86,11 @@ public class Recette extends JPanel{
 		JPanel titre_panel = new JPanel();
 		text_panel.add(titre_panel, BorderLayout.NORTH);
 		
-		JLabel titre_label = new JLabel("\u00B5Titre");
+		JLabel titre_label = new JLabel(titre);
 		titre_panel.add(titre_label);
+		
+		JLabel date_label = new JLabel(date);
+		titre_panel.add(date_label);
 		
 		aliments_panel = new JPanel();
 		text_panel.add(aliments_panel, BorderLayout.SOUTH);
@@ -96,8 +105,11 @@ public class Recette extends JPanel{
 		JLabel label_note = new JLabel("Note nutritionnelle");
 		description_panel.add(label_note, BorderLayout.SOUTH);
 		
-		JLabel label_description = new JLabel("Description");
+		JLabel label_description = new JLabel(description);
 		description_panel.add(label_description, BorderLayout.CENTER);
+		
+		JLabel label_user = new JLabel(username);
+		description_panel.add(label_user, BorderLayout.NORTH);
 		
 	}
 	public void addAliment(String aliment)
