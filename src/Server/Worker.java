@@ -131,16 +131,10 @@ public class Worker implements Runnable {
 			String text = "";
 			while(loop && i<10) {
 				// Get the 10 last lines stored on the server
-				// Return a line with: "username,title,description,nutriScore,date,imageName"
-				text = server.getUploadedText(i+1);
+				// Return a line with: "username,title,description,imageName,date,nbAliments,aliment1,aliment2,...,scoreNutri"
+				text = server.sendPostText(i+1);
 				if(text == "") loop = false;
 				else {
-					//String[] parts = text.split("\t");
-					//String login = parts[0];
-					//String title = parts[1];
-					//String description = parts[2];
-					//String date = parts[3];
-					//String imageName = parts[4];
 					sendResponse(8,text);
 				}
 				i++;
@@ -167,8 +161,6 @@ public class Worker implements Runnable {
 		}
 	}
 	
-	public void storeImage(BufferedImage img, String date) {
-	}
 	
 	public void sendResponse(int req, String data) {
 		try {
@@ -176,11 +168,7 @@ public class Worker implements Runnable {
 			out.writeUTF(data);
 			if(req == 8) {
 				String[] parts = data.split("\t");
-				//String login = parts[0];
-				//String title = parts[1];
-				//String description = parts[2];
-				//String date = parts[3];
-				String imageName = parts[4];
+				String imageName = parts[3];
 				BufferedImage image = ImageIO.read(new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+imageName+".png"));
 		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		        // Need to check the extension of the file uploaded (by now, the default is PNG)

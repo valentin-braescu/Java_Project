@@ -108,8 +108,7 @@ public class SingleServer extends JFrame {
 			// execute the prepared Statement
 			ResultSet res = prepst.executeQuery();
 			// Get the first line
-			res.next();
-			if(!res.wasNull()) {
+			if(res.next()) {
 				// The user exists in the database
 				userId = res.getInt("id");
 			}
@@ -239,19 +238,25 @@ public class SingleServer extends JFrame {
 		String[] parts = data.split("\t");
 		String title = parts[0];
 		String description = parts[1];
-		PreparedStatement prepstInsert;
-		String queryInsert;
-		prepstInsert = null;
-		queryInsert = "";
+		int nbFood = Integer.valueOf(parts[2]);
+		PreparedStatement prepstInsert1;
+		PreparedStatement prepstInsert2;
+		String queryInsert1;
+		String queryInsert2;
+		prepstInsert1 = null;
+		prepstInsert2 = null;
+		queryInsert1 = "";
+		queryInsert2 = "";
+		
 		// Image treatment
 		// The default extension is PNG (need to work on that)
         try {
             // Save the image with a temporary name
             File outputFile = new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
             if (outputFile.createNewFile()){
-            	System.out.println("File is created!");
+            	//System.out.println("File is created!");
             }else{
-            	System.out.println("File already exists.");
+            	//System.out.println("File already exists.");
             }
             ImageIO.write(img, "png", outputFile);
           
@@ -266,25 +271,60 @@ public class SingleServer extends JFrame {
             File oldfile =new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
     		File newfile =new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+checksum+".png");
     		if(oldfile.renameTo(newfile)){
-    			System.out.println("[+] Rename succesful");
+    			//System.out.println("[+] Rename succesful");
     		}else{
-    			System.out.println("[-] Rename failed");
+    			//System.out.println("[-] Rename failed");
     		}
     		
-    		// INSERT the infos in the Database
-			// mysql INSERT prepared statement
-			queryInsert = "INSERT INTO posts (id,title,description,imageName,date) VALUES (?,?,?,?,?)";
-			// create mysql INSERT prepared Statement
-			// Build the SQL INSERT query
-			prepstInsert = con.prepareStatement(queryInsert);
-			prepstInsert.setInt(1,clientId);
-			prepstInsert.setString(2,title);
-			prepstInsert.setString(3,description);
-			prepstInsert.setString(4,checksum);
-			prepstInsert.setString(5,date);
-			// execute the prepared Statement
-			prepstInsert.execute();
-			prepstInsert.close();
+    		// Search for food codes in the database
+    		// /////// repérer les aliments qui ne sont pas enregistrés dans la table
+    		boolean alimentsPresents = true;
+    		int cpt=0;
+    		while(cpt<nbFood && alimentsPresents) {
+    			String foodCode = getFoodCode(parts[3+cpt]);
+    			cpt++;
+    			if(foodCode=="0") {
+    				// If only one food doesn't exist in the database, the upload is canceled
+    				alimentsPresents=false;
+    			}
+    		}
+    		if(alimentsPresents) {
+    			// INSERT the infos in the Database
+    			// mysql INSERT prepared statement
+    			queryInsert1 = "INSERT INTO posts (id,title,description,imageName,date) VALUES (?,?,?,?,?)";
+    			// create mysql INSERT prepared Statement
+    			// Build the SQL INSERT query
+    			prepstInsert1 = con.prepareStatement(queryInsert1);
+    			prepstInsert1.setInt(1,clientId);
+    			prepstInsert1.setString(2,title);
+    			prepstInsert1.setString(3,description);
+    			prepstInsert1.setString(4,checksum);
+    			prepstInsert1.setString(5,date);
+    			// execute the prepared Statement
+    			prepstInsert1.execute();
+    			prepstInsert1.close();
+    			
+    			// Create a link between the food and the users in the database
+    			for(int i=0; i< nbFood; i++) {
+    				// INSERT a line containing (userId, date, food_code)
+    				queryInsert2 = "INSERT INTO food_posts (userId,date,food_code) VALUES (?,?,?)";
+    				// create mysql INSERT prepared Statement
+    				// Build the SQL INSERT query
+    				prepstInsert2 = con.prepareStatement(queryInsert2);
+    				prepstInsert2.setInt(1,clientId);
+    				prepstInsert2.setString(2,date);
+    				String foodCode = getFoodCode(parts[3+i]);
+    				prepstInsert2.setString(3,foodCode);
+    				// execute the prepared Statement
+    				prepstInsert2.execute();
+    				prepstInsert2.close();
+    			}
+    		}
+    		else {
+    			// At least one of the food uploaded doesn't belong to our database. The user needs to give more infos about the food.
+    			return false;
+    		}
+    		
         } catch(IOException | SQLException e) {
         	System.out.println("[x] IO error.");
         	return false;
@@ -295,6 +335,33 @@ public class SingleServer extends JFrame {
         return true;
 	}
 	
+	public String getFoodCode(String food) {
+		// Return the code of the first food matching in the database
+		PreparedStatement prepst;
+		String foodCode = "0";
+		String query = "";
+		prepst = null;
+		try {
+			// Check if the food already exists in the database
+			// mysql SELECT prepared statement
+			query = "SELECT code FROM food WHERE nom=?";
+			// create mysql SELECT prepared Statement
+			prepst = con.prepareStatement(query);
+			prepst.setString(1,food);
+			// execute the prepared Statement
+			ResultSet res = prepst.executeQuery();
+			// Get the first line
+			if(!res.next()) {
+				foodCode = "0";
+			}
+			else {
+				foodCode = res.getString("code");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return foodCode;
+	}
 	
 	private static String getFileChecksum(MessageDigest digest, File file) throws IOException
 	{
@@ -329,7 +396,7 @@ public class SingleServer extends JFrame {
 	    return sb.toString();
 	}
 	
-	public String getUploadedText(int line) {
+	public String sendPostText(int line) {
 		// Return a line with: "username,title,description,nutriScore,date,imageName"
 		// If line = 2, return the second last line uploaded.
 		String response = "";
@@ -339,23 +406,47 @@ public class SingleServer extends JFrame {
 		query = "";
 		boolean lineFound = true;
 		// mysql SELECT prepared statement
-		query = "SELECT u.login, p.title, p.description, p.date, p.imageName FROM users AS u INNER JOIN posts AS p ON u.id = p.id ORDER BY p.date DESC";
+		query = "SELECT u.login, u.id, p.title, p.description, p.imageName, p.date FROM users AS u INNER JOIN posts AS p ON u.id = p.id ORDER BY p.date DESC";
 		// create mysql SELECT prepared Statement
 		try {
 			prepst = con.prepareStatement(query);
 			// execute the prepared Statement
 			ResultSet res = prepst.executeQuery();
-			// Get the good line
-			for(int i=0; i<line;i++) {
+			if(!res.next()) {
+				// No line found
+				lineFound = false;
+			}
+			else {
+				res.last();
+				int nbLines = res.getRow();
+				res.beforeFirst();
 				res.next();
-				if(res.wasNull()) {
-					// Not enough lines to find the expected one
-					i = line;
+				if(nbLines<line) {
+					// Not enough lines to get this line number
 					lineFound = false;
 				}
+				else {
+					// Get the good line
+					for(int i=1; i<line;i++) {
+						res.next();
+					}
+				}
 			}
+			
 			if(lineFound) {
-				response+=res.getString("login")+"\t"+res.getString("title")+"\t"+res.getString("description")+"\t"+res.getString("date")+"\t"+res.getString("imageName");
+				// For each post, the server send the infos to the client
+				String login = res.getString("login");
+				int id = res.getInt("id");
+				String title = res.getString("title");
+				String description = res.getString("description");
+				String imageName = res.getString("imageName");
+				String date = res.getString("date");
+				int nbFood = getNbFood(id, date);
+				response+=login+"\t"+title+"\t"+description+"\t"+imageName+"\t"+date+"\t"+Integer.valueOf(nbFood);
+				for(int j=0;j<nbFood;j++) {
+					// We add the list of food associated with an image
+					response += "\t"+getFoodUsed(id, date,j+1);
+				}
 			}
 			prepst.close();
 		} catch (SQLException e) {
@@ -364,6 +455,82 @@ public class SingleServer extends JFrame {
 		return response;
 	}
 	
+	public int getNbFood(int id, String date) {
+		// Return the number of food associated with a post
+		PreparedStatement prepst;
+		String query = "";
+		prepst = null;
+		int nbFood = 0;
+		try {
+			// mysql SELECT prepared statement
+			query = "SELECT count(userId) as cpt FROM food_posts WHERE userId=? AND date=?";
+			// create mysql SELECT prepared Statement
+			prepst = con.prepareStatement(query);
+			prepst.setInt(1,id);
+			prepst.setString(2,date);
+			// execute the prepared Statement
+			ResultSet res = prepst.executeQuery();
+			res.next();
+			nbFood = res.getInt("cpt");
+			prepst.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return nbFood;
+	}
+	
+	public String getFoodUsed(int id, String date, int line) {
+		// Return the name of the food associated with an image (if lots of food, refer to the line)
+		PreparedStatement prepst;
+		String foodName = "";
+		String query = "";
+		prepst = null;
+		String foodCode="";
+		try {
+			// mysql SELECT prepared statement
+			query = "SELECT food_code FROM food_posts WHERE userId=? AND date=?";
+			// create mysql SELECT prepared Statement
+			prepst = con.prepareStatement(query);
+			prepst.setInt(1,id);
+			prepst.setString(2,date);
+			// execute the prepared Statement
+			ResultSet res = prepst.executeQuery();
+			// Get the good line
+			for(int i=0; i<line; i++) {
+				res.next();
+			}
+			foodCode = res.getString("food_code");
+			foodName = foodNameFromCode(foodCode);
+			prepst.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return foodName;
+	}
+	
+	public String foodNameFromCode(String foodCode) {
+		// Return the name of the food associated with a food code.
+		PreparedStatement prepst;
+		String query = "";
+		prepst = null;
+		String foodName="";
+		try {
+			// mysql SELECT prepared statement
+			query = "SELECT nom FROM food WHERE code=?";
+			// create mysql SELECT prepared Statement
+			prepst = con.prepareStatement(query);
+			prepst.setString(1,foodCode);
+			// execute the prepared Statement
+			ResultSet res = prepst.executeQuery();
+			// Get the good line
+			res.next();
+			foodName = res.getString("nom");
+			prepst.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return foodName;
+	}
 	
 	public int searchFoodLines(String food) {
 		// Looking for the number of lines corresponding to this food in the database
@@ -380,8 +547,7 @@ public class SingleServer extends JFrame {
 			prepst.setString(1,"%"+food+"%");
 			// execute the prepared Statement
 			ResultSet res = prepst.executeQuery();
-			res.next();
-			if(!res.wasNull()) {
+			if(res.next()) {
 				nbLines = res.getInt("nbLines");
 			}
 			prepst.close();

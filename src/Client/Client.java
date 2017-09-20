@@ -96,15 +96,19 @@ public class Client {
 			// If the user wants to upload an image
 			if(req == 6) {
 				// The server is warned that text and picture are being sent
-				// sendRequest(6,NomDuPlat,Description,filePath)
+				// sendRequest(6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ..., filePath)
 				String[] parts = data.split("\t");
-				String title = parts[0];
-				String description = parts[1];
-				String filePath = parts[2];
-				String newData = title+"\t"+description;
+				// We extract the filePath from the data
+				String newData = parts[0]+"\t"+parts[1]+"\t"+parts[2];
+				int nbFood = Integer.valueOf(parts[2]);
+				for(int i=0; i< nbFood;i++) {
+					newData += "\t"+parts[3+i];
+				}
+				// Send the new String to the server
 				out.writeUTF(newData);
 				try {
-					BufferedImage image = ImageIO.read(new File(filePath));
+					// Use the filePath to read the image on the client computer
+					BufferedImage image = ImageIO.read(new File(parts[3+nbFood]));
 			        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			        // Need to check the extension of the file uploaded (by now, the default is JPG)
 			        ImageIO.write(image, "jpg", byteArrayOutputStream);
@@ -148,9 +152,11 @@ public class Client {
 			break;
 		case 21 :
 			System.out.println("Connection ok");
-			//DEMO sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"C:\\Users\\Public\\Pictures\\greenLed.png");
-			//DEMO sendRequest(3,"coca");
-			//DEMO sendRequest(3,"blubliblu");
+			sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Public\\Pictures\\greenLed.png");
+			sendRequest(6,"Mon titre2 !!! "+"\t"+"Morty's favorite food."+"\t"+"2"+"\t"+"coco pops"+"\t"+"coca-cola"+"\t"+"C:\\Users\\Public\\Pictures\\redLed.png");
+			sendRequest(3,"coca");
+			sendRequest(3,"blubliblu");
+			sendRequest(5,"");
 			gui.setVisible(true);
 			break;
 		case 40 :
@@ -189,7 +195,7 @@ public class Client {
 			System.out.println("[+] Data has been uploaded on the server.");
 			break;
 		case 8 :
-			// Reception de text et d'image (login, title, description, date, imageName)
+			// Reception de texte et d'image (login, title, description, date, imageName)
 			break;
 		default :
 			break;
@@ -197,7 +203,22 @@ public class Client {
 	}
 	
 	public void displayPanel(String data, BufferedImage img) {
-		// TODO: Display on the WALL !
+		System.out.println("Display Panel function.");
+		System.out.println("Text reçu :"+data);
+		// Save the image
+		String[] parts = data.split("\t");
+		String imageName = parts[3];
+        try {
+        	File outputFile = new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\imagesClient\\"+imageName+".png");
+			if (outputFile.createNewFile()){
+				System.out.println("File is created!");
+			}else{
+				System.out.println("File already exists.");
+			}
+			ImageIO.write(img, "png", outputFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void setIDs(String id, String password)
