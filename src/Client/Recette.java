@@ -6,7 +6,7 @@ package Client;
 import java.awt.Image;
 
 /**
- * @author Valentin
+ * @author Valentin and Sébastien 
  *
  */
 public class Recette {

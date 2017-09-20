@@ -4,12 +4,15 @@
 package Server;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
-
+import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 
 /**
  * @author Sebastien and Valentin 
@@ -22,7 +25,8 @@ public class ListWorker implements Runnable {
 	private Thread th;
 	private boolean run;
 	private DataInputStream in;
-	private ImageInputStream imageIn;
+	private InputStream inputStream;
+
 	
 	ListWorker(Worker worker, Socket socket){
 		this.worker = worker;
@@ -41,7 +45,7 @@ public class ListWorker implements Runnable {
 			//Creating an input data stream to listen to the requests
 			in = new DataInputStream(socket.getInputStream());
 			//Creating an input image stream to download pictures
-			imageIn = ImageIO.createImageInputStream(socket.getInputStream());
+			inputStream = socket.getInputStream();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -49,17 +53,28 @@ public class ListWorker implements Runnable {
 			try {
 				req = in.readInt();
 				data = in.readUTF();
-				if(req == 7) {
-					// Analyzing image
-					BufferedImage img=ImageIO.read(imageIn);
-					worker.storeImage(img);
-				}
+				// Get the date-time of the upload
+		        Date date = new Date();
+		        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		        String currentTime = sdf.format(date);
+
+		        if(req == 6) {
+		        	// Text and image are uploaded
+					byte[] sizeAr = new byte[4];
+			        inputStream.read(sizeAr);
+			        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+			        byte[] imageAr = new byte[size];
+			        inputStream.read(imageAr);
+			        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
+			        // Send the image to the worker
+			        worker.storeInfos(data, image, currentTime);
+		        }
 				else {
 					// Analyzing string data
 					worker.analyzeReq(req, data);
 				}
 			} catch (IOException e) {
-				System.out.println("Client aborted");
+				System.out.println("[x] Client aborted");
 				worker.deconnection();
 			}
 		}
@@ -69,8 +84,11 @@ public class ListWorker implements Runnable {
 	public void stop() {
 		run = false;
 		try {
+			// Closing image stream
+			inputStream.close();
+			// Closing data stream
 			in.close();
-			imageIn.close();
+			//imageIn.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
