@@ -251,6 +251,7 @@ public class SingleServer extends JFrame {
 		// Image treatment
 		// The default extension is PNG (need to work on that)
         try {
+        	System.out.println("Uploading");
             // Save the image with a temporary name
             File outputFile = new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
             if (outputFile.createNewFile()){

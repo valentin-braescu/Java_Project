@@ -91,7 +91,6 @@ public class Client {
 	
 	public void sendRequest(int req, String data)
 	{
-		System.out.println(data);
 		try {
 			out.writeInt(req);
 			// If the user wants to upload an image
@@ -109,15 +108,18 @@ public class Client {
 				out.writeUTF(newData);
 				try {
 					// Use the filePath to read the image on the client computer
+					System.out.println("Coucou1");
 					BufferedImage image = ImageIO.read(new File(parts[3+nbFood]));
-			        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			        ///ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			        // Need to check the extension of the file uploaded (by now, the default is JPG)
-			        ImageIO.write(image, "jpg", byteArrayOutputStream);
-			        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-			        outputStream.write(size);
-			        outputStream.write(byteArrayOutputStream.toByteArray());
-			        outputStream.flush();
-			        byteArrayOutputStream.close();
+					System.out.println("Coucou2");
+			        ImageIO.write(image, "jpg", outputStream);
+			        System.out.println("Coucou3");
+			        ///byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+			        ///outputStream.write(size);
+			        ///outputStream.write(byteArrayOutputStream.toByteArray());
+			        ///outputStream.flush();
+			        ///byteArrayOutputStream.close();
 				} catch (IOException e) {
 					System.out.println("[x] Error when uploading an image.");
 				}

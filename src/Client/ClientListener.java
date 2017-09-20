@@ -56,17 +56,12 @@ public class ClientListener implements Runnable {
 				if(req == 8) {
 					System.out.println("Request 8 recieved");
 					// The server is sending text and pictures to display on the wall
-					byte[] sizeAr = new byte[4];
-					System.out.println("coucou1");
-			        inputStream.read(sizeAr);
-			        System.out.println("coucou2");
-			        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-			        System.out.println("coucou3");
-			        byte[] imageAr = new byte[size];
-			        System.out.println("coucou4");
-			        inputStream.read(imageAr);
-			        System.out.println("coucou5");
-			        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
+					//byte[] sizeAr = new byte[4];
+			        //inputStream.read(sizeAr);
+			        //int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+			        //byte[] imageAr = new byte[size];
+			        //inputStream.read(imageAr);
+			        BufferedImage image = ImageIO.read(sock.getInputStream());
 			        // Wait until the image is downloaded
 			        // Send the image to the worker
 			        System.out.println("coucou6");

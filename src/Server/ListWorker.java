@@ -60,14 +60,17 @@ public class ListWorker implements Runnable {
 
 		        if(req == 6) {
 		        	// Text and image are uploaded
-					byte[] sizeAr = new byte[4];
-			        inputStream.read(sizeAr);
-			        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-			        byte[] imageAr = new byte[size];
-			        inputStream.read(imageAr);
-			        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
+					//byte[] sizeAr = new byte[4];
+			        //inputStream.read(sizeAr);
+			        //int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+			        //byte[] imageAr = new byte[size];
+			        //inputStream.read(imageAr);
+		        	System.out.println("Coucou1");
+			        BufferedImage image = ImageIO.read(inputStream);
+			        System.out.println("Coucou2");
 			        // Send the image to the worker
 			        worker.storeInfos(data, image, currentTime);
+			        System.out.println("Coucou3");
 		        }
 				else {
 					// Analyzing string data
