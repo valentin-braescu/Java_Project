@@ -54,14 +54,22 @@ public class ClientListener implements Runnable {
 				int req = entree.readInt();
 				String data = entree.readUTF();
 				if(req == 8) {
+					System.out.println("Request 8 recieved");
 					// The server is sending text and pictures to display on the wall
 					byte[] sizeAr = new byte[4];
+					System.out.println("coucou1");
 			        inputStream.read(sizeAr);
+			        System.out.println("coucou2");
 			        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+			        System.out.println("coucou3");
 			        byte[] imageAr = new byte[size];
+			        System.out.println("coucou4");
 			        inputStream.read(imageAr);
+			        System.out.println("coucou5");
 			        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
+			        // Wait until the image is downloaded
 			        // Send the image to the worker
+			        System.out.println("coucou6");
 			        newRecette(data, image);
 			        client.displayPanel(data, image);
 				}
@@ -94,17 +102,18 @@ public class ClientListener implements Runnable {
 	public void newRecette(String data, BufferedImage image)
 	{
 		//Parsing of the string data
+		System.out.println(data);
 		String[] parts = data.split("\t");
 		String titre = parts[0];
 		String description = parts[1];
-		int nb_aliments = Integer.parseInt(parts[2]);
+		int nb_aliments = Integer.parseInt(parts[5]);
 		
 		Recette recette = new Recette(nb_aliments, titre, description);
 		
 		//Detection of the aliments in the recipe
 		for( int i = 0; i < nb_aliments; i++)
 		{
-			recette.addAliment(parts[i+3]);
+			recette.addAliment(parts[i+5]);
 		}
 		
 		Wall wall = client.gui.getWall();

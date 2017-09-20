@@ -136,6 +136,11 @@ public class Worker implements Runnable {
 				if(text == "") loop = false;
 				else {
 					sendResponse(8,text);
+					try {
+						th.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				i++;
 			}

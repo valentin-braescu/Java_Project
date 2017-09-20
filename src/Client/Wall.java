@@ -38,7 +38,8 @@ public class Wall extends JPanel implements ActionListener{
 	Wall(GUI gui, Client client)
 	{
 		this.gui= gui;
-		
+		this.client = client;
+		fil = new LinkedList<Recette>();
 		setLayout(new BorderLayout(0,0));
 		
 		JPanel actualiser_panel = new JPanel();
@@ -75,7 +76,7 @@ public class Wall extends JPanel implements ActionListener{
 			/*Recette recette = new Recette(2,"Recette example", "Miam une recette qu'elle est bonne");
 			System.out.println("actualiser clicked");*/
 			
-			client.sendRequest(5, "");
+			client.sendRequest(5,"");
 			//panel_list.add(recette);
 			//gui.pack();
 			gui.revalidate();
