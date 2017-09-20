@@ -45,7 +45,7 @@ public class Client {
 	
 	public void startClient(int req,String id)
 	{
-		try
+		/*try
 		{
 			sock = new Socket("localhost", 3456);
 			//sock = new Socket("192.168.43.4", 3456);
@@ -59,7 +59,8 @@ public class Client {
 		}
 		
 		listener = new ClientListener(sock, this);
-		sendRequest( req, id);
+		
+		sendRequest( req, id);*/
 		
 	}
 	
@@ -138,7 +139,7 @@ public class Client {
 			System.out.println("Creation failed");
 			// Reset login and password
 			setIDs("","");
-			gui.inscription(false,false,"");
+			gui.connexion(false,false,"",1);
 			break;
 		case 11 :
 			System.out.println("Creation ok");
@@ -148,7 +149,7 @@ public class Client {
 			System.out.println("Connection failed");
 			// Reset login and password
 			setIDs("","");
-			gui.connexion(false,false,"");
+			gui.connexion(false,false,"",2);
 			break;
 		case 21 :
 			System.out.println("Connection ok");

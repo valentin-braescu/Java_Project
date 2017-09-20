@@ -32,7 +32,7 @@ import javax.swing.border.EmptyBorder;
 public class GUI extends JFrame implements ActionListener{
 	
 	private Client client;
-	//private Wall wall;
+	private Wall wall;
 	private CreateTab createTab;
 	
 	
@@ -61,7 +61,7 @@ public class GUI extends JFrame implements ActionListener{
 		font = new Font("Arial",Font.ITALIC|Font.BOLD,18);
 		font_menu = new Font("Arial",Font.BOLD, 18);
 		
-		//wall = new Wall();
+		wall = new Wall(this, client);
 		createTab = new CreateTab();
 
 		initialize();
@@ -141,17 +141,17 @@ public class GUI extends JFrame implements ActionListener{
 
 	    if( choix == 0)
 	    {
-	    	connexion(true,true,"");
+	    	connexion(true,true,"", 2);
 	    }
 	    else if( choix == 1)
 	    {
-	    	inscription(true,true,"");
+	    	connexion(true,true,"", 1);
 	    }
 	}
 	
 	// NOTE : les fonctions "connexion" et "inscription" se ressemblent de ouf. Rassembler tout ça en une serait mieux.
 	
-	 public void connexion(boolean loginField, boolean passwordField, String defaultLogin) {
+	 public void connexion(boolean loginField, boolean passwordField, String defaultLogin, int mode) {
 	        JPanel p = new JPanel(new BorderLayout(5,5));
 	       
 	        JPanel labels = new JPanel(new GridLayout(0,1,2,2));
@@ -172,7 +172,15 @@ public class GUI extends JFrame implements ActionListener{
 	        if(!passwordField) password.setBorder(BorderFactory.createLineBorder(Color.RED));
 
 	        // Dialog : OK to send the credentials, or CANCEL the operation
-	        int connexionBox = JOptionPane.showConfirmDialog( this, p, "Connexion", JOptionPane.OK_CANCEL_OPTION);
+	        int connexionBox;
+	        if( mode == 2)
+	        {
+	        	connexionBox = JOptionPane.showConfirmDialog( this, p, "Connexion", JOptionPane.OK_CANCEL_OPTION);
+	        }
+	        else
+	        {
+	        	connexionBox = JOptionPane.showConfirmDialog( this, p, "Inscription", JOptionPane.OK_CANCEL_OPTION);
+	        }
 	        
 	        if(connexionBox == JOptionPane.OK_OPTION) {
 	        	// Parsing the entries login/password
@@ -186,13 +194,14 @@ public class GUI extends JFrame implements ActionListener{
 	            	newPasswordField = true;
 	            	if(login.isEmpty()) newLoginField = false;
 	            	if(pass.isEmpty()) newPasswordField = false;
-	            	connexion(newLoginField,newPasswordField,login);
+	            	connexion(newLoginField,newPasswordField,login, mode);
 	            }
 	            else {
 	            	// Saving login and password (temporarily, waiting for the server to acknowledge)
 	    	        client.setIDs(login, pass);
 	    	        // Starting client - Send login and password to the server
-	    	        client.startClient(2, login+'\t'+pass);
+	    	        client.startClient(mode, login+'\t'+pass);
+	    	        setVisible(true);
 	            }
 	        }
 	        else if(connexionBox == JOptionPane.CANCEL_OPTION) {
@@ -202,63 +211,6 @@ public class GUI extends JFrame implements ActionListener{
 	        	System.exit(0);
 	        }
 	    }
-
-	
-	public void inscription(boolean loginField, boolean passwordField, String defaultLogin)
-	{
-        JPanel p = new JPanel(new BorderLayout(5,5));
-
-        JPanel labels = new JPanel(new GridLayout(0,1,2,2));
-        labels.add(new JLabel("User Name", SwingConstants.RIGHT));
-        labels.add(new JLabel("Password", SwingConstants.RIGHT));
-        p.add(labels, BorderLayout.WEST);
-
-        JPanel controls = new JPanel(new GridLayout(0,1,2,2));
-        JTextField username = new JTextField(defaultLogin);
-        controls.add(username);
-        // If the login field was empty the last time
-        if(!loginField) username.setBorder(BorderFactory.createLineBorder(Color.RED));
-        
-        JPasswordField password = new JPasswordField();
-        controls.add(password);
-        // If the password field was empty the last time
-        if(!passwordField) password.setBorder(BorderFactory.createLineBorder(Color.RED));
-        p.add(controls, BorderLayout.CENTER);
-
-        //LayoutManager l = new GroupLayout(p);
-        //p.setLayout(l);
-        
-        // Dialog : OK to send the credentials, or CANCEL the operation
-        int inscriptionBox = JOptionPane.showConfirmDialog( this, p, "Inscription", JOptionPane.OK_CANCEL_OPTION);
-        
-        if(inscriptionBox == JOptionPane.OK_OPTION) {
-        	// Parsing the entries login/password
-        	String login = username.getText();
-        	String pass = String.valueOf(password.getPassword());
-            if(login.isEmpty() || pass.isEmpty()) {
-            	// One of the fields is empty
-            	boolean newLoginField, newPasswordField;
-            	// By default, the fields are considered filled
-            	newLoginField = true;
-            	newPasswordField = true;
-            	if(login.isEmpty()) newLoginField = false;
-            	if(pass.isEmpty()) newPasswordField = false;
-            	inscription(newLoginField,newPasswordField,login);
-            }
-            else {
-            	// Saving login and password (temporarily, waiting for the server to acknowledge)
-    	        client.setIDs(login, pass);
-    	        // Starting client - Send login and password to the server
-    	        client.startClient(1, login+'\t'+pass);
-            }
-        }
-        else if(inscriptionBox == JOptionPane.CANCEL_OPTION) {
-        	accueil();
-        }
-        else {
-        	System.exit(0);
-        }
-	}
 	
 	public void modifierCompte(JFrame frame)
 	{
@@ -276,8 +228,6 @@ public class GUI extends JFrame implements ActionListener{
         controls.add(password);
         p.add(controls, BorderLayout.CENTER);
 
-        //LayoutManager l = new GroupLayout(p);
-        //p.setLayout(l);
         JOptionPane.showMessageDialog( frame, p, "Modification du compte", JOptionPane.QUESTION_MESSAGE);
         
         setVisible(true);
@@ -302,7 +252,7 @@ public class GUI extends JFrame implements ActionListener{
 		{
 			
 			remove(main_panel);
-			//main_panel = wall;
+			main_panel = wall;
 			add(main_panel);
 			revalidate();
 			repaint();
@@ -317,10 +267,21 @@ public class GUI extends JFrame implements ActionListener{
 			revalidate();
 			repaint();
 		}
+		if( s == button_list)
+		{
+			remove(main_panel);
+			revalidate();
+			repaint();
+		}
 		if( s == modifier_compte)
 		{
 			modifierCompte(this);
 		}
+	}
+	
+	public Wall getWall()
+	{
+		return wall;
 	}
 	
 }
