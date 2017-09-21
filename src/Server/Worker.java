@@ -174,15 +174,14 @@ public class Worker implements Runnable {
 			if(req == 8) {
 				String[] parts = data.split("\t");
 				String imageName = parts[3];
+				// Sending the image to the client
 				BufferedImage image = ImageIO.read(new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+imageName+".png"));
-		        ///ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		        // Need to check the extension of the file uploaded (by now, the default is PNG)
-		        ImageIO.write(image, "png", socket.getOutputStream());
-		        ///byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-		        ///outputStream.write(size);
-		        ///outputStream.write(byteArrayOutputStream.toByteArray());
-		        ///outputStream.flush();
-		        ///byteArrayOutputStream.close();
+		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		        ImageIO.write(image, "jpg", byteArrayOutputStream);
+		        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+		        out.write(size);
+		        out.write(byteArrayOutputStream.toByteArray());
+		        out.flush();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -3,16 +3,25 @@
  */
 package Client;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 /**
  * @author Valentin and Sébastien
@@ -25,7 +34,6 @@ public class Client {
 	public GUI gui;
 	private ClientListener listener;
 	private DataOutputStream out;
-	private OutputStream outputStream;
 	private String user_id;
 	private String user_password;
 
@@ -50,7 +58,7 @@ public class Client {
 			sock = new Socket("localhost", 3456);
 			//sock = new Socket("192.168.43.4", 3456);
 			out = new DataOutputStream(sock.getOutputStream());
-			outputStream = sock.getOutputStream();
+			
 			
 		}
 		catch(IOException e)
@@ -73,8 +81,6 @@ public class Client {
 		{
 			// Closing data stream
 			out.close();
-			// Closing Image stream
-			outputStream.close();
 			// Closing the socket
 			sock.close();
 		}
@@ -104,24 +110,19 @@ public class Client {
 				for(int i=0; i< nbFood;i++) {
 					newData += "\t"+parts[3+i];
 				}
-				// Send the new String to the server
 				out.writeUTF(newData);
 				try {
-					// Use the filePath to read the image on the client computer
-					System.out.println("Coucou1");
-					BufferedImage image = ImageIO.read(new File(parts[3+nbFood]));
-			        ///ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			        // Need to check the extension of the file uploaded (by now, the default is JPG)
-					System.out.println("Coucou2");
-			        ImageIO.write(image, "jpg", outputStream);
-			        System.out.println("Coucou3");
-			        ///byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-			        ///outputStream.write(size);
-			        ///outputStream.write(byteArrayOutputStream.toByteArray());
-			        ///outputStream.flush();
-			        ///byteArrayOutputStream.close();
+					// Sending image to the server
+			        BufferedImage image = ImageIO.read(new File(parts[3+nbFood]));
+			        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			        ImageIO.write(image, "jpg", byteArrayOutputStream);
+			        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+			        out.write(size);
+			        out.write(byteArrayOutputStream.toByteArray());
+			        out.flush();
 				} catch (IOException e) {
 					System.out.println("[x] Error when uploading an image.");
+					e.printStackTrace();
 				}
 			}
 			else {

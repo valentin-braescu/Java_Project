@@ -21,7 +21,6 @@ public class ClientListener implements Runnable {
 
 	private Thread thread;
 	private DataInputStream entree;
-	private InputStream inputStream;
 	private Socket sock	;
 	private Client client;
 	
@@ -40,7 +39,6 @@ public class ClientListener implements Runnable {
 		{
 			entree = new DataInputStream(sock.getInputStream());
 			//Creating an input image stream to download pictures
-			inputStream = sock.getInputStream();
 		}
 		catch(IOException e)
 		{
@@ -55,18 +53,15 @@ public class ClientListener implements Runnable {
 				String data = entree.readUTF();
 				if(req == 8) {
 					System.out.println("Request 8 recieved");
-					// The server is sending text and pictures to display on the wall
-					//byte[] sizeAr = new byte[4];
-			        //inputStream.read(sizeAr);
-			        //int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-			        //byte[] imageAr = new byte[size];
-			        //inputStream.read(imageAr);
-			        BufferedImage image = ImageIO.read(sock.getInputStream());
-			        // Wait until the image is downloaded
-			        // Send the image to the worker
-			        System.out.println("coucou6");
-			        newRecette(data, image);
-			        client.displayPanel(data, image);
+					// Get image
+					byte[] sizeAr = new byte[4];
+		            entree.read(sizeAr);
+		            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+		            byte[] imageAr = new byte[size];
+		            entree.read(imageAr);
+		            BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageAr));
+			        newRecette(data, img);
+			        client.displayPanel(data, img);
 				}
 				else {
 					// the other requests are treated normally
@@ -85,7 +80,6 @@ public class ClientListener implements Runnable {
 		try
 		{
 			entree.close();
-			inputStream.close();
 		}
 		catch( IOException e)
 		{
