@@ -92,6 +92,7 @@ public class Worker implements Runnable {
 			}
 			break;
 		case 3:
+			System.out.println(data);
 			// The user is looking for information about the food
 			int nbLines = server.searchFoodLines(data);
 			String info = "";

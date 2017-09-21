@@ -57,7 +57,7 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 	CreateTab(Client client, GUI gui)
 	{
 		this.gui = gui;
-		
+		this.client = client;
 		list_aliments = new LinkedList<CreateTab_NewAliment>();
 		aliments = new LinkedList<String>();
 		setLayout(new BorderLayout(0,0));

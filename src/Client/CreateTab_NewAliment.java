@@ -47,19 +47,21 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 		if( s == valider)
 		{
 			// Search food on the server
-			client.sendRequest(3,champ.getText());
+			String food = champ.getText();
+			System.out.println("Food:"+food);
+			client.sendRequest(3,food);
 			try {
 				TimeUnit.SECONDS.sleep(2);
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			boolean flag = client.getFoodFoundFlag();
-			
+			System.out.println("Boolean:"+flag);
 			if(flag)
 			{
 				//add aliment to apercu
-				tab.aliments.addLast(champ.getText());
+				tab.aliments.addLast(food);
+				tab.updateAlimentsApercu();
 			}
 			else
 			{
