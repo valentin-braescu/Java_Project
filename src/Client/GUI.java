@@ -33,8 +33,8 @@ public class GUI extends JFrame implements ActionListener{
 	
 	private Client client;
 	private Wall wall;
-	private CreateTab createTab;
-	private List list;
+	public CreateTab createTab;
+	public List list;
 	
 	
 	
@@ -50,7 +50,7 @@ public class GUI extends JFrame implements ActionListener{
 	private JPanel panel_wall;
 	private JPanel panel_create;
 	private JPanel panel_list;
-	private JPanel main_panel;
+	public JPanel main_panel;
 	private JButton button_wall;
 	private JButton button_list;
 	private JButton button_create;
@@ -63,7 +63,7 @@ public class GUI extends JFrame implements ActionListener{
 		font_menu = new Font("Arial",Font.BOLD, 18);
 		
 		wall = new Wall(this, client);
-		createTab = new CreateTab();
+		createTab = new CreateTab(client,this);
 		list = new List(client);
 		
 		initialize();
@@ -86,7 +86,7 @@ public class GUI extends JFrame implements ActionListener{
 		mon_compte.add(modifier_compte);
 
 		menu_bar.add(mon_compte);
-		deco = new JMenu("D�connexion");
+		deco = new JMenu("Deconnexion");
 		deco.setFont(font_menu);
 		deconnexion = new JMenuItem("Deconnexion");
 		deconnexion.addActionListener(this);
@@ -123,7 +123,7 @@ public class GUI extends JFrame implements ActionListener{
 		
 		main_panel = new JPanel();
 		main_panel.add(new JLabel("Veuillez choisir un onglet"));
-		main_panel.add(new JLabel("Wall : affiche l'ensemble des recettes publi�es par les autres internautes"));
+		main_panel.add(new JLabel("Wall : affiche l'ensemble des recettes publiees par les autres internautes"));
 		main_panel.add(new JLabel("List : rechercher un aliment"));
 		main_panel.add(new JLabel("Create : publiez une recette"));
 

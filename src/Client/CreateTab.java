@@ -399,7 +399,7 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 		}
 		if( s == button_add_aliment)
 		{
-			CreateTab_NewAliment newAliment = new CreateTab_NewAliment(this);
+			CreateTab_NewAliment newAliment = new CreateTab_NewAliment(this, client);
 			list_aliments.addLast(newAliment);
 			panel_list_aliment.add(newAliment);
 			gui.revalidate();

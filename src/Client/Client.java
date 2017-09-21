@@ -37,6 +37,7 @@ public class Client {
 	private DataOutputStream out;
 	private String user_id;
 	private String user_password;
+	private boolean foodFound = true;
 	
 	Client()
 	{
@@ -166,11 +167,17 @@ public class Client {
 			break;
 		case 30:
 			// The food the user is looking for doesn't exist in the database
-			System.out.println("[-] This food doesn't exist in our database.");
+			// System.out.println("[-] This food doesn't exist in our database.");
+			foodFound = false;
 			break;
 		case 31:
-			gui.getList().addFoodToList(data);
-			gui.refreshList();
+			if(gui.main_panel == gui.list) {
+				gui.getList().addFoodToList(data);
+				gui.refreshList();
+			}
+			else {
+				foodFound = true;
+			}
 			break;
 		case 60 :
 			System.out.println("[x] Error when uploading data on the server.");
@@ -222,4 +229,7 @@ public class Client {
 		return user_password;
 	}
 
+	public boolean getFoodFoundFlag() {
+		return foodFound;
+	}
 }

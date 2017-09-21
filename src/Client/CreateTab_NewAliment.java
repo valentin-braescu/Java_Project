@@ -19,11 +19,12 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 	private JButton valider;
 	private JTextField champ;
 	private CreateTab tab;
+	private Client client;
 	
 	
-	public CreateTab_NewAliment(CreateTab tab) {
+	public CreateTab_NewAliment(CreateTab tab, Client client) {
 		// TODO Auto-generated constructor stub
-		
+		this.client = client;
 		this.tab = tab;
 		
 		champ = new JTextField(10);
@@ -44,9 +45,10 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 		Object s = e.getSource();
 		if( s == valider)
 		{
-			champ.getText();
-			//recherche dans list de champ
-			
+			// Search food on the server
+			client.sendRequest(3,champ.getText());
+			// Sleep 2s
+			boolean flag = client.getFoodFoundFlag();
 		}
 		
 	}
