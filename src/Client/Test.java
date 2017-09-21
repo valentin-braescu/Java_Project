@@ -17,10 +17,18 @@ import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.JTextField;
+import java.awt.Font;
+import java.awt.Component;
+import javax.swing.Box;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 public class Test {
 
 	private JFrame frame;
+	private JTextField textField;
+	private JTextField textField_description;
 
 	/**
 	 * Launch the application.
@@ -53,22 +61,49 @@ public class Test {
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		JPanel panel_nom_vue = new JPanel();
+		panel_nom_vue.setBorder(new LineBorder(new Color(0, 0, 0)));
+		frame.getContentPane().add(panel_nom_vue, BorderLayout.WEST);
+		panel_nom_vue.setLayout(new GridLayout(0, 1, 2, 0));
+		
+		JLabel label_editeur = new JLabel("Editeur");
+		label_editeur.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_nom_vue.add(label_editeur);
+		
+		JLabel label_apercu = new JLabel("Aper\u00E7u");
+		label_apercu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_nom_vue.add(label_apercu);
+		
+		JPanel panel_vue = new JPanel();
+		panel_vue.setBorder(new LineBorder(new Color(0, 0, 0)));
+		frame.getContentPane().add(panel_vue, BorderLayout.CENTER);
+		panel_vue.setLayout(new GridLayout(0, 1, 2, 0));
+		
+		JPanel panel_edition = new JPanel();
+		panel_edition.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_vue.add(panel_edition);
+		panel_edition.setLayout(new BorderLayout(0, 0));
+		
 		JPanel image_panel = new JPanel();
-		frame.getContentPane().add(image_panel, BorderLayout.WEST);
+		panel_edition.add(image_panel, BorderLayout.WEST);
 		image_panel.setLayout(new BorderLayout(0, 0));
 		
 		JEditorPane image = new JEditorPane();
 		image_panel.add(image);
 		
 		JPanel text_panel = new JPanel();
-		frame.getContentPane().add(text_panel, BorderLayout.CENTER);
+		panel_edition.add(text_panel);
 		text_panel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel titre_panel = new JPanel();
 		text_panel.add(titre_panel, BorderLayout.NORTH);
 		
-		JLabel titre_label = new JLabel("\u00B5Titre");
+		JLabel titre_label = new JLabel("Titre");
 		titre_panel.add(titre_label);
+		
+		textField = new JTextField();
+		titre_panel.add(textField);
+		textField.setColumns(10);
 		
 		JPanel aliments_panel = new JPanel();
 		text_panel.add(aliments_panel, BorderLayout.SOUTH);
@@ -84,11 +119,61 @@ public class Test {
 		text_panel.add(description_panel, BorderLayout.CENTER);
 		description_panel.setLayout(new BorderLayout(0, 0));
 		
-		JLabel label_note = new JLabel("Note nutritionnelle");
-		description_panel.add(label_note, BorderLayout.SOUTH);
-		
 		JLabel label_description = new JLabel("Description");
-		description_panel.add(label_description, BorderLayout.CENTER);
+		description_panel.add(label_description, BorderLayout.WEST);
+		
+		textField_description = new JTextField();
+		description_panel.add(textField_description, BorderLayout.CENTER);
+		textField_description.setColumns(10);
+		
+		JPanel panel_score = new JPanel();
+		description_panel.add(panel_score, BorderLayout.SOUTH);
+		
+		JLabel label_score_nutri = new JLabel("Score Nutritionnnel : ");
+		panel_score.add(label_score_nutri);
+		
+		JLabel label_score = new JLabel("C");
+		label_score.setFont(new Font("Tahoma", Font.BOLD, 13));
+		panel_score.add(label_score);
+		
+		JPanel panel_apercu = new JPanel();
+		panel_apercu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panel_vue.add(panel_apercu);
+		panel_apercu.setLayout(new BorderLayout(0, 0));
+		
+		JPanel panel_image_apercu = new JPanel();
+		panel_apercu.add(panel_image_apercu, BorderLayout.WEST);
+		
+		JLabel label_image_apercu = new JLabel("Image");
+		panel_image_apercu.add(label_image_apercu);
+		
+		JPanel panel_text_apercu = new JPanel();
+		panel_apercu.add(panel_text_apercu, BorderLayout.CENTER);
+		panel_text_apercu.setLayout(new BorderLayout(0, 0));
+		
+		JPanel panel_titre_paercu = new JPanel();
+		panel_text_apercu.add(panel_titre_paercu, BorderLayout.NORTH);
+		
+		JLabel label_titre_apercu = new JLabel("titre");
+		panel_titre_paercu.add(label_titre_apercu);
+		
+		JPanel panel_aliment_paercu = new JPanel();
+		panel_text_apercu.add(panel_aliment_paercu, BorderLayout.SOUTH);
+		
+		JLabel lblAliments = new JLabel("Aliments");
+		panel_aliment_paercu.add(lblAliments);
+		
+		JPanel panel_description_apercu = new JPanel();
+		panel_text_apercu.add(panel_description_apercu, BorderLayout.CENTER);
+		panel_description_apercu.setLayout(new BorderLayout(0, 0));
+		
+		JLabel label_score_apercu = new JLabel("Note nutri");
+		panel_description_apercu.add(label_score_apercu, BorderLayout.SOUTH);
+		
+		JLabel label_description_apercu = new JLabel("Description");
+		panel_description_apercu.add(label_description_apercu, BorderLayout.CENTER);
+		
+
 	}
 
 }

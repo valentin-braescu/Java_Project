@@ -45,7 +45,7 @@ public class Client {
 	
 	public void startClient(int req,String id)
 	{
-		try
+		/*try
 		{
 			sock = new Socket("localhost", 3456);
 			//sock = new Socket("192.168.43.4", 3456);
@@ -60,7 +60,7 @@ public class Client {
 		
 		listener = new ClientListener(sock, this);
 		
-		sendRequest( req, id);
+		sendRequest( req, id);*/
 		
 	}
 	
@@ -155,11 +155,11 @@ public class Client {
 			break;
 		case 21 :
 			System.out.println("Connection ok");
-			sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Public\\Pictures\\greenLed.png");
-			sendRequest(6,"Mon titre2 !!! "+"\t"+"Morty's favorite food."+"\t"+"2"+"\t"+"coco pops"+"\t"+"coca-cola"+"\t"+"C:\\Users\\Public\\Pictures\\redLed.png");
-			sendRequest(3,"coca");
-			sendRequest(3,"blubliblu");
-			sendRequest(5,"");
+			//sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Public\\Pictures\\greenLed.png");
+			//sendRequest(6,"Mon titre2 !!! "+"\t"+"Morty's favorite food."+"\t"+"2"+"\t"+"coco pops"+"\t"+"coca-cola"+"\t"+"C:\\Users\\Public\\Pictures\\redLed.png");
+			//sendRequest(3,"coca");
+			//sendRequest(3,"blubliblu");
+			//sendRequest(5,"");
 			gui.setVisible(true);
 			break;
 		case 40 :
