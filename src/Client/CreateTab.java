@@ -49,13 +49,17 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 	private JButton button_add_aliment;
 	private JButton button_remove_aliment;
 	private JPanel panel_list_aliment;
+	private JPanel panel_aliment_paercu;
 	private LinkedList<CreateTab_NewAliment> list_aliments;
+	
+	public LinkedList<String> aliments;
 	
 	CreateTab(Client client, GUI gui)
 	{
 		this.gui = gui;
 		
 		list_aliments = new LinkedList<CreateTab_NewAliment>();
+		aliments = new LinkedList<String>();
 		setLayout(new BorderLayout(0,0));
 		
 		// Panel affichant sur la gauche de l'écran editeur et apercu
@@ -193,11 +197,9 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 		label_titre_apercu = new JLabel("titre");
 		panel_titre_paercu.add(label_titre_apercu);
 		
-		JPanel panel_aliment_paercu = new JPanel();
+		panel_aliment_paercu = new JPanel();
 		panel_text_apercu.add(panel_aliment_paercu, BorderLayout.SOUTH);
 		
-		JLabel lblAliments = new JLabel("Aliments");
-		panel_aliment_paercu.add(lblAliments);
 		
 		JPanel panel_description_apercu = new JPanel();
 		panel_text_apercu.add(panel_description_apercu, BorderLayout.CENTER);
@@ -252,7 +254,21 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 	
 	private void sendRecette()
 	{
-		client.sendRequest(6,textField_titre.getText()+'\t'+textField_description.getText()+'\t'+'0'+'\t'+ image);
+		String data = textField_titre.getText()+'\t'+textField_description.getText()+'\t';
+		String aliment_string = String.valueOf(aliments.size()) + '\t';
+		for( int i=0; i < aliments.size() ; i++ )
+		{
+			if( i != (aliments.size() -1))
+			{
+				aliment_string = aliment_string + aliments.get(i) +'\t';
+			}
+			else
+			{
+				aliment_string = aliment_string + aliments.get(i);
+			}
+		}
+		data = data + aliment_string ;
+		client.sendRequest(6,data);
 		//sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Public\\Pictures\\greenLed.png");
 	}
 	
@@ -267,11 +283,12 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 		repaint();
 	}
 
-	private void newAliment(boolean nomField,boolean marqueField,boolean valeurField,boolean acideField,boolean sucresField,boolean proteinesField,boolean fibresField,boolean selField,boolean teneurField)
+	public void newAliment(boolean nomField,boolean marqueField,boolean valeurField,boolean acideField,boolean sucresField,boolean proteinesField,boolean fibresField,boolean selField,boolean teneurField)
 	{
         JPanel p = new JPanel(new BorderLayout(5,5));
 	       
         JPanel labels = new JPanel(new GridLayout(0,1,2,2));
+        labels.add(new JLabel("Vous pouvez ajouter un nouvel aliment, ou vous rendre sur l'onglet List faire une recherche"));
         labels.add(new JLabel("Type de produit", SwingConstants.RIGHT));
         labels.add(new JLabel("Nom", SwingConstants.RIGHT));
         labels.add(new JLabel("Marque", SwingConstants.RIGHT));
@@ -375,6 +392,15 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
         }
 
 	}
+	
+	public void updateAlimentsApercu()
+	{
+		panel_aliment_paercu.removeAll();
+		for( int i=0; i < aliments.size(); i++)
+		{
+			new JLabel(aliments.get(i));
+		}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -382,7 +408,7 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 		Object s = e.getSource();
 		if( s == button_envoie)
 		{
-			
+			sendRecette();
 		}
 		if( s == textField_titre)
 		{
