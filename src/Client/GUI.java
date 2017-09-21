@@ -62,7 +62,7 @@ public class GUI extends JFrame implements ActionListener{
 		font_menu = new Font("Arial",Font.BOLD, 18);
 		
 		wall = new Wall(this, client);
-		createTab = new CreateTab();
+		createTab = new CreateTab(client, this);
 
 		initialize();
 		accueil();

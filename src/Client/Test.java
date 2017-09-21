@@ -23,6 +23,10 @@ import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.SwingConstants;
+import java.awt.CardLayout;
+import net.miginfocom.swing.MigLayout;
 
 public class Test {
 
@@ -67,6 +71,8 @@ public class Test {
 		panel_nom_vue.setLayout(new GridLayout(0, 1, 2, 0));
 		
 		JLabel label_editeur = new JLabel("Editeur");
+		label_editeur.setHorizontalAlignment(SwingConstants.CENTER);
+		label_editeur.setPreferredSize(new Dimension(100, 100));
 		label_editeur.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_nom_vue.add(label_editeur);
 		
@@ -86,17 +92,21 @@ public class Test {
 		
 		JPanel image_panel = new JPanel();
 		panel_edition.add(image_panel, BorderLayout.WEST);
-		image_panel.setLayout(new BorderLayout(0, 0));
+		image_panel.setLayout(new MigLayout("", "[97px]", "[123px]"));
 		
-		JEditorPane image = new JEditorPane();
-		image_panel.add(image);
+		JButton btnNewButton = new JButton("New button");
+		image_panel.add(btnNewButton, "cell 0 0,alignx left,growy");
 		
 		JPanel text_panel = new JPanel();
-		panel_edition.add(text_panel);
-		text_panel.setLayout(new BorderLayout(0, 0));
+		panel_edition.add(text_panel, BorderLayout.CENTER);
+		text_panel.setLayout(new GridLayout(0, 2, 0, 0));
+		
+		JPanel non_aliment_panel = new JPanel();
+		text_panel.add(non_aliment_panel);
+		non_aliment_panel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel titre_panel = new JPanel();
-		text_panel.add(titre_panel, BorderLayout.NORTH);
+		non_aliment_panel.add(titre_panel, BorderLayout.NORTH);
 		
 		JLabel titre_label = new JLabel("Titre");
 		titre_panel.add(titre_label);
@@ -106,7 +116,7 @@ public class Test {
 		textField.setColumns(10);
 		
 		JPanel aliments_panel = new JPanel();
-		text_panel.add(aliments_panel, BorderLayout.SOUTH);
+		non_aliment_panel.add(aliments_panel, BorderLayout.SOUTH);
 		aliments_panel.setLayout(new GridLayout(0, 1, 2, 0));
 		
 		JPanel panel = new JPanel();
@@ -116,7 +126,7 @@ public class Test {
 		aliments_panel.add(panel_1);
 		
 		JPanel description_panel = new JPanel();
-		text_panel.add(description_panel, BorderLayout.CENTER);
+		non_aliment_panel.add(description_panel, BorderLayout.CENTER);
 		description_panel.setLayout(new BorderLayout(0, 0));
 		
 		JLabel label_description = new JLabel("Description");
@@ -136,16 +146,34 @@ public class Test {
 		label_score.setFont(new Font("Tahoma", Font.BOLD, 13));
 		panel_score.add(label_score);
 		
+		JPanel aliment_panel = new JPanel();
+		text_panel.add(aliment_panel);
+		aliment_panel.setLayout(new BorderLayout(0, 0));
+		
+		JPanel panel_2 = new JPanel();
+		aliment_panel.add(panel_2, BorderLayout.NORTH);
+		
+		JButton btnNewButton_1 = new JButton("New button");
+		panel_2.add(btnNewButton_1);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		aliment_panel.add(scrollPane, BorderLayout.CENTER);
+		
+		JPanel panel_3 = new JPanel();
+		scrollPane.setViewportView(panel_3);
+		
 		JPanel panel_apercu = new JPanel();
 		panel_apercu.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel_vue.add(panel_apercu);
 		panel_apercu.setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_image_apercu = new JPanel();
+		panel_image_apercu.setPreferredSize(new Dimension(20, 20));
 		panel_apercu.add(panel_image_apercu, BorderLayout.WEST);
+		panel_image_apercu.setLayout(new MigLayout("", "[36px]", "[16px]"));
 		
 		JLabel label_image_apercu = new JLabel("Image");
-		panel_image_apercu.add(label_image_apercu);
+		panel_image_apercu.add(label_image_apercu, "cell 0 0,alignx left,aligny top");
 		
 		JPanel panel_text_apercu = new JPanel();
 		panel_apercu.add(panel_text_apercu, BorderLayout.CENTER);
@@ -172,6 +200,8 @@ public class Test {
 		
 		JLabel label_description_apercu = new JLabel("Description");
 		panel_description_apercu.add(label_description_apercu, BorderLayout.CENTER);
+		
+		
 		
 
 	}
