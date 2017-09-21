@@ -277,6 +277,7 @@ public class SingleServer extends JFrame {
     			//System.out.println("[-] Rename failed");
     		}
     		
+    		
     		// Search for food codes in the database
     		// /////// repérer les aliments qui ne sont pas enregistrés dans la table
     		boolean alimentsPresents = true;
@@ -290,9 +291,16 @@ public class SingleServer extends JFrame {
     			}
     		}
     		if(alimentsPresents) {
+    			// Compute the score of the dish
+    			String tempScore = "";
+    			for(int i=0; i< nbFood; i++) {
+    				tempScore += getFoodScore(parts[3+i]);
+    			}
+    			String finalScore = computeScore(tempScore);
+    			
     			// INSERT the infos in the Database
     			// mysql INSERT prepared statement
-    			queryInsert1 = "INSERT INTO posts (id,title,description,imageName,date) VALUES (?,?,?,?,?)";
+    			queryInsert1 = "INSERT INTO posts (id,title,description,imageName,date,score) VALUES (?,?,?,?,?,?)";
     			// create mysql INSERT prepared Statement
     			// Build the SQL INSERT query
     			prepstInsert1 = con.prepareStatement(queryInsert1);
@@ -301,6 +309,7 @@ public class SingleServer extends JFrame {
     			prepstInsert1.setString(3,description);
     			prepstInsert1.setString(4,checksum);
     			prepstInsert1.setString(5,date);
+    			prepstInsert1.setString(6,finalScore);
     			// execute the prepared Statement
     			prepstInsert1.execute();
     			prepstInsert1.close();
@@ -407,7 +416,7 @@ public class SingleServer extends JFrame {
 		query = "";
 		boolean lineFound = true;
 		// mysql SELECT prepared statement
-		query = "SELECT u.login, u.id, p.title, p.description, p.imageName, p.date FROM users AS u INNER JOIN posts AS p ON u.id = p.id ORDER BY p.date DESC";
+		query = "SELECT u.login, u.id, p.title, p.description, p.imageName, p.date, p.score FROM users AS u INNER JOIN posts AS p ON u.id = p.id ORDER BY p.date DESC";
 		// create mysql SELECT prepared Statement
 		try {
 			prepst = con.prepareStatement(query);
@@ -442,12 +451,14 @@ public class SingleServer extends JFrame {
 				String description = res.getString("description");
 				String imageName = res.getString("imageName");
 				String date = res.getString("date");
+				String score = res.getString("score");
 				int nbFood = getNbFood(id, date);
 				response+=login+"\t"+title+"\t"+description+"\t"+imageName+"\t"+date+"\t"+Integer.valueOf(nbFood);
 				for(int j=0;j<nbFood;j++) {
 					// We add the list of food associated with an image
 					response += "\t"+getFoodUsed(id, date,j+1);
 				}
+				response += "\t"+score;
 			}
 			prepst.close();
 		} catch (SQLException e) {
@@ -480,6 +491,68 @@ public class SingleServer extends JFrame {
 		return nbFood;
 	}
 	
+	public synchronized String getFoodScore(String foodName) {
+		// Return the score of a food
+		PreparedStatement prepst;
+		String query = "";
+		prepst = null;
+		String score = "";
+		try {
+			// mysql SELECT prepared statement
+			query = "SELECT score FROM food WHERE nom=?";
+			// create mysql SELECT prepared Statement
+			prepst = con.prepareStatement(query);
+			prepst.setString(1,foodName);
+			// execute the prepared Statement
+			ResultSet res = prepst.executeQuery();
+			res.next();
+			score = res.getString("score");
+			prepst.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return score;
+	}
+	
+	public synchronized String computeScore(String score) {
+		String finalScore = "";
+		int nbA=0,nbB=0,nbC=0,nbD=0,nbE=0;
+		// We count the number of A, B, C, D, and E scores, and we compute the average number to get the final score
+		nbA+=occurences(score,"a");
+		nbB+=occurences(score,"b");
+		nbC+=occurences(score,"c");
+		nbD+=occurences(score,"d");
+		nbE+=occurences(score,"e");
+		int moy =(int)((nbA*5+nbB*4+nbC*3+nbD*2+nbE)/(nbA+nbB+nbC+nbD+nbE));
+		switch(moy) {
+		case 1:
+			finalScore = "e";
+			break;
+		case 2:
+			finalScore = "d";
+			break;
+		case 3:
+			finalScore = "c";
+			break;
+		case 4:
+			finalScore = "b";
+			break;
+		case 5:
+			finalScore = "a";
+			break;
+		}
+		return finalScore;
+	}
+	
+	public synchronized int occurences(String str, String oc) {
+		int cpt = 0;
+		int indexInit = 0;
+		while(str.indexOf(oc,indexInit)!=-1) {
+			cpt++;
+			indexInit = str.indexOf(oc,indexInit);
+		}
+		return cpt;
+	}
 	public synchronized String getFoodUsed(int id, String date, int line) {
 		// Return the name of the food associated with an image (if lots of food, refer to the line)
 		PreparedStatement prepst;

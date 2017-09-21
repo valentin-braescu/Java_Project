@@ -44,6 +44,7 @@ public class List extends JPanel implements ActionListener{
 		this.client = client;
 		
 		setLayout(new BorderLayout());
+		GridLayout grid = new GridLayout(0,12);
 		// Top bar
 		JPanel topBar = new JPanel();
 		add(topBar, BorderLayout.NORTH);
@@ -57,8 +58,8 @@ public class List extends JPanel implements ActionListener{
 				searchField.add(textField_foodSearch);
 			// Name of each column
 			JPanel columnNames = new JPanel();
-			columnNames.setLayout(new GridLayout(1,12,0,0));
-			topBar.add(columnNames,BorderLayout.CENTER);
+			columnNames.setLayout(grid);
+			//topBar.add(columnNames,BorderLayout.CENTER);
 			JLabel type = new JLabel("Type");
 			columnNames.add(type);
 			JLabel nom = new JLabel("Nom");
@@ -90,10 +91,11 @@ public class List extends JPanel implements ActionListener{
 		scroll_pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scroll_pane.setPreferredSize(new Dimension(100, 100));
 		add(scroll_pane, BorderLayout.CENTER);
+		scroll_pane.setColumnHeaderView(columnNames);
 		
 		panel_list = new JPanel();
 		scroll_pane.setViewportView(panel_list);
-		panel_list.setLayout(new GridLayout(0, 12,1,1));
+		panel_list.setLayout(grid);
 	}
 	
 	public void addFoodToList(String food) {
