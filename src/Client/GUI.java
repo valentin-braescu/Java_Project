@@ -26,7 +26,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 /**
- * @author Valentin and Sébastien 
+ * @author Valentin and Sï¿½bastien 
  *
  */
 public class GUI extends JFrame implements ActionListener{
@@ -34,6 +34,7 @@ public class GUI extends JFrame implements ActionListener{
 	private Client client;
 	private Wall wall;
 	private CreateTab createTab;
+	private List list;
 	
 	
 	
@@ -62,8 +63,9 @@ public class GUI extends JFrame implements ActionListener{
 		font_menu = new Font("Arial",Font.BOLD, 18);
 		
 		wall = new Wall(this, client);
-		createTab = new CreateTab(client, this);
-
+		createTab = new CreateTab();
+		list = new List(client);
+		
 		initialize();
 		accueil();
 	}
@@ -84,7 +86,7 @@ public class GUI extends JFrame implements ActionListener{
 		mon_compte.add(modifier_compte);
 
 		menu_bar.add(mon_compte);
-		deco = new JMenu("Déconnexion");
+		deco = new JMenu("Dï¿½connexion");
 		deco.setFont(font_menu);
 		deconnexion = new JMenuItem("Deconnexion");
 		deconnexion.addActionListener(this);
@@ -121,7 +123,7 @@ public class GUI extends JFrame implements ActionListener{
 		
 		main_panel = new JPanel();
 		main_panel.add(new JLabel("Veuillez choisir un onglet"));
-		main_panel.add(new JLabel("Wall : affiche l'ensemble des recettes publiées par les autres internautes"));
+		main_panel.add(new JLabel("Wall : affiche l'ensemble des recettes publiï¿½es par les autres internautes"));
 		main_panel.add(new JLabel("List : rechercher un aliment"));
 		main_panel.add(new JLabel("Create : publiez une recette"));
 
@@ -149,7 +151,7 @@ public class GUI extends JFrame implements ActionListener{
 	    }
 	}
 	
-	// NOTE : les fonctions "connexion" et "inscription" se ressemblent de ouf. Rassembler tout ça en une serait mieux.
+	// NOTE : les fonctions "connexion" et "inscription" se ressemblent de ouf. Rassembler tout ï¿½a en une serait mieux.
 	
 	 public void connexion(boolean loginField, boolean passwordField, String defaultLogin, int mode) {
 	        JPanel p = new JPanel(new BorderLayout(5,5));
@@ -270,6 +272,8 @@ public class GUI extends JFrame implements ActionListener{
 		if( s == button_list)
 		{
 			remove(main_panel);
+			main_panel = list;
+			add(main_panel);
 			revalidate();
 			repaint();
 		}
@@ -277,6 +281,18 @@ public class GUI extends JFrame implements ActionListener{
 		{
 			modifierCompte(this);
 		}
+	}
+	
+	public void refreshList() {
+		remove(main_panel);
+		main_panel = list;
+		add(main_panel);
+		revalidate();
+		repaint();
+	}
+	
+	public List getList() {
+		return list;
 	}
 	
 	public Wall getWall()

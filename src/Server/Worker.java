@@ -104,6 +104,7 @@ public class Worker implements Runnable {
 				for(int i = 0; i<nbLines;i++) {
 					info = server.searchFoodInfos(data, nbLines-i);
 					// The line number is sent so that the client knows when to stop
+					// Format: numLine, code, type_de_produit, nom, marque, categorie, score, valeur_energetique, acides_gras_satures, sucres, proteines, fibres, sel_ou_sodium, teneur_fruits_legumes
 					sendResponse(31,String.valueOf(nbLines-i)+"\t"+info);
 				}
 			}
@@ -143,6 +144,16 @@ public class Worker implements Runnable {
 					}
 				}
 				i++;
+			}
+			break;
+		case 7:
+			// The food doesn't exist. The user wants to add it in the database
+			boolean added = server.addNewFood(data);
+			if(added) {
+				sendResponse(71,"");
+			}
+			else {
+				sendResponse(70,"");
 			}
 			break;
 		default:
