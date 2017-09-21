@@ -34,6 +34,7 @@ public class GUI extends JFrame implements ActionListener{
 	private Client client;
 	private Wall wall;
 	private CreateTab createTab;
+	private List list;
 	
 	
 	
@@ -63,7 +64,8 @@ public class GUI extends JFrame implements ActionListener{
 		
 		wall = new Wall(this, client);
 		createTab = new CreateTab();
-
+		list = new List(client);
+		
 		initialize();
 		accueil();
 	}
@@ -270,6 +272,8 @@ public class GUI extends JFrame implements ActionListener{
 		if( s == button_list)
 		{
 			remove(main_panel);
+			main_panel = list;
+			add(main_panel);
 			revalidate();
 			repaint();
 		}
@@ -277,6 +281,18 @@ public class GUI extends JFrame implements ActionListener{
 		{
 			modifierCompte(this);
 		}
+	}
+	
+	public void refreshList() {
+		remove(main_panel);
+		main_panel = list;
+		add(main_panel);
+		revalidate();
+		repaint();
+	}
+	
+	public List getList() {
+		return list;
 	}
 	
 	public Wall getWall()

@@ -32,8 +32,8 @@ public class Wall extends JPanel implements ActionListener{
 	private LinkedList<Recette> fil; 
 	private GUI gui;
 	private Client client;
-	JPanel panel_list;
-	JScrollPane scroll_pane;
+	private JPanel panel_list;
+	private JScrollPane scroll_pane;
 	
 	Wall(GUI gui, Client client)
 	{

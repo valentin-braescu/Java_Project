@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  * @author Valentin and Sébastien
@@ -36,7 +37,6 @@ public class Client {
 	private DataOutputStream out;
 	private String user_id;
 	private String user_password;
-
 	
 	Client()
 	{
@@ -53,7 +53,7 @@ public class Client {
 	
 	public void startClient(int req,String id)
 	{
-		/*try
+		try
 		{
 			sock = new Socket("localhost", 3456);
 			//sock = new Socket("192.168.43.4", 3456);
@@ -68,7 +68,7 @@ public class Client {
 		
 		listener = new ClientListener(sock, this);
 		
-		sendRequest( req, id);*/
+		sendRequest( req, id);
 		
 	}
 	
@@ -155,42 +155,22 @@ public class Client {
 			gui.connexion(false,false,"",2);
 			break;
 		case 21 :
-			System.out.println("Connection ok");
-			//sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Public\\Pictures\\greenLed.png");
-			//sendRequest(6,"Mon titre2 !!! "+"\t"+"Morty's favorite food."+"\t"+"2"+"\t"+"coco pops"+"\t"+"coca-cola"+"\t"+"C:\\Users\\Public\\Pictures\\redLed.png");
-			//sendRequest(3,"coca");
-			//sendRequest(3,"blubliblu");
-			//sendRequest(5,"");
+			System.out.println("[+] Connection ok");
 			gui.setVisible(true);
 			break;
 		case 40 :
-			System.out.println("Modification accepted");
+			System.out.println("[+] Modification accepted");
 			break;
 		case 41 :
-			System.out.println("Modification refused");
+			System.out.println("[-] Modification refused");
 			break;
 		case 30:
 			// The food the user is looking for doesn't exist in the database
 			System.out.println("[-] This food doesn't exist in our database.");
 			break;
 		case 31:
-			// Some food has been found !
-			String[] parts = data.split("\t");
-			String numLine = parts[0];
-			String code = parts[1];
-			String type_de_produit = parts[2];
-			String nom = parts[3];
-			String marque = parts[4];
-			String categorie = parts[5];
-			String score = parts[6];
-			String valeur_energetique = parts[7];
-			String acides_gras_satures = parts[8];
-			String sucres = parts[9];
-			String proteines = parts[10];
-			String fibres = parts[11];
-			String sel_ou_sodium = parts[12];
-			String teneur_fruits_legumes = parts[13];
-			System.out.println(data);
+			gui.getList().addFoodToList(data);
+			gui.refreshList();
 			break;
 		case 60 :
 			System.out.println("[x] Error when uploading data on the server.");
@@ -205,6 +185,7 @@ public class Client {
 			break;
 		}
 	}
+	
 	
 	public void displayPanel(String data, BufferedImage img) {
 		System.out.println("Display Panel function.");

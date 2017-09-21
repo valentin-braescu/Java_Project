@@ -82,12 +82,12 @@ public class SingleServer extends JFrame {
 		colWorker.add(worker);
 	}
 	
-	public void delWorker(Worker worker) {
+	public synchronized void delWorker(Worker worker) {
 		colWorker.remove(worker);
 		listener.removeUser();
 	}
 	
-	public int checkLoginPass(String data) {
+	public synchronized int checkLoginPass(String data) {
 		String[] parts = data.split("\t");
 		String login = parts[0];
 		String pass = parts[1];
@@ -128,7 +128,7 @@ public class SingleServer extends JFrame {
 		return userId;
 	}
 	
-	public boolean creaCompte(String data) {
+	public synchronized boolean creaCompte(String data) {
 		String[] parts = data.split("\t");
 		String login = parts[0];
 		String pass = parts[1];
@@ -184,14 +184,14 @@ public class SingleServer extends JFrame {
 	}
 	
 	
-	public int conCompte(String data) {
+	public synchronized int conCompte(String data) {
 		// Check if the user exists in the database
 		// If id == 0, the user doesn't exist
 		int id = checkLoginPass(data);
 		return id;
 	}
 	
-	public boolean modifCompte(String data) {
+	public synchronized boolean modifCompte(String data) {
 		String[] parts = data.split("\t");
 		String oldLogin = parts[0];
 		String oldPass = parts[1];
@@ -234,7 +234,7 @@ public class SingleServer extends JFrame {
 		return modif;
 	}
 	
-	public boolean upload(String data, BufferedImage img, String clientLogin,int clientId, String date) {
+	public synchronized boolean upload(String data, BufferedImage img, String clientLogin,int clientId, String date) {
 		String[] parts = data.split("\t");
 		String title = parts[0];
 		String description = parts[1];
@@ -282,9 +282,9 @@ public class SingleServer extends JFrame {
     		boolean alimentsPresents = true;
     		int cpt=0;
     		while(cpt<nbFood && alimentsPresents) {
-    			String foodCode = getFoodCode(parts[3+cpt]);
+    			int foodCode = getFoodCode(parts[3+cpt]);
     			cpt++;
-    			if(foodCode=="0") {
+    			if(foodCode==0) {
     				// If only one food doesn't exist in the database, the upload is canceled
     				alimentsPresents=false;
     			}
@@ -314,8 +314,8 @@ public class SingleServer extends JFrame {
     				prepstInsert2 = con.prepareStatement(queryInsert2);
     				prepstInsert2.setInt(1,clientId);
     				prepstInsert2.setString(2,date);
-    				String foodCode = getFoodCode(parts[3+i]);
-    				prepstInsert2.setString(3,foodCode);
+    				int foodCode = getFoodCode(parts[3+i]);
+    				prepstInsert2.setInt(3,foodCode);
     				// execute the prepared Statement
     				prepstInsert2.execute();
     				prepstInsert2.close();
@@ -336,10 +336,10 @@ public class SingleServer extends JFrame {
         return true;
 	}
 	
-	public String getFoodCode(String food) {
+	public synchronized int getFoodCode(String food) {
 		// Return the code of the first food matching in the database
 		PreparedStatement prepst;
-		String foodCode = "0";
+		int foodCode = 0;
 		String query = "";
 		prepst = null;
 		try {
@@ -353,10 +353,10 @@ public class SingleServer extends JFrame {
 			ResultSet res = prepst.executeQuery();
 			// Get the first line
 			if(!res.next()) {
-				foodCode = "0";
+				foodCode = 0;
 			}
 			else {
-				foodCode = res.getString("code");
+				foodCode = res.getInt("code");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -364,7 +364,7 @@ public class SingleServer extends JFrame {
 		return foodCode;
 	}
 	
-	private static String getFileChecksum(MessageDigest digest, File file) throws IOException
+	private synchronized static String getFileChecksum(MessageDigest digest, File file) throws IOException
 	{
 		// GetFileChecksum function implemented here: https://howtodoinjava.com/core-java/io/how-to-generate-sha-or-md5-file-checksum-hash-in-java/ 
 	    // Get file input stream for reading the file content
@@ -397,7 +397,7 @@ public class SingleServer extends JFrame {
 	    return sb.toString();
 	}
 	
-	public String sendPostText(int line) {
+	public synchronized String sendPostText(int line) {
 		// Return a line with: "username,title,description,nutriScore,date,imageName"
 		// If line = 2, return the second last line uploaded.
 		String response = "";
@@ -456,7 +456,7 @@ public class SingleServer extends JFrame {
 		return response;
 	}
 	
-	public int getNbFood(int id, String date) {
+	public synchronized int getNbFood(int id, String date) {
 		// Return the number of food associated with a post
 		PreparedStatement prepst;
 		String query = "";
@@ -480,13 +480,13 @@ public class SingleServer extends JFrame {
 		return nbFood;
 	}
 	
-	public String getFoodUsed(int id, String date, int line) {
+	public synchronized String getFoodUsed(int id, String date, int line) {
 		// Return the name of the food associated with an image (if lots of food, refer to the line)
 		PreparedStatement prepst;
 		String foodName = "";
 		String query = "";
 		prepst = null;
-		String foodCode="";
+		int foodCode=0;
 		try {
 			// mysql SELECT prepared statement
 			query = "SELECT food_code FROM food_posts WHERE userId=? AND date=?";
@@ -500,7 +500,7 @@ public class SingleServer extends JFrame {
 			for(int i=0; i<line; i++) {
 				res.next();
 			}
-			foodCode = res.getString("food_code");
+			foodCode = res.getInt("food_code");
 			foodName = foodNameFromCode(foodCode);
 			prepst.close();
 		} catch (SQLException e) {
@@ -509,7 +509,7 @@ public class SingleServer extends JFrame {
 		return foodName;
 	}
 	
-	public String foodNameFromCode(String foodCode) {
+	public synchronized String foodNameFromCode(int foodCode) {
 		// Return the name of the food associated with a food code.
 		PreparedStatement prepst;
 		String query = "";
@@ -520,7 +520,7 @@ public class SingleServer extends JFrame {
 			query = "SELECT nom FROM food WHERE code=?";
 			// create mysql SELECT prepared Statement
 			prepst = con.prepareStatement(query);
-			prepst.setString(1,foodCode);
+			prepst.setInt(1,foodCode);
 			// execute the prepared Statement
 			ResultSet res = prepst.executeQuery();
 			// Get the good line
@@ -533,7 +533,7 @@ public class SingleServer extends JFrame {
 		return foodName;
 	}
 	
-	public int searchFoodLines(String food) {
+	public synchronized int searchFoodLines(String food) {
 		// Looking for the number of lines corresponding to this food in the database
 		PreparedStatement prepst;
 		String query;
@@ -558,7 +558,7 @@ public class SingleServer extends JFrame {
 		return nbLines;
 	}
 	
-	public String searchFoodInfos(String food, int line) {
+	public synchronized String searchFoodInfos(String food, int line) {
 		// Looking for information about this food/line in the database
 		PreparedStatement prepst;
 		String query;
@@ -576,12 +576,58 @@ public class SingleServer extends JFrame {
 			for(int i=0; i<line; i++) {
 				res.next();
 			}
-			info += res.getString("code")+"\t"+res.getString("type_de_produit")+"\t"+res.getString("nom")+"\t"+res.getString("marque")+"\t"+res.getString("categorie")+"\t"+res.getString("score")+"\t"+res.getInt("valeur_energetique")+"\t"+res.getFloat("acides_gras_satures")+"\t"+res.getFloat("sucres")+"\t"+res.getFloat("proteines")+"\t"+res.getFloat("fibres")+"\t"+res.getFloat("sel_ou_sodium")+"\t"+res.getInt("teneur_fruits_legumes");
+			info += res.getInt("code")+"\t"+res.getString("type_de_produit")+"\t"+res.getString("nom")+"\t"+res.getString("marque")+"\t"+res.getString("categorie")+"\t"+res.getString("score")+"\t"+res.getInt("valeur_energetique")+"\t"+res.getFloat("acides_gras_satures")+"\t"+res.getFloat("sucres")+"\t"+res.getFloat("proteines")+"\t"+res.getFloat("fibres")+"\t"+res.getFloat("sel_ou_sodium")+"\t"+res.getInt("teneur_fruits_legumes");
 			prepst.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return info;
+	}
+	
+	
+	public synchronized boolean addNewFood(String food) {
+		// Format: type_de_produit, nom, marque, categorie, score, valeur_energetique, acides_gras_satures, sucres, proteines, fibres, sel_ou_sodium, teneur_fruits_legumes
+		String[] parts = food.split("\t");
+		String type_de_produit = parts[0];
+		String nom = parts[1];
+		String marque = parts[2];
+		String categorie = parts[3];
+		String score = parts[4];
+		int valeur_energetique = Integer.valueOf(parts[5]);
+		float acides_gras_satures = Float.valueOf(parts[6]);
+		float sucres = Float.valueOf(parts[7]);
+		float proteines = Float.valueOf(parts[8]);
+		float fibres = Float.valueOf(parts[9]);
+		float sel_ou_sodium = Float.valueOf(parts[10]);
+		int teneur_fruits_legumes = Integer.valueOf(parts[11]);
+		
+		try {
+			String query = "";
+			PreparedStatement prepst = null;
+			// INSERT a line containing (userId, date, food_code)
+			query = "INSERT INTO food (type_de_produit,nom,marque,categorie,score,valeur_energetique,acides_gras_satures,sucres,proteines,fibres,sel_ou_sodium,teneur_fruits_legumes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+			// create mysql INSERT prepared Statement
+			// Build the SQL INSERT query
+			prepst = con.prepareStatement(query);
+			prepst.setString(1,type_de_produit);
+			prepst.setString(2,nom);
+			prepst.setString(1,marque);
+			prepst.setString(2,categorie);
+			prepst.setString(1,score);
+			prepst.setInt(2,valeur_energetique);
+			prepst.setFloat(1,acides_gras_satures);
+			prepst.setFloat(2,sucres);
+			prepst.setFloat(1,proteines);
+			prepst.setFloat(2,fibres);
+			prepst.setFloat(1,sel_ou_sodium);
+			prepst.setInt(2,teneur_fruits_legumes);
+			// execute the prepared Statement
+			prepst.execute();
+			prepst.close();
+		} catch (SQLException e) {
+			return false;
+		}
+		return true;
 	}
 	
 	public void stopServer() {
