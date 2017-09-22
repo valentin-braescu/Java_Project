@@ -51,6 +51,7 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 	private JPanel panel_list_aliment;
 	private JPanel panel_aliment_paercu;
 	private LinkedList<CreateTab_NewAliment> list_aliments;
+	private String filePath;
 	
 	public LinkedList<String> aliments;
 	
@@ -217,6 +218,7 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 		
 		button_envoie = new JButton("Envoyer");
 		panel_envoie.add(button_envoie);
+		button_envoie.addActionListener(this);
 		
 		//Ajout de ActionListener sur les JTextField
 		textField_titre.addActionListener(this);
@@ -249,7 +251,7 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 			e.printStackTrace();
 		}
 		image = newImage;
-
+		filePath = choix.getSelectedFile().getAbsolutePath();
 	}
 	
 	private void sendRecette()
@@ -258,16 +260,11 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 		String aliment_string = String.valueOf(aliments.size()) + '\t';
 		for( int i=0; i < aliments.size() ; i++ )
 		{
-			if( i != (aliments.size() -1))
-			{
 				aliment_string = aliment_string + aliments.get(i) +'\t';
-			}
-			else
-			{
-				aliment_string = aliment_string + aliments.get(i);
-			}
 		}
-		data = data + aliment_string ;
+		filePath.replace("\\","\\\\");
+		data = data + aliment_string + filePath ;
+		System.out.println(data);
 		client.sendRequest(6,data);
 		//sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Public\\Pictures\\greenLed.png");
 	}
@@ -398,7 +395,7 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 		panel_aliment_paercu.removeAll();
 		for( int i=0; i < aliments.size(); i++)
 		{
-			new JLabel(aliments.get(i));
+			panel_aliment_paercu.add(new JLabel(aliments.get(i)));
 		}
 		gui.revalidate();
 		gui.repaint();

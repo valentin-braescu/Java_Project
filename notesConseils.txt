@@ -1,0 +1,12 @@
+- Modif compte à tester
+- revoir la GUI de wall
+- Design Pattern Interpreter
+- Server : calcul du score nutri à tester
+
+
+Pas de login/password
+(même si ça sert, couper la fenêtre pendant les heures de dblp)
+Attention aux interfaces -> prioriser (le user doit savoir où regarder)
+
+Proposer aux utilisateurs de conseiller des ajouts d'aliments 
+Editer le wall au fur et à mesure ! l'edition se refresh en temps réel dans le wall

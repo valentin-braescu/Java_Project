@@ -193,6 +193,7 @@ public class SingleServer extends JFrame {
 	
 	public synchronized boolean modifCompte(String data) {
 		String[] parts = data.split("\t");
+		System.out.println("modifCompte: "+data);
 		String oldLogin = parts[0];
 		String oldPass = parts[1];
 		String newLogin = parts[2];

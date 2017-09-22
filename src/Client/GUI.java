@@ -234,7 +234,6 @@ public class GUI extends JFrame implements ActionListener{
         
         setVisible(true);
         client.setIDs(username.getText(), password.getText());
-        client.startClient(4, username.getText()+'\t'+password.getText());
 	}
 	
 	

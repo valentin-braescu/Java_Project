@@ -34,9 +34,6 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 		valider = new JButton("Valider");
 		valider.addActionListener(this);
 		add(valider);
-		
-		
-		
 	}
 
 
@@ -47,6 +44,7 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 		if( s == valider)
 		{
 			// Search food on the server
+			System.out.println("Début champ.getText()");
 			String food = champ.getText();
 			System.out.println("Food:"+food);
 			client.sendRequest(3,food);
