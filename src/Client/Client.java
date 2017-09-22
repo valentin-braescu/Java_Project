@@ -57,7 +57,7 @@ public class Client {
 		try
 		{
 			sock = new Socket("localhost", 3456);
-			//sock = new Socket("192.168.43.4", 3456);
+			//sock = new Socket("192.168.127.222", 3456);
 			out = new DataOutputStream(sock.getOutputStream());
 			
 			

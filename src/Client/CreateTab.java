@@ -400,6 +400,8 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 		{
 			new JLabel(aliments.get(i));
 		}
+		gui.revalidate();
+		gui.repaint();
 	}
 
 	@Override

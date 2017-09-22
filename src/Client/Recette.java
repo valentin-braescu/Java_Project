@@ -27,7 +27,7 @@ public class Recette extends JPanel{
 	private BufferedImage photo;
 	private String titre;
 	private String description;
-	private String note;
+	private String score;
 	private int nb_aliments;
 	private JPanel aliments_panel;
 	private String date;
@@ -35,7 +35,7 @@ public class Recette extends JPanel{
 	
 	private List<String> aliment_list;
 	
-	Recette(int nb_aliment, String titre, String description, String username, String date, BufferedImage image)
+	Recette(int nb_aliment, String titre, String description, String username, String date, BufferedImage image, String score)
 	{
 		this.titre= titre;
 		nb_aliments = nb_aliment;
@@ -44,6 +44,7 @@ public class Recette extends JPanel{
 		this.photo = image;
 		this.username=username;
 		this.date = date;
+		this.score=score;
 		
 		
 		/*########################################### 
@@ -102,7 +103,7 @@ public class Recette extends JPanel{
 		text_panel.add(description_panel, BorderLayout.CENTER);
 		description_panel.setLayout(new BorderLayout(0, 0));
 		
-		JLabel label_note = new JLabel("Note nutritionnelle");
+		JLabel label_note = new JLabel(score);
 		description_panel.add(label_note, BorderLayout.SOUTH);
 		
 		JLabel label_description = new JLabel(description);
