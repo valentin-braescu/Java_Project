@@ -157,6 +157,7 @@ public class Client {
 			break;
 		case 21 :
 			System.out.println("[+] Connection ok");
+			sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Public\\Pictures\\greenLed.png");
 			gui.setVisible(true);
 			break;
 		case 40 :

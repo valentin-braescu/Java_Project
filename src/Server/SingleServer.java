@@ -297,7 +297,6 @@ public class SingleServer extends JFrame {
     				tempScore += getFoodScore(parts[3+i]);
     			}
     			String finalScore = computeScore(tempScore);
-    			
     			// INSERT the infos in the Database
     			// mysql INSERT prepared statement
     			queryInsert1 = "INSERT INTO posts (id,title,description,imageName,date,score) VALUES (?,?,?,?,?,?)";
@@ -540,6 +539,8 @@ public class SingleServer extends JFrame {
 		case 5:
 			finalScore = "a";
 			break;
+		default:
+			finalScore = "f";
 		}
 		return finalScore;
 	}
@@ -549,7 +550,7 @@ public class SingleServer extends JFrame {
 		int indexInit = 0;
 		while(str.indexOf(oc,indexInit)!=-1) {
 			cpt++;
-			indexInit = str.indexOf(oc,indexInit);
+			indexInit = str.indexOf(oc,indexInit)+1;
 		}
 		return cpt;
 	}
