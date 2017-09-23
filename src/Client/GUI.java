@@ -84,6 +84,7 @@ public class GUI extends JFrame implements ActionListener{
 		new JFrame();	
 		
 		JPanel panel = new JPanel();
+		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 	
 		
 		//Menu panel
@@ -323,7 +324,8 @@ public class GUI extends JFrame implements ActionListener{
 		Object s=e.getSource()	;	
 		if( s== deconnexion)
 		{
-			client.stopClient(0);
+			client.stopClient();
+			System.exit(0);
 			
 		}
 		if(s == mon_compte)
