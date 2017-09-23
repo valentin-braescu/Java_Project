@@ -319,6 +319,14 @@ public class Client {
 		case 8 :
 			// Reception de texte et d'image (login, title, description, date, imageName)
 			break;
+		case 91 :
+			//new user connected
+			gui.updateConnectedList(data, 1);
+			break;
+		case 90 :
+			//user deconncted
+			gui.updateConnectedList(data, 2);
+			break;
 		default :
 			break;
 		}
@@ -331,17 +339,21 @@ public class Client {
 		// Save the image
 		String[] parts = data.split("\t");
 		String imageName = parts[3];
-        try {
-        	File outputFile = new File("C:\\Users\\S�bastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\imagesClient\\"+imageName+".png");
-			if (outputFile.createNewFile()){
-				System.out.println("File is created!");
-			}else{
-				System.out.println("File already exists.");
-			}
-			ImageIO.write(img, "png", outputFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if( img != null)
+		{
+			 try {
+		        	File outputFile = new File("C:\\Users\\S�bastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\imagesClient\\"+imageName+".png");
+					if (outputFile.createNewFile()){
+						System.out.println("File is created!");
+					}else{
+						System.out.println("File already exists.");
+					}
+					ImageIO.write(img, "png", outputFile);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 		}
+       
 	}
 	
 	public void setIDs(String id, String password)
@@ -366,4 +378,5 @@ public class Client {
 	public boolean getFoodFoundFlag() {
 		return foodFound;
 	}
+	
 }
