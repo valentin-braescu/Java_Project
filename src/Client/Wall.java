@@ -6,6 +6,7 @@ package Client;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -37,14 +39,19 @@ public class Wall extends JPanel implements ActionListener{
 	
 	Wall(GUI gui, Client client)
 	{
+		//Members init
 		this.gui= gui;
 		this.client = client;
 		fil = new LinkedList<Recette>();
+		
+		//General GUI init
 		setLayout(new BorderLayout(0,0));
+		setOpaque(false);
 		
 		JPanel actualiser_panel = new JPanel();
 		add(actualiser_panel, BorderLayout.NORTH);
 		
+		//Actualiser button
 		actualiser = new JButton("Actualiser");
 		actualiser.addActionListener(this);
 		actualiser.setFont(new Font("Arial",Font.ITALIC|Font.BOLD,18));
@@ -55,12 +62,15 @@ public class Wall extends JPanel implements ActionListener{
 		//Panel with a scroll pane
 		scroll_pane = new JScrollPane();
 		scroll_pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scroll_pane.setPreferredSize(new Dimension(100, 100));
+		//scroll_pane.setPreferredSize(new Dimension(100, 100));
+		
 		add(scroll_pane, BorderLayout.CENTER);
 		
 		
 		panel_list = new JPanel();
+		panel_list.setOpaque(false);
 		scroll_pane.setViewportView(panel_list);
+		scroll_pane.getViewport().setOpaque(false);
 		panel_list.setLayout(new GridLayout(10, 1,0,0));
 		
 		
@@ -113,7 +123,11 @@ public class Wall extends JPanel implements ActionListener{
 	}
 	
 
-	
+    public void paintComponent(Graphics g) {
+    	// Add a background image
+    	Image bg = new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\wall.jpg").getImage();
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(),this);
+    }
 	
 	
 }

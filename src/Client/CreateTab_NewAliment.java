@@ -4,6 +4,7 @@
 package Client;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +29,7 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 	private JLabel flag_icon;
 	public boolean flag;
 	public String aliment;
+	private Font font = new Font("Verdana",Font.ITALIC,17);
 	
 	
 	public CreateTab_NewAliment(Editor tab, Client client) {
@@ -45,11 +47,13 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 		add(flag_icon);
 		
 		champ = new JTextField(10);
+		champ.setFont(font);
 		add(champ);
 		
 		
 		
 		valider = new JButton("Valider");
+		valider.setFont(font);
 		valider.addActionListener(this);
 		add(valider);
 	}

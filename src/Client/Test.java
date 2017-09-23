@@ -30,6 +30,7 @@ import net.miginfocom.swing.MigLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import javax.swing.SpringLayout;
 
 public class Test {
 
@@ -68,33 +69,13 @@ public class Test {
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.NORTH);
-		
-		JButton btnNewButton = new JButton("New button");
-		panel.add(btnNewButton);
-		
-		JPanel panel_1 = new JPanel();
-		frame.getContentPane().add(panel_1, BorderLayout.EAST);
-		panel_1.setLayout(new BorderLayout(0, 0));
-		
-		JScrollPane scrollPane = new JScrollPane();
-		panel_1.add(scrollPane);
-		
-		JPanel panel_3 = new JPanel();
-		panel_1.add(panel_3, BorderLayout.CENTER);
-		panel_3.setLayout(new BorderLayout(0, 0));
-		
-		JLabel lblNewLabel_1 = new JLabel("New label");
-		panel_3.add(lblNewLabel_1);
+		frame.getContentPane().add(panel, BorderLayout.CENTER);
+		panel.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblNewLabel = new JLabel("New label");
-		panel_1.add(lblNewLabel, BorderLayout.SOUTH);
-		
-		JPanel panel_4 = new JPanel();
-		panel_1.add(panel_4, BorderLayout.NORTH);
-		
-		JPanel panel_2 = new JPanel();
-		frame.getContentPane().add(panel_2, BorderLayout.CENTER);
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		panel.add(lblNewLabel);
 		
 
 		
