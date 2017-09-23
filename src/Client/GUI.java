@@ -42,6 +42,7 @@ public class GUI extends JFrame implements ActionListener{
 	private Wall wall;
 	public Editor createTab;
 	public List list;
+	private InitialWall initWall;
 	
 	
 	
@@ -76,6 +77,7 @@ public class GUI extends JFrame implements ActionListener{
 		font = new Font("Arial",Font.ITALIC|Font.BOLD,18);
 		font_menu = new Font("Arial",Font.BOLD, 18);
 		
+		initWall = new InitialWall();
 		wall = new Wall(this, client);
 		createTab = new Editor(client,this);
 		list = new List(client);
@@ -130,7 +132,7 @@ public class GUI extends JFrame implements ActionListener{
 		button_list.addActionListener(this);
 		panel.add(button_list);
 		
-		button_create = new JButton("Create");
+		button_create = new JButton("Editeur");
 		button_create.setFont(font);
 		button_create.addActionListener(this);
 		panel.add(button_create);
@@ -161,14 +163,12 @@ public class GUI extends JFrame implements ActionListener{
 		
 		
 		//init of main-panel
-		main_panel = new JPanel();
-		main_panel.add(new JLabel("Veuillez choisir un onglet"));
-		main_panel.add(new JLabel("Wall : affiche l'ensemble des recettes publiees par les autres internautes"));
-		main_panel.add(new JLabel("List : rechercher un aliment"));
-		main_panel.add(new JLabel("Create : publiez une recette"));
+		main_panel = initWall;
 
 		
 		add(main_panel, BorderLayout.CENTER);
+		
+
 	}
 	
 	public void setGUIVisible(boolean flag)
@@ -397,6 +397,12 @@ public class GUI extends JFrame implements ActionListener{
 			connected_pane.removeUser(name);
 		}
 	}
+	
+    public void paintComponent(Graphics g) {
+    	// Add a background image
+    	Image bg = new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\connected.jpg").getImage();
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(),main_panel);
+    }
 
 	
 }
