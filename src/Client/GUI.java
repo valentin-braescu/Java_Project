@@ -22,6 +22,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -56,6 +58,10 @@ public class GUI extends JFrame implements ActionListener{
 	private JButton button_wall;
 	private JButton button_list;
 	private JButton button_create;
+	private JButton send_message;
+	
+	public JPanel chat_panel;
+	public JPanel chat_messages_panel;
 	
 	
 	public GUI(Client client)
@@ -79,6 +85,8 @@ public class GUI extends JFrame implements ActionListener{
 		
 		JPanel panel = new JPanel();
 	
+		
+		//Menu panel
 		JMenuBar menu_bar = new JMenuBar();
 		
 		mon_compte = new JMenu("Mon Compte");
@@ -102,6 +110,7 @@ public class GUI extends JFrame implements ActionListener{
 		setJMenuBar(menu_bar);
 		
 		
+		//Button panel
 		button_wall = new JButton("Wall");
 		button_wall.setFont(font);
 		button_wall.addActionListener(this);
@@ -120,13 +129,38 @@ public class GUI extends JFrame implements ActionListener{
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		
 		
+		
+		//Chat panel
+		
+		chat_panel = new JPanel();
+		chat_panel.setLayout(new BorderLayout());
+		chat_messages_panel = new JPanel();
+		
+		JScrollPane scrollpane = new JScrollPane();
+		scrollpane.setViewportView(chat_messages_panel);
+		
+		chat_panel.add(scrollpane, BorderLayout.CENTER);
+		
+		
+		send_message = new JButton("Envoyer message");
+		send_message.addActionListener(this);
+		chat_messages_panel.add( send_message, BorderLayout.SOUTH);
+		
+		
+		
+		
+		//frame configuration
+		
 		setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		getContentPane().add(panel, BorderLayout.NORTH);
+		getContentPane().add(chat_panel, BorderLayout.EAST);
 		setTitle("Bouffe");
 		setVisible(false);
 		setBounds(100, 100, 450, 300);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		
+		//init of main-panel
 		main_panel = new JPanel();
 		main_panel.add(new JLabel("Veuillez choisir un onglet"));
 		main_panel.add(new JLabel("Wall : affiche l'ensemble des recettes publiees par les autres internautes"));

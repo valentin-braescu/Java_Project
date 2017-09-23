@@ -34,7 +34,6 @@ import java.awt.Insets;
 public class Test {
 
 	private JFrame frame;
-	private JTextField textField_titre;
 
 	/**
 	 * Launch the application.
@@ -64,83 +63,38 @@ public class Test {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 848, 481);
+		frame.setBounds(100, 100, 615, 346);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JPanel image_panel = new JPanel();
-		frame.getContentPane().add(image_panel, BorderLayout.WEST);
-		image_panel.setLayout(new GridLayout(3, 1, 0, 0));
-		
-		JPanel image_panel_useless = new JPanel();
-		image_panel.add(image_panel_useless);
-		
-		JPanel image_panel_container = new JPanel();
-		image_panel.add(image_panel_container);
-		
-		JLabel image_label = new JLabel("New label");
-		image_panel_container.add(image_label);
-		
-		JPanel image_button_panel = new JPanel();
-		image_panel.add(image_button_panel);
-		
-		JButton btnSelectionnezUneImage = new JButton("Selectionnez une image");
-		image_button_panel.add(btnSelectionnezUneImage);
-		
-		JPanel editor_panel = new JPanel();
-		frame.getContentPane().add(editor_panel, BorderLayout.CENTER);
-		editor_panel.setLayout(new GridLayout(2, 1, 0, 0));
-		
-		JPanel text_panel = new JPanel();
-		editor_panel.add(text_panel);
-		text_panel.setLayout(new BorderLayout(0, 0));
-		
-		JPanel titre_panel = new JPanel();
-		text_panel.add(titre_panel, BorderLayout.NORTH);
-		
-		JLabel titre_label = new JLabel(" Titre de la recette : ");
-		titre_panel.add(titre_label);
-		
-		textField_titre = new JTextField();
-		titre_panel.add(textField_titre);
-		textField_titre.setColumns(10);
-		
-		JPanel description_panel = new JPanel();
-		text_panel.add(description_panel, BorderLayout.CENTER);
-		GridBagLayout gbl_description_panel = new GridBagLayout();
-		gbl_description_panel.columnWidths = new int[]{210, 97, 0};
-		gbl_description_panel.rowHeights = new int[]{76, 25, 0, 0};
-		gbl_description_panel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		gbl_description_panel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-		description_panel.setLayout(gbl_description_panel);
+		JPanel panel = new JPanel();
+		frame.getContentPane().add(panel, BorderLayout.NORTH);
 		
 		JButton btnNewButton = new JButton("New button");
-		btnNewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.anchor = GridBagConstraints.EAST;
-		gbc_btnNewButton.gridx = 1;
-		gbc_btnNewButton.gridy = 2;
-		description_panel.add(btnNewButton, gbc_btnNewButton);
+		panel.add(btnNewButton);
 		
-		JPanel aliment_panel = new JPanel();
-		editor_panel.add(aliment_panel);
-		aliment_panel.setLayout(new BorderLayout(0, 0));
-		
-		JPanel button_panel = new JPanel();
-		aliment_panel.add(button_panel, BorderLayout.NORTH);
-		
-		JButton button_add_aliment = new JButton("Ajouter un aliment");
-		button_panel.add(button_add_aliment);
-		
-		JButton button_remove_aliment = new JButton("Retirer un aliment");
-		button_panel.add(button_remove_aliment);
+		JPanel panel_1 = new JPanel();
+		frame.getContentPane().add(panel_1, BorderLayout.EAST);
+		panel_1.setLayout(new BorderLayout(0, 0));
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		aliment_panel.add(scrollPane, BorderLayout.CENTER);
+		panel_1.add(scrollPane);
 		
-		JPanel aliment_list = new JPanel();
-		scrollPane.setViewportView(aliment_list);
+		JPanel panel_3 = new JPanel();
+		panel_1.add(panel_3, BorderLayout.CENTER);
+		panel_3.setLayout(new BorderLayout(0, 0));
+		
+		JLabel lblNewLabel_1 = new JLabel("New label");
+		panel_3.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		panel_1.add(lblNewLabel, BorderLayout.SOUTH);
+		
+		JPanel panel_4 = new JPanel();
+		panel_1.add(panel_4, BorderLayout.NORTH);
+		
+		JPanel panel_2 = new JPanel();
+		frame.getContentPane().add(panel_2, BorderLayout.CENTER);
 		
 
 		
