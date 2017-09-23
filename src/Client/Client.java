@@ -46,6 +46,7 @@ public class Client {
 	private String user_id;
 	private String user_password;
 	private boolean foodFound = true;
+	private int idPost = 0;
 	
 	Client()
 	{
@@ -216,28 +217,42 @@ public class Client {
 			out.writeInt(req);
 			// If the user wants to upload an image
 			if(req == 6) {
-				// The server is warned that text and picture are being sent
-				// sendRequest(6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ..., filePath)
+				boolean uploadImage = false;
+				// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ..., filePath
 				String[] parts = data.split("\t");
 				// We extract the filePath from the data
 				String newData = parts[0]+"\t"+parts[1]+"\t"+parts[2];
 				int nbFood = Integer.valueOf(parts[2]);
+				String filepath = parts[3+nbFood];
 				for(int i=0; i< nbFood;i++) {
 					newData += "\t"+parts[3+i];
 				}
+				// The filepath can be "null" -> no image is uploaded. Send the id of the post (to work on the same post).
+				if(filepath != "null") {
+					newData+="\t"+"notNull";
+					uploadImage = true;
+				}
+				else {
+					newData+="\t"+"null";
+					uploadImage = false;
+				}
+				newData+="\t"+String.valueOf(idPost);
+				// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ...,alimentN,imageOrNot, idPost
 				out.writeUTF(newData);
-				try {
-					// Sending image to the server
-			        BufferedImage image = ImageIO.read(new File(parts[3+nbFood]));
-			        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			        ImageIO.write(image, "jpg", byteArrayOutputStream);
-			        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-			        out.write(size);
-			        out.write(byteArrayOutputStream.toByteArray());
-			        out.flush();
-				} catch (IOException e) {
-					System.out.println("[x] Error when uploading an image.");
-					e.printStackTrace();
+				if(uploadImage) {
+					try {
+						// Sending image to the server
+				        BufferedImage image = ImageIO.read(new File(filepath));
+				        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				        ImageIO.write(image, "jpg", byteArrayOutputStream);
+				        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+				        out.write(size);
+				        out.write(byteArrayOutputStream.toByteArray());
+				        out.flush();
+					} catch (IOException e) {
+						System.out.println("[x] Error when uploading an image.");
+						e.printStackTrace();
+					}
 				}
 			}
 			else {

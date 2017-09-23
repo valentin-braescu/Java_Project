@@ -85,6 +85,7 @@ public class Worker implements Runnable {
 				String[] parts = data.split("\t");
 				clientLogin = parts[0];
 				server.broadcastUsernameCo(clientLogin);
+				server.getUserList(this);
 			}
 			else {
 				// Connection refused
@@ -134,10 +135,16 @@ public class Worker implements Runnable {
 			String text = "";
 			while(loop && i<10) {
 				// Get the 10 last lines stored on the server
-				// Return a line with: "username,title,description,imageName,date,nbAliments,aliment1,aliment2,...,scoreNutri"
+				// Return a line with: "username,title,description,imageName,date,nbAliments,aliment1,aliment2,...s"
 				text = server.sendPostText(i+1);
 				if(text == "") loop = false;
 				else {
+					/*AJOUTER SCORE NUTRI
+					String tempScore = "";
+					for(int i=0; i< nbFood; i++) {
+						tempScore += getFoodScore(parts[3+i]);
+					}
+					String finalScore = computeScore(tempScore);*/
 					sendResponse(8,text);
 				}
 				i++;
@@ -162,15 +169,15 @@ public class Worker implements Runnable {
 	public void storeInfos(String data,BufferedImage img, String date) {
 		System.out.println("Request 6");
 		// Client uploading Text
-		boolean upload = false;
+		int upload = 0;
 		upload = server.upload(data, img, clientLogin, clientId, date);
-		if(upload) {
+		if(upload != 0) {
 			// Data uploaded accepted
-			sendResponse(61,"");
+			sendResponse(61,String.valueOf(upload));
 		}
 		else {
 			// Data uploaded refused
-			sendResponse(60,"");
+			sendResponse(60,"0");
 		}
 	}
 	

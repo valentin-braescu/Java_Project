@@ -118,11 +118,6 @@ public class SingleServer extends JFrame {
 				// The user doesn't exist in the database
 				userId = 0;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		// Closing the Statement
-		try {
 			prepst.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -166,6 +161,7 @@ public class SingleServer extends JFrame {
 				// execute the prepared Statement
 				prepst.execute();
 				creation = true;
+				prepst.close();
 			}
 			else {
 				// This login already exists
@@ -174,14 +170,6 @@ public class SingleServer extends JFrame {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		// Closing the Statement
-		try {
-			prepst.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
 		return creation;
 	}
 	
@@ -219,6 +207,7 @@ public class SingleServer extends JFrame {
 				prepst.setString(4,oldPass);
 				// execute the prepared Statement
 				prepst.execute();
+				prepst.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -227,49 +216,168 @@ public class SingleServer extends JFrame {
 		else {
 			modif = false;
 		}
-		// Closing the Statement
-		try {
-			prepst.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
 		return modif;
 	}
 	
-	public synchronized boolean upload(String data, BufferedImage img, String clientLogin,int clientId, String date) {
+	public synchronized int upload(String data, BufferedImage img, String clientLogin,int clientId, String date) {
+		// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ...,alimentN, ImageOrNot,idPost
+		String[] parts = data.split("\t");
+		int nbFood = Integer.valueOf(parts[2]);
+		String checksum = "";
+		int idPost=0;
+		if(img != null) {
+			checksum = saveImage(clientLogin,img);
+		}
+	
+		// Search for food codes in the database
+		// /////// repérer les aliments qui ne sont pas enregistrés dans la table
+		boolean alimentsPresents = true;
+		int cpt=0;
+		while(cpt<nbFood && alimentsPresents) {
+			int foodCode = getFoodCode(parts[3+cpt]);
+			cpt++;
+			if(foodCode==0) {
+				// If only one food doesn't exist in the database, the upload is canceled
+				alimentsPresents=false;
+			}
+		}
+		
+		if(alimentsPresents) {
+			// All the food exist in the database ! 
+			idPost = Integer.valueOf(parts[parts.length-1]);
+			// Check if there is an existing POST, or if we need to create a new one
+			if(idPost == 0) {
+				idPost = insertPost(clientId,checksum,date,data);
+			}
+			else {
+				updatePost(clientId,checksum,date,data,idPost);
+			}
+		}
+		return idPost;
+	}
+	
+	public synchronized void updatePost(int clientId, String checksum,String date, String data, int idPost) {
 		String[] parts = data.split("\t");
 		String title = parts[0];
 		String description = parts[1];
-		int nbFood = Integer.valueOf(parts[2]);
-		PreparedStatement prepstInsert1;
-		PreparedStatement prepstInsert2;
-		String queryInsert1;
-		String queryInsert2;
-		prepstInsert1 = null;
-		prepstInsert2 = null;
-		queryInsert1 = "";
-		queryInsert2 = "";
+		// Check update image
+		if(!checksum.equals("")) {
+			try {
+				String queryUpdate = "UPDATE posts SET imageName=? WHERE id=? AND idPost=?";
+				PreparedStatement prepstUpdate = con.prepareStatement(queryUpdate);
+				prepstUpdate.setString(1,checksum);
+				prepstUpdate.setInt(2,clientId);
+				prepstUpdate.setInt(3,idPost);
+				prepstUpdate.execute();
+				prepstUpdate.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		// Check update title and description
+		if(!title.equals("") || !description.equals("")) {
+			if(!title.equals("") && !description.equals("")) {
+				try {
+					// If both the title and the description are changed
+					String queryUpdate = "UPDATE posts SET title=? AND description=? AND date=? WHERE id=? AND idPost=?";
+					PreparedStatement prepstUpdate = con.prepareStatement(queryUpdate);
+					prepstUpdate.setString(1,title);
+					prepstUpdate.setString(2,description);
+					prepstUpdate.setString(3,date);
+					prepstUpdate.setInt(4,clientId);
+					prepstUpdate.setInt(5,idPost);
+					prepstUpdate.execute();
+					prepstUpdate.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			else if(!title.equals("")) {
+				try {
+					// Only the title is changed (the date is always updated)
+					String queryUpdate = "UPDATE posts SET title=? AND date=? WHERE id=? AND idPost=?";
+					PreparedStatement prepstUpdate = con.prepareStatement(queryUpdate);
+					prepstUpdate.setString(1,title);
+					prepstUpdate.setString(2,date);
+					prepstUpdate.setInt(3,clientId);
+					prepstUpdate.setInt(4,idPost);
+					prepstUpdate.execute();
+					prepstUpdate.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				try {
+					// Only the title is changed (the date is always updated)
+					String queryUpdate = "UPDATE posts SET description=? AND date=? WHERE id=? AND idPost=?";
+					PreparedStatement prepstUpdate = con.prepareStatement(queryUpdate);
+					prepstUpdate.setString(1,description);
+					prepstUpdate.setString(2,date);
+					prepstUpdate.setInt(3,clientId);
+					prepstUpdate.setInt(4,idPost);
+					prepstUpdate.execute();
+					prepstUpdate.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		
-		// Image treatment
-		// The default extension is PNG (need to work on that)
-        try {
+		// Check food updates
+		int nbFood = Integer.valueOf(parts[2]);
+		int cpt = 0;
+		while(cpt<nbFood) {
+			boolean foodInPost = isFoodInPost(parts[3+cpt],idPost);
+			if(!foodInPost) {
+				insertFoodInPost(clientId,date,data,idPost);
+			}
+		}
+		
+	}
+	
+	public synchronized boolean isFoodInPost(String foodName,int idPost) {
+		// Check if this food has already been registered for this post
+		boolean foodInPost = false;
+		try {
+			String querySelect = "SELECT count(userId) as line FROM food_posts WHERE idPost=? AND food_code=?";
+			PreparedStatement prepstSelect=con.prepareStatement(querySelect);
+			prepstSelect.setInt(1,idPost);
+			prepstSelect.setInt(2,getFoodCode(foodName));
+			ResultSet res = prepstSelect.executeQuery();
+			res.next();
+			int line = res.getInt("line");
+			if(line!=0) {
+				foodInPost = true;
+			}
+			prepstSelect.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return foodInPost;
+	}
+	
+	public synchronized String saveImage(String clientLogin, BufferedImage img) {
+		String checksum ="";
+		try {
+        	// Image treatment
+			// The default extension is PNG (need to work on that)
         	System.out.println("Uploading");
             // Save the image with a temporary name
             File outputFile = new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+clientLogin+"_temp.png");
-            if (outputFile.createNewFile()){
-            	//System.out.println("File is created!");
-            }else{
-            	//System.out.println("File already exists.");
-            }
-            ImageIO.write(img, "png", outputFile);
-          
+			if (outputFile.createNewFile()){
+				//System.out.println("File is created!");
+			}else{
+				//System.out.println("File already exists.");
+			}
+			ImageIO.write(img, "png", outputFile);
+	          
             // Open the image as a file and hash it
             File tempImage = new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+clientLogin+"_temp.png");
             // Create message digest
             MessageDigest md = MessageDigest.getInstance("MD5");
             // Get the checksum
-            String checksum = getFileChecksum(md,tempImage);
+            checksum = getFileChecksum(md,tempImage);
 
             // Rename the image previously saved
             File oldfile =new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+clientLogin+"_temp.png");
@@ -279,72 +387,78 @@ public class SingleServer extends JFrame {
     		}else{
     			//System.out.println("[-] Rename failed");
     		}
-    		
-    		
-    		// Search for food codes in the database
-    		// /////// repérer les aliments qui ne sont pas enregistrés dans la table
-    		boolean alimentsPresents = true;
-    		int cpt=0;
-    		while(cpt<nbFood && alimentsPresents) {
-    			int foodCode = getFoodCode(parts[3+cpt]);
-    			cpt++;
-    			if(foodCode==0) {
-    				// If only one food doesn't exist in the database, the upload is canceled
-    				alimentsPresents=false;
-    			}
-    		}
-    		if(alimentsPresents) {
-    			// Compute the score of the dish
-    			String tempScore = "";
-    			for(int i=0; i< nbFood; i++) {
-    				tempScore += getFoodScore(parts[3+i]);
-    			}
-    			String finalScore = computeScore(tempScore);
-    			// INSERT the infos in the Database
-    			// mysql INSERT prepared statement
-    			queryInsert1 = "INSERT INTO posts (id,title,description,imageName,date,score) VALUES (?,?,?,?,?,?)";
-    			// create mysql INSERT prepared Statement
-    			// Build the SQL INSERT query
-    			prepstInsert1 = con.prepareStatement(queryInsert1);
-    			prepstInsert1.setInt(1,clientId);
-    			prepstInsert1.setString(2,title);
-    			prepstInsert1.setString(3,description);
-    			prepstInsert1.setString(4,checksum);
-    			prepstInsert1.setString(5,date);
-    			prepstInsert1.setString(6,finalScore);
-    			// execute the prepared Statement
-    			prepstInsert1.execute();
-    			prepstInsert1.close();
-    			
-    			// Create a link between the food and the users in the database
-    			for(int i=0; i< nbFood; i++) {
-    				// INSERT a line containing (userId, date, food_code)
-    				queryInsert2 = "INSERT INTO food_posts (userId,date,food_code) VALUES (?,?,?)";
-    				// create mysql INSERT prepared Statement
-    				// Build the SQL INSERT query
-    				prepstInsert2 = con.prepareStatement(queryInsert2);
-    				prepstInsert2.setInt(1,clientId);
-    				prepstInsert2.setString(2,date);
-    				int foodCode = getFoodCode(parts[3+i]);
-    				prepstInsert2.setInt(3,foodCode);
-    				// execute the prepared Statement
-    				prepstInsert2.execute();
-    				prepstInsert2.close();
-    			}
-    		}
-    		else {
-    			// At least one of the food uploaded doesn't belong to our database. The user needs to give more infos about the food.
-    			return false;
-    		}
-    		
-        } catch(IOException | SQLException e) {
-        	System.out.println("[x] IO error.");
-        	return false;
-        } catch (NoSuchAlgorithmException e) {
-        	System.out.println("[x] Algorithm error.");
-        	return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
 		}
-        return true;
+		return checksum;
+	}
+	
+	public synchronized int insertPost(int clientId, String checksum,String date, String data) {
+		String[] parts = data.split("\t");
+		String title = parts[0];
+		String description = parts[1];
+		int idPost = 0;
+		try {
+			PreparedStatement prepstInsert1 = null;
+			String queryInsert1 = "";
+			// This is a new POST
+			// INSERT the infos in the Database
+			// mysql INSERT prepared statement
+			queryInsert1 = "INSERT INTO posts (id,title,description,imageName,date) VALUES (?,?,?,?,?)";
+			// create mysql INSERT prepared Statement
+			// Build the SQL INSERT query
+			prepstInsert1 = con.prepareStatement(queryInsert1);
+			prepstInsert1.setInt(1,clientId);
+			prepstInsert1.setString(2,title);
+			prepstInsert1.setString(3,description);
+			prepstInsert1.setString(4,checksum);
+			prepstInsert1.setString(5,date);
+			// execute the prepared Statement
+			prepstInsert1.execute();
+			prepstInsert1.close();
+			// Get the new id of the post
+			String querySelect = "SELECT idPost FROM posts WHERE id=? AND date=?";
+			PreparedStatement prepstSelect=con.prepareStatement(querySelect);
+			prepstSelect.setInt(1,clientId);
+			prepstSelect.setString(2,date);
+			ResultSet res = prepstSelect.executeQuery();
+			res.next();
+			idPost = res.getInt("idPost");
+			prepstSelect.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		insertFoodInPost(clientId,date,data,idPost);
+		return idPost;
+	}
+	
+	public synchronized void insertFoodInPost(int clientId, String date, String data, int idPost) {
+		String[] parts = data.split("\t");
+		int nbFood = Integer.valueOf(parts[2]);
+		// Create a link between the food and the users in the database
+		for(int i=0; i< nbFood; i++) {
+			try {
+				PreparedStatement prepstInsert2 = null;
+				String queryInsert2 = "";
+				// INSERT a line containing (userId, date, food_code)
+				queryInsert2 = "INSERT INTO food_posts (userId,date,food_code,idPost) VALUES (?,?,?,?)";
+				// create mysql INSERT prepared Statement
+				// Build the SQL INSERT query
+				prepstInsert2 = con.prepareStatement(queryInsert2);
+				prepstInsert2.setInt(1,clientId);
+				prepstInsert2.setString(2,date);
+				int foodCode = getFoodCode(parts[3+i]);
+				prepstInsert2.setInt(3,foodCode);
+				prepstInsert2.setInt(4,idPost);
+				// execute the prepared Statement
+				prepstInsert2.execute();
+				prepstInsert2.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public synchronized int getFoodCode(String food) {
@@ -716,6 +830,13 @@ public class SingleServer extends JFrame {
 	public synchronized void broadcastUsernameDisco(String username) {
 		for(Worker w: colWorker) {
 			w.sendResponse(90,username);
+		}
+	}
+	
+	public synchronized void getUserList(Worker w) {
+		for(Worker worker: colWorker) {
+			String login = worker.getLogin();
+			w.sendResponse(91,login);
 		}
 	}
 	
