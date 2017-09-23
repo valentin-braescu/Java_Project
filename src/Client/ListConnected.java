@@ -5,6 +5,7 @@ package Client;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -24,17 +25,22 @@ public class ListConnected extends JPanel{
 	
 	private LinkedList<String> users;
 	private GUI gui;
-	private JLabel header = new JLabel("Liste des utilisateurs connectés");
+	private JLabel header = new JLabel("<html><u>Liste utilisateurs</u></html>");
+	private Font font;
 
 	ListConnected(GUI gui)
 	{
 		this.gui=gui;
 		users = new LinkedList<String>();
-		setPreferredSize(new Dimension(150, 100));
+		
+		font= new Font("Verdana",Font.ITALIC,17);
+		
+		setPreferredSize(new Dimension(170, 100));
 		setLayout(new GridLayout(40, 1));
 		add(header);
-		
 		header.setForeground(Color.white);
+		header.setFont(font);
+		
 	}
 	
 	
@@ -53,6 +59,7 @@ public class ListConnected extends JPanel{
 			users.addLast(name);
 			JLabel newUser = new JLabel(name);
 			newUser.setForeground(Color.white);
+			newUser.setFont(font);
 			add(newUser);
 			
 			gui.revalidate();
@@ -90,6 +97,7 @@ public class ListConnected extends JPanel{
 		{
 			user = new JLabel(users.get(i));
 			user.setForeground(Color.white);
+			user.setFont(font);
 			add(user);
 		}
 		gui.revalidate();

@@ -5,6 +5,7 @@ package Client;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
@@ -53,6 +54,7 @@ public class Editor extends JPanel implements ActionListener{
 	private BufferedImage image;
 	private JPanel image_panel_container;
 	private JPanel aliment_list ;
+	private Font font;
 	
 	public LinkedList<CreateTab_NewAliment> list_aliments;
 	
@@ -64,13 +66,16 @@ public class Editor extends JPanel implements ActionListener{
 		list_aliments = new LinkedList<CreateTab_NewAliment>();
 
 		this.gui = gui;
+		this.client= client;
 		filePath = null;
+		
+		font= new Font("Verdana",Font.ITALIC,17);
 		
 		setLayout(new MigLayout());
 		JPanel containt = new JPanel();
 		containt.setOpaque(false);
-		containt.setMaximumSize(new Dimension( 500, 300));
-		containt.setMinimumSize(new Dimension( 500, 300));
+		containt.setMaximumSize(new Dimension( 700, 500));
+		containt.setMinimumSize(new Dimension( 700, 500));
 		containt.setLayout(new BorderLayout(0,0));
 		add(containt,"push, align center"  );
 		
@@ -94,6 +99,7 @@ public class Editor extends JPanel implements ActionListener{
 		
 		button_select_image = new JButton("Selectionnez une image");
 		button_select_image.addActionListener(this);
+		button_select_image.setFont(font);
 		image_button_panel.add(button_select_image);
 		
 		JPanel editor_panel = new JPanel();
@@ -109,8 +115,10 @@ public class Editor extends JPanel implements ActionListener{
 		
 		JLabel titre_label = new JLabel(" Titre de la recette : ");
 		titre_panel.add(titre_label);
+		titre_label.setFont(font);
 		
 		textField_titre = new JTextField();
+		textField_titre.setFont(font);
 		titre_panel.add(textField_titre);
 		textField_titre.setColumns(10);
 		
@@ -119,6 +127,7 @@ public class Editor extends JPanel implements ActionListener{
 		description_panel.setLayout(new BorderLayout(0, 0));
 		
 		textField_description = new JTextField();
+		textField_description.setFont(font);
 		description_panel.add(textField_description);
 		textField_description.setColumns(10);
 		
@@ -131,10 +140,12 @@ public class Editor extends JPanel implements ActionListener{
 		
 		button_add_aliment = new JButton("Ajouter un aliment");
 		button_add_aliment.addActionListener(this);
+		button_add_aliment.setFont(font);
 		button_panel.add(button_add_aliment);
 		
 		button_remove_aliment = new JButton("Retirer un aliment");
 		button_remove_aliment.addActionListener(this);
+		button_remove_aliment.setFont(font);
 		button_panel.add(button_remove_aliment);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -150,6 +161,7 @@ public class Editor extends JPanel implements ActionListener{
 		JPanel send_panel = new JPanel();
 		button_send = new JButton("Envoyer");
 		button_send.addActionListener(this);
+		button_send.setFont(font);
 		send_panel.add(button_send);
 		
 		containt.add(send_panel, BorderLayout.SOUTH);
@@ -187,7 +199,8 @@ public class Editor extends JPanel implements ActionListener{
 		image_panel_container.removeAll();
 		JLabel label_image = new JLabel();
 		//Update the panel panel_image_apercu with the just loaded image
-		label_image.setIcon( new ImageIcon(image));
+		Image scaled = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+		label_image.setIcon( new ImageIcon(scaled));
 		image_panel_container.add(label_image);
 		revalidate();
 		repaint();
@@ -375,6 +388,11 @@ public class Editor extends JPanel implements ActionListener{
 			sendRecette();
 		}
 		
+		
+	}
+	
+	public void cleanEditor()
+	{
 		
 	}
 	

@@ -52,6 +52,7 @@ public class ListChat extends JPanel implements ActionListener{
 		JPanel send_panel = new JPanel();
 		send_panel.setLayout(new BorderLayout());
 		message = new JTextField(1);
+		message.setPreferredSize(new Dimension(200, 100));
 		send_message = new JButton("Envoyer message");
 		send_message.addActionListener(this);
 		send_panel.add(message, BorderLayout.NORTH);
