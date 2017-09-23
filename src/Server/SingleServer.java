@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -364,7 +365,7 @@ public class SingleServer extends JFrame {
 			// The default extension is PNG (need to work on that)
         	System.out.println("Uploading");
             // Save the image with a temporary name
-            File outputFile = new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+clientLogin+"_temp.png");
+            File outputFile = new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+clientLogin+"_temp.png");
 			if (outputFile.createNewFile()){
 				//System.out.println("File is created!");
 			}else{
@@ -373,15 +374,15 @@ public class SingleServer extends JFrame {
 			ImageIO.write(img, "png", outputFile);
 	          
             // Open the image as a file and hash it
-            File tempImage = new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+clientLogin+"_temp.png");
+            File tempImage = new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+clientLogin+"_temp.png");
             // Create message digest
             MessageDigest md = MessageDigest.getInstance("MD5");
             // Get the checksum
             checksum = getFileChecksum(md,tempImage);
 
             // Rename the image previously saved
-            File oldfile =new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+clientLogin+"_temp.png");
-    		File newfile =new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+checksum+".png");
+            File oldfile =new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+clientLogin+"_temp.png");
+    		File newfile =new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+checksum+".png");
     		if(oldfile.renameTo(newfile)){
     			//System.out.println("[+] Rename succesful");
     		}else{

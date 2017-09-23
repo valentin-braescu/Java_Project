@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.nio.file.Paths;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -45,7 +46,7 @@ public class InitialWall extends JPanel{
 	
     public void paintComponent(Graphics g) {
     	// Add a background image
-    	Image bg = new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\initial_wallpaper.jpg").getImage();
+    	Image bg = new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\initial_wallpaper.jpg").getImage();
         g.drawImage(bg, 0, 0, getWidth(), getHeight(),this);
     }
 }

@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
@@ -319,11 +320,13 @@ public class Editor extends JPanel implements ActionListener{
 	
 	private void sendRecette()
 	{
+		System.out.println("EDITOR : start send recipe");
 		String data = textField_titre.getText()+'\t'+textField_description.getText()+'\t';
 		String aliment_string = "";
 		int aliment_length = 0;
 		for( int i=0; i < list_aliments.size() ; i++ )
 		{
+			System.out.println(list_aliments.get(i).aliment + " "+list_aliments.get(i).flag +" "+ i);
 			if( list_aliments.get(i).flag == true )
 			{
 				aliment_string = aliment_string + list_aliments.get(i).aliment +'\t';
@@ -350,7 +353,7 @@ public class Editor extends JPanel implements ActionListener{
 	
     public void paintComponent(Graphics g) {
     	// Add a background image
-    	Image bg = new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\editorWallpaper.jpg").getImage();
+    	Image bg = new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\editorWallpaper.jpg").getImage();
         g.drawImage(bg, 0, 0, getWidth(), getHeight(),this);
     }
 	

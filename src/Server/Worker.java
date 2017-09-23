@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
@@ -190,7 +191,7 @@ public class Worker implements Runnable {
 				String[] parts = data.split("\t");
 				String imageName = parts[3];
 				// Sending the image to the client
-				BufferedImage image = ImageIO.read(new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+imageName+".png"));
+				BufferedImage image = ImageIO.read(new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+imageName+".png"));
 		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		        ImageIO.write(image, "jpg", byteArrayOutputStream);
 		        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();

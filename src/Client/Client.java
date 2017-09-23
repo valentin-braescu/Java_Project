@@ -24,6 +24,8 @@ import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -64,7 +66,7 @@ public class Client {
 	{
 		int returnedInt = 0;
 		String line = null;
-		String fileName = "C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\login.txt";
+		String fileName = Paths.get(".").toAbsolutePath().normalize().toString()+"\\login.txt";
 		File file = new File(fileName);
 		
 		if( file.exists())
@@ -107,7 +109,7 @@ public class Client {
 	
 	public void writeFileLogin()
 	{
-		String fileName = "D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\login.txt";
+		String fileName = Paths.get(".").toAbsolutePath().normalize().toString()+"\\login.txt";
 		File file = new File(fileName);
 		
 		if( !file.exists())
@@ -145,7 +147,7 @@ public class Client {
 	
 	public void deleteFileLogin()
 	{
-		String fileName = "D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\login.txt";
+		String fileName = Paths.get(".").toAbsolutePath().normalize().toString()+"\\login.txt";
 		File file = new File(fileName);
 		
 		file.delete();
@@ -228,13 +230,14 @@ public class Client {
 					newData += "\t"+parts[3+i];
 				}
 				// The filepath can be "null" -> no image is uploaded. Send the id of the post (to work on the same post).
-				if(filepath != "null") {
-					newData+="\t"+"notNull";
-					uploadImage = true;
-				}
-				else {
+				if(filepath.equals("null") ) {
 					newData+="\t"+"null";
 					uploadImage = false;
+				}
+				else {
+					
+					newData+="\t"+"notNull";
+					uploadImage = true;
 				}
 				newData+="\t"+String.valueOf(idPost);
 				// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ...,alimentN,imageOrNot, idPost
@@ -342,7 +345,7 @@ public class Client {
 		if( img != null)
 		{
 			 try {
-		        	File outputFile = new File("C:\\Users\\Sï¿½bastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\imagesClient\\"+imageName+".png");
+		        	File outputFile = new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\imagesClient\\"+imageName+".png");
 					if (outputFile.createNewFile()){
 						System.out.println("File is created!");
 					}else{

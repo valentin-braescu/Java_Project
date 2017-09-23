@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
@@ -107,7 +108,7 @@ public class ListConnected extends JPanel{
 	
     public void paintComponent(Graphics g) {
     	// Add a background image
-    	Image bg = new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\connected.jpg").getImage();
+    	Image bg = new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\connected.jpg").getImage();
         g.drawImage(bg, 0, 0, getWidth(), getHeight(),this);
     }
 }

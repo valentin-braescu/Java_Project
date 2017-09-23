@@ -1,9 +1,2 @@
-<<<<<<< HEAD
 Seb
 totoro
-max
-bob
-=======
-max
-bob
->>>>>>> Valentin

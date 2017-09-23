@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Paths;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -73,7 +74,7 @@ public class ListChat extends JPanel implements ActionListener{
 	
     public void paintComponent(Graphics g) {
     	// Add a background image
-    	Image bg = new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\chat.jpg").getImage();
+    	Image bg = new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\chat.jpg").getImage();
         g.drawImage(bg, 0, 0, getWidth(), getHeight(),this);
     }
 	

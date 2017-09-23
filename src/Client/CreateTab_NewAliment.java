@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
@@ -43,7 +44,7 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 		
 		flag_icon = new JLabel();
 		//flag_icon.setPreferredSize(new Dimension(25, 25));
-		flag_icon.setIcon(new ImageIcon(new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\ImageIcon\\R.gif").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+		flag_icon.setIcon(new ImageIcon(new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\ImageIcon\\R.gif").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
 		add(flag_icon);
 		
 		champ = new JTextField(10);
@@ -66,10 +67,8 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 		if( s == valider)
 		{
 			// Search food on the server
-			System.out.println("Début champ.getText()");
 			String food = champ.getText();
-			System.out.println(food);
-			System.out.println("Food:"+food);
+
 			client.sendRequest(3,food);
 			try {
 				TimeUnit.SECONDS.sleep(1);
@@ -77,21 +76,20 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 				e1.printStackTrace();
 			}
 			boolean flag = client.getFoodFoundFlag();
-			System.out.println("Boolean:"+flag);
 			if(flag)
 			{
 				//add aliment to apercu
 				tab.list_aliments.addLast(this);
 				flag = true;
 				aliment = food;
-				flag_icon.setIcon(new ImageIcon(new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\ImageIcon\\G.gif").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+				flag_icon.setIcon(new ImageIcon(new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\ImageIcon\\G.gif").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
 			}
 			else
 			{
 				tab.newAliment(true, true, true, true, true, true, true, true, true);
 				flag = false;
 				aliment = "";
-				flag_icon.setIcon(new ImageIcon(new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\ImageIcon\\R.gif").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+				flag_icon.setIcon(new ImageIcon(new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\ImageIcon\\R.gif").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
 				
 			}
 		}

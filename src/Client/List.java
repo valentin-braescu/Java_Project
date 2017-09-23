@@ -21,6 +21,7 @@ import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -191,7 +192,7 @@ public class List extends JPanel implements ActionListener, FocusListener{
 	@Override
     public void paintComponent(Graphics g) {
     	// Add a background image
-    	Image bg = new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\listWallpaper.jpg").getImage();
+    	Image bg = new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\listWallpaper.jpg").getImage();
         g.drawImage(bg, 0, 0, getWidth(), getHeight(),this);
     }
 }
