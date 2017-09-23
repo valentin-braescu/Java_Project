@@ -83,8 +83,10 @@ public class SingleServer extends JFrame {
 	}
 	
 	public synchronized void delWorker(Worker worker) {
+		String username = worker.getLogin();
 		colWorker.remove(worker);
 		listener.removeUser();
+		broadcastUsernameDisco(username);
 	}
 	
 	public synchronized int checkLoginPass(String data) {
@@ -703,6 +705,18 @@ public class SingleServer extends JFrame {
 			return false;
 		}
 		return true;
+	}
+	
+	public synchronized void broadcastUsernameCo(String username) {
+		for(Worker w: colWorker) {
+			w.sendResponse(91,username);
+		}
+	}
+	
+	public synchronized void broadcastUsernameDisco(String username) {
+		for(Worker w: colWorker) {
+			w.sendResponse(90,username);
+		}
 	}
 	
 	public void stopServer() {

@@ -324,7 +324,7 @@ public class GUI extends JFrame implements ActionListener{
 		Object s=e.getSource()	;	
 		if( s== deconnexion)
 		{
-			client.stopClient();
+			client.stopClient(0);
 			System.exit(0);
 			
 		}

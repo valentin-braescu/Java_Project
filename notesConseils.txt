@@ -4,6 +4,7 @@
 - Server : calcul du score nutri à tester
 - envoi d'une recette sans image
 - chat users
+- liste des utilisateurs connectés
 
 Proposer aux utilisateurs de conseiller des ajouts d'aliments 
 Editer le wall au fur et à mesure ! l'edition se refresh en temps réel dans le wall

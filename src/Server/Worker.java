@@ -84,6 +84,7 @@ public class Worker implements Runnable {
 				clientId = conn;
 				String[] parts = data.split("\t");
 				clientLogin = parts[0];
+				server.broadcastUsernameCo(clientLogin);
 			}
 			else {
 				// Connection refused
@@ -195,6 +196,9 @@ public class Worker implements Runnable {
 		}
 	}
 	
+	public String getLogin() {
+		return clientLogin;
+	}
 	
 	public void deconnection() {
 		listWorker.stop();
