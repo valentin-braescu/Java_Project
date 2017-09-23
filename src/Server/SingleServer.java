@@ -833,7 +833,7 @@ public class SingleServer extends JFrame {
 		}
 	}
 	
-	public synchronized void getUserList(Worker w) {
+	public synchronized void sendUserList(Worker w) {
 		for(Worker worker: colWorker) {
 			String login = worker.getLogin();
 			w.sendResponse(91,login);

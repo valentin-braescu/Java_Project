@@ -85,7 +85,7 @@ public class Worker implements Runnable {
 				String[] parts = data.split("\t");
 				clientLogin = parts[0];
 				server.broadcastUsernameCo(clientLogin);
-				server.getUserList(this);
+				server.sendUserList(this);
 			}
 			else {
 				// Connection refused

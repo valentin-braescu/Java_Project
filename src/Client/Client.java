@@ -64,7 +64,7 @@ public class Client {
 	{
 		int returnedInt = 0;
 		String line = null;
-		String fileName = "D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\login.txt";
+		String fileName = "C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\login.txt";
 		File file = new File(fileName);
 		
 		if( file.exists())
