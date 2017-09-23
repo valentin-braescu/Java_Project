@@ -80,8 +80,8 @@ public class GUI extends JFrame implements ActionListener{
 		createTab = new Editor(client,this);
 		list = new List(client);
 		
-		chat_panel = new ListChat();
-		connected_pane = new ListConnected();
+		chat_panel = new ListChat(this);
+		connected_pane = new ListConnected(this);
 		
 		initialize();
 		accueil();
@@ -384,6 +384,18 @@ public class GUI extends JFrame implements ActionListener{
 	public Wall getWall()
 	{
 		return wall;
+	}
+	
+	public void updateConnectedList(String name, int mode)
+	{
+		if( mode == 1)
+		{
+			connected_pane.addUser(name);
+		}
+		else
+		{
+			connected_pane.removeUser(name);
+		}
 	}
 
 	

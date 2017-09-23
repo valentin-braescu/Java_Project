@@ -143,7 +143,7 @@ public class Editor extends JPanel implements ActionListener{
 		aliment_panel.add(scrollPane, BorderLayout.CENTER);
 		
 		aliment_list = new JPanel();
-		aliment_list.setLayout(new GridLayout(1, 25));
+		aliment_list.setLayout(new GridLayout(25, 1));
 		scrollPane.setViewportView(aliment_list);
 		aliment_list.setOpaque(false);
 		
