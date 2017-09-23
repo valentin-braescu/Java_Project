@@ -254,7 +254,7 @@ public class SingleServer extends JFrame {
         try {
         	System.out.println("Uploading");
             // Save the image with a temporary name
-            File outputFile = new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
+            File outputFile = new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+clientLogin+"_temp.png");
             if (outputFile.createNewFile()){
             	//System.out.println("File is created!");
             }else{
@@ -263,15 +263,15 @@ public class SingleServer extends JFrame {
             ImageIO.write(img, "png", outputFile);
           
             // Open the image as a file and hash it
-            File tempImage = new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
+            File tempImage = new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+clientLogin+"_temp.png");
             // Create message digest
             MessageDigest md = MessageDigest.getInstance("MD5");
             // Get the checksum
             String checksum = getFileChecksum(md,tempImage);
 
             // Rename the image previously saved
-            File oldfile =new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+clientLogin+"_temp.png");
-    		File newfile =new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+checksum+".png");
+            File oldfile =new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+clientLogin+"_temp.png");
+    		File newfile =new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+checksum+".png");
     		if(oldfile.renameTo(newfile)){
     			//System.out.println("[+] Rename succesful");
     		}else{

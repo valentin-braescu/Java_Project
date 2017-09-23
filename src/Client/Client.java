@@ -9,11 +9,16 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
@@ -23,6 +28,9 @@ import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import jdk.jfr.events.FileWriteEvent;
 
 /**
  * @author Valentin and Sébastien
@@ -42,7 +50,6 @@ public class Client {
 	Client()
 	{
 		gui = new GUI(this);
-		
 	}
 	
 	/**
@@ -50,6 +57,97 @@ public class Client {
 	 */
 	public static void main(String[] args) {
 		new Client();
+	}
+	
+	public int lireFichierLogin()
+	{
+		int returnedInt = 0;
+		String line = null;
+		String fileName = "D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\login.txt";
+		File file = new File(fileName);
+		
+		if( file.exists())
+		{
+			FileReader fileReader;
+			try {
+				fileReader = new FileReader(fileName);
+				BufferedReader bufferReader = new BufferedReader(fileReader);
+				
+				if( (line = bufferReader.readLine()) != null)
+					user_id = line;
+				System.out.println(user_id);
+				if( (line = bufferReader.readLine()) != null)
+					user_password = line;
+				System.out.println(user_password);
+				bufferReader.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				returnedInt = -1;
+				System.out.println(
+		                "Unable to open file '" + 
+		                fileName + "'");   
+			}
+			catch( IOException e)
+			{
+				returnedInt = -2;
+				System.out.println(
+		                "Error reading file '" 
+		                + fileName + "'");    
+			}
+			returnedInt = 1;
+		}
+		else
+		{
+			returnedInt = -1;
+		}
+		
+		return returnedInt;
+	}
+	
+	public void writeFileLogin()
+	{
+		String fileName = "D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\login.txt";
+		File file = new File(fileName);
+		
+		if( !file.exists())
+		{
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		FileWriter fileWriter;
+		try {
+			fileWriter = new FileWriter(fileName);
+			BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+			
+			bufferedWriter.write(user_id);
+			bufferedWriter.newLine();
+			bufferedWriter.write(user_password);
+			bufferedWriter.newLine();
+			
+			bufferedWriter.close();
+		} 
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			 System.out.println(
+		                "Error writing to file '"
+		                + fileName + "'");
+			e.printStackTrace();
+		}
+
+	}
+	
+	public void deleteFileLogin()
+	{
+		String fileName = "D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\login.txt";
+		File file = new File(fileName);
+		
+		file.delete();
 	}
 	
 	public void startClient(int req,String id)
@@ -73,27 +171,44 @@ public class Client {
 		
 	}
 	
-	public void stopClient()
+	public void stopClient(int mode)
 	{
-		sendRequest(0,"");
-		listener.close();
 		
-		try
+		if( mode == 0)
 		{
-			// Closing data stream
-			out.close();
-			// Closing the socket
-			sock.close();
+			sendRequest(0,"");
+			listener.close();
+			try
+			{
+				// Closing data stream
+				out.close();
+				// Closing the socket
+				sock.close();
+			}
+			catch(IOException e)
+			{
+				System.out.println("[x] Client aborted");
+			}
+			System.exit(0);	
 		}
-		catch(IOException e)
-		{
-			System.out.println("[x] Client aborted");
+		if( mode == 1)
+		{			
+			sendRequest(0,"");
+			listener.close();
+			try
+			{
+				// Closing data stream
+				out.close();
+				// Closing the socket
+				sock.close();
+			}
+			catch(IOException e)
+			{
+				System.out.println("[x] Client aborted");
+			}
 		}
 		
-		System.exit(0);
-		
-		
-		
+
 	}
 	
 	public void sendRequest(int req, String data)
@@ -155,10 +270,12 @@ public class Client {
 			// Reset login and password
 			setIDs("","");
 			gui.connexion(false,false,"",2);
+			new JOptionPane().showMessageDialog(null, "Message informatif", "Information", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case 21 :
 			System.out.println("[+] Connection ok");
-			sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\listWallpaper.jpg");
+			//sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\listWallpaper.jpg");
+			//gui.setVisible(true);
 			gui.setVisible(true);
 			break;
 		case 40 :
@@ -219,6 +336,9 @@ public class Client {
 	{
 		user_id = id;
 		user_password=password;
+		
+		writeFileLogin();
+		
 	}
 	
 	public String getIDUser()

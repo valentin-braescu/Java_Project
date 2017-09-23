@@ -52,16 +52,27 @@ public class ClientListener implements Runnable {
 				int req = entree.readInt();
 				String data = entree.readUTF();
 				if(req == 8) {
-					System.out.println("Request 8 recieved");
-					// Get image
-					byte[] sizeAr = new byte[4];
-		            entree.read(sizeAr);
-		            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-		            byte[] imageAr = new byte[size];
-		            entree.read(imageAr);
-		            BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageAr));
-			        newRecette(data, img);
-			        client.displayPanel(data, img);
+					
+					String[] parts = data.split("\t");
+					if( parts[parts.length-1] !="null")
+					{
+						System.out.println("Request 8 recieved");
+						// Get image
+						byte[] sizeAr = new byte[4];
+			            entree.read(sizeAr);
+			            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+			            byte[] imageAr = new byte[size];
+			            entree.read(imageAr);
+			            BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageAr));
+				        newRecette(data, img);
+				        client.displayPanel(data, img);
+					}
+					else
+					{
+						BufferedImage image = null;
+						newRecette(data, image);
+						client.displayPanel(data, image);
+					}
 				}
 				else {
 					// the other requests are treated normally

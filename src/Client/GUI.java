@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -33,7 +34,7 @@ public class GUI extends JFrame implements ActionListener{
 	
 	private Client client;
 	private Wall wall;
-	public CreateTab createTab;
+	public Editor createTab;
 	public List list;
 	
 	
@@ -43,6 +44,7 @@ public class GUI extends JFrame implements ActionListener{
 	private JMenu deco;
 	private JMenuItem deconnexion;
 	private JMenuItem modifier_compte;
+	private JMenuItem change_user;
 	private JMenu mon_compte;
 	private JButton connect;
 	private JButton inscription;
@@ -58,12 +60,13 @@ public class GUI extends JFrame implements ActionListener{
 	
 	public GUI(Client client)
 	{
+		System.out.println("creationGUI");
 		this.client= client;
 		font = new Font("Arial",Font.ITALIC|Font.BOLD,18);
 		font_menu = new Font("Arial",Font.BOLD, 18);
 		
 		wall = new Wall(this, client);
-		createTab = new CreateTab(client,this);
+		createTab = new Editor(client,this);
 		list = new List(client);
 		
 		initialize();
@@ -83,7 +86,10 @@ public class GUI extends JFrame implements ActionListener{
 		mon_compte.addActionListener(this);
 		modifier_compte = new JMenuItem("Modifier compte");
 		modifier_compte.addActionListener(this);
+		change_user = new JMenuItem("Changer utilisateur");
+		change_user.addActionListener(this);
 		mon_compte.add(modifier_compte);
+		mon_compte.add(change_user);
 
 		menu_bar.add(mon_compte);
 		deco = new JMenu("Deconnexion");
@@ -131,24 +137,47 @@ public class GUI extends JFrame implements ActionListener{
 		add(main_panel, BorderLayout.CENTER);
 	}
 	
+	public void setGUIVisible(boolean flag)
+	{
+		setVisible(flag);
+	}
+	
 	
 	public void accueil()
 	{
-		String[] options = {"Connexion", "Inscription"};
+		
+		int flag = client.lireFichierLogin();
+		
+		if( flag == -1)
+		{
+			String[] options = {"Connexion", "Inscription"};
 
-	    JOptionPane accueil = new JOptionPane();
+		    JOptionPane accueil = new JOptionPane();
 
-	    int choix = accueil.showOptionDialog(null, "Que souhaitez vous faire ?","Accueil",JOptionPane.YES_NO_CANCEL_OPTION,
-	    		JOptionPane.QUESTION_MESSAGE,null, options,options[0]);
+		    int choix = accueil.showOptionDialog(null, "Que souhaitez vous faire ?","Accueil",JOptionPane.YES_NO_CANCEL_OPTION,
+		    		JOptionPane.QUESTION_MESSAGE,null, options,options[0]);
 
-	    if( choix == 0)
-	    {
-	    	connexion(true,true,"", 2);
-	    }
-	    else if( choix == 1)
-	    {
-	    	connexion(true,true,"", 1);
-	    }
+		    if( choix == 0)
+		    {
+		    	connexion(true,true,"", 2);
+		    }
+		    else if( choix == 1)
+		    {
+		    	connexion(true,true,"", 1);
+		    }
+		}
+		
+		if( flag == 1)
+		{
+			client.startClient(2, client.getIDUser()+'\t'+client.getIDPassoword() );
+		}
+		else
+		{
+			System.exit(0);
+		}
+		
+		
+
 	}
 	
 	// NOTE : les fonctions "connexion" et "inscription" se ressemblent de ouf. Rassembler tout �a en une serait mieux.
@@ -203,7 +232,6 @@ public class GUI extends JFrame implements ActionListener{
 	    	        client.setIDs(login, pass);
 	    	        // Starting client - Send login and password to the server
 	    	        client.startClient(mode, login+'\t'+pass);
-	    	        setVisible(true);
 	            }
 	        }
 	        else if(connexionBox == JOptionPane.CANCEL_OPTION) {
@@ -213,7 +241,26 @@ public class GUI extends JFrame implements ActionListener{
 	        	System.exit(0);
 	        }
 	    }
-	
+
+	public void switchUser()
+	{
+		System.out.println("start switch user");
+		client.deleteFileLogin();
+		
+		//ask for new user IDs
+		client.stopClient( 1);
+		//
+		try {
+			TimeUnit.SECONDS.sleep(2);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("accueil");
+		accueil();
+	}
+	 
+	 
 	public void modifierCompte(JFrame frame)
 	{
         JPanel p = new JPanel(new BorderLayout(5,5));
@@ -226,7 +273,7 @@ public class GUI extends JFrame implements ActionListener{
         JPanel controls = new JPanel(new GridLayout(0,1,2,2));
         JTextField username = new JTextField(client.getIDUser());
         controls.add(username);
-       JTextField password = new JTextField(client.getIDPassoword());
+        JTextField password = new JTextField(client.getIDPassoword());
         controls.add(password);
         p.add(controls, BorderLayout.CENTER);
 
@@ -242,7 +289,7 @@ public class GUI extends JFrame implements ActionListener{
 		Object s=e.getSource()	;	
 		if( s== deconnexion)
 		{
-			client.stopClient();
+			client.stopClient(0);
 			
 		}
 		if(s == mon_compte)
@@ -263,6 +310,7 @@ public class GUI extends JFrame implements ActionListener{
 		{
 			
 			remove(main_panel);
+			
 			main_panel = createTab;
 			add(main_panel);
 			revalidate();
@@ -279,6 +327,10 @@ public class GUI extends JFrame implements ActionListener{
 		if( s == modifier_compte)
 		{
 			modifierCompte(this);
+		}
+		if ( s == change_user)
+		{
+			switchUser();
 		}
 	}
 	

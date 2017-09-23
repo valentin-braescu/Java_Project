@@ -27,12 +27,14 @@ import java.awt.Dimension;
 import javax.swing.SwingConstants;
 import java.awt.CardLayout;
 import net.miginfocom.swing.MigLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class Test {
 
 	private JFrame frame;
-	private JTextField textField;
-	private JTextField textField_description;
+	private JTextField textField_titre;
 
 	/**
 	 * Launch the application.
@@ -62,146 +64,85 @@ public class Test {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 848, 481);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		JPanel panel_nom_vue = new JPanel();
-		panel_nom_vue.setBorder(new LineBorder(new Color(0, 0, 0)));
-		frame.getContentPane().add(panel_nom_vue, BorderLayout.WEST);
-		panel_nom_vue.setLayout(new GridLayout(0, 1, 2, 0));
-		
-		JLabel label_editeur = new JLabel("Editeur");
-		label_editeur.setHorizontalAlignment(SwingConstants.CENTER);
-		label_editeur.setPreferredSize(new Dimension(100, 100));
-		label_editeur.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel_nom_vue.add(label_editeur);
-		
-		JLabel label_apercu = new JLabel("Aper\u00E7u");
-		label_apercu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel_nom_vue.add(label_apercu);
-		
-		JPanel panel_vue = new JPanel();
-		panel_vue.setBorder(new LineBorder(new Color(0, 0, 0)));
-		frame.getContentPane().add(panel_vue, BorderLayout.CENTER);
-		panel_vue.setLayout(new GridLayout(0, 1, 2, 0));
-		
-		JPanel panel_edition = new JPanel();
-		panel_edition.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel_vue.add(panel_edition);
-		panel_edition.setLayout(new BorderLayout(0, 0));
+		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel image_panel = new JPanel();
-		panel_edition.add(image_panel, BorderLayout.WEST);
-		image_panel.setLayout(new MigLayout("", "[97px]", "[123px]"));
+		frame.getContentPane().add(image_panel, BorderLayout.WEST);
+		image_panel.setLayout(new GridLayout(3, 1, 0, 0));
 		
-		JButton btnNewButton = new JButton("New button");
-		image_panel.add(btnNewButton, "cell 0 0,alignx left,growy");
+		JPanel image_panel_useless = new JPanel();
+		image_panel.add(image_panel_useless);
+		
+		JPanel image_panel_container = new JPanel();
+		image_panel.add(image_panel_container);
+		
+		JLabel image_label = new JLabel("New label");
+		image_panel_container.add(image_label);
+		
+		JPanel image_button_panel = new JPanel();
+		image_panel.add(image_button_panel);
+		
+		JButton btnSelectionnezUneImage = new JButton("Selectionnez une image");
+		image_button_panel.add(btnSelectionnezUneImage);
+		
+		JPanel editor_panel = new JPanel();
+		frame.getContentPane().add(editor_panel, BorderLayout.CENTER);
+		editor_panel.setLayout(new GridLayout(2, 1, 0, 0));
 		
 		JPanel text_panel = new JPanel();
-		panel_edition.add(text_panel, BorderLayout.CENTER);
-		text_panel.setLayout(new GridLayout(0, 2, 0, 0));
-		
-		JPanel non_aliment_panel = new JPanel();
-		text_panel.add(non_aliment_panel);
-		non_aliment_panel.setLayout(new BorderLayout(0, 0));
+		editor_panel.add(text_panel);
+		text_panel.setLayout(new BorderLayout(0, 0));
 		
 		JPanel titre_panel = new JPanel();
-		non_aliment_panel.add(titre_panel, BorderLayout.NORTH);
+		text_panel.add(titre_panel, BorderLayout.NORTH);
 		
-		JLabel titre_label = new JLabel("Titre");
+		JLabel titre_label = new JLabel(" Titre de la recette : ");
 		titre_panel.add(titre_label);
 		
-		textField = new JTextField();
-		titre_panel.add(textField);
-		textField.setColumns(10);
-		
-		JPanel aliments_panel = new JPanel();
-		non_aliment_panel.add(aliments_panel, BorderLayout.SOUTH);
-		aliments_panel.setLayout(new GridLayout(0, 1, 2, 0));
-		
-		JPanel panel = new JPanel();
-		aliments_panel.add(panel);
-		
-		JPanel panel_1 = new JPanel();
-		aliments_panel.add(panel_1);
+		textField_titre = new JTextField();
+		titre_panel.add(textField_titre);
+		textField_titre.setColumns(10);
 		
 		JPanel description_panel = new JPanel();
-		non_aliment_panel.add(description_panel, BorderLayout.CENTER);
-		description_panel.setLayout(new BorderLayout(0, 0));
+		text_panel.add(description_panel, BorderLayout.CENTER);
+		GridBagLayout gbl_description_panel = new GridBagLayout();
+		gbl_description_panel.columnWidths = new int[]{210, 97, 0};
+		gbl_description_panel.rowHeights = new int[]{76, 25, 0, 0};
+		gbl_description_panel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gbl_description_panel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		description_panel.setLayout(gbl_description_panel);
 		
-		JLabel label_description = new JLabel("Description");
-		description_panel.add(label_description, BorderLayout.WEST);
-		
-		textField_description = new JTextField();
-		description_panel.add(textField_description, BorderLayout.CENTER);
-		textField_description.setColumns(10);
-		
-		JPanel panel_score = new JPanel();
-		description_panel.add(panel_score, BorderLayout.SOUTH);
-		
-		JLabel label_score_nutri = new JLabel("Score Nutritionnnel : ");
-		panel_score.add(label_score_nutri);
-		
-		JLabel label_score = new JLabel("C");
-		label_score.setFont(new Font("Tahoma", Font.BOLD, 13));
-		panel_score.add(label_score);
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.anchor = GridBagConstraints.EAST;
+		gbc_btnNewButton.gridx = 1;
+		gbc_btnNewButton.gridy = 2;
+		description_panel.add(btnNewButton, gbc_btnNewButton);
 		
 		JPanel aliment_panel = new JPanel();
-		text_panel.add(aliment_panel);
+		editor_panel.add(aliment_panel);
 		aliment_panel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel_2 = new JPanel();
-		aliment_panel.add(panel_2, BorderLayout.NORTH);
+		JPanel button_panel = new JPanel();
+		aliment_panel.add(button_panel, BorderLayout.NORTH);
 		
-		JButton btnNewButton_1 = new JButton("New button");
-		panel_2.add(btnNewButton_1);
+		JButton button_add_aliment = new JButton("Ajouter un aliment");
+		button_panel.add(button_add_aliment);
+		
+		JButton button_remove_aliment = new JButton("Retirer un aliment");
+		button_panel.add(button_remove_aliment);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		aliment_panel.add(scrollPane, BorderLayout.CENTER);
 		
-		JPanel panel_3 = new JPanel();
-		scrollPane.setViewportView(panel_3);
+		JPanel aliment_list = new JPanel();
+		scrollPane.setViewportView(aliment_list);
 		
-		JPanel panel_apercu = new JPanel();
-		panel_apercu.setBorder(new LineBorder(new Color(0, 0, 0)));
-		panel_vue.add(panel_apercu);
-		panel_apercu.setLayout(new BorderLayout(0, 0));
-		
-		JPanel panel_image_apercu = new JPanel();
-		panel_image_apercu.setPreferredSize(new Dimension(20, 20));
-		panel_apercu.add(panel_image_apercu, BorderLayout.WEST);
-		panel_image_apercu.setLayout(new MigLayout("", "[36px]", "[16px]"));
-		
-		JLabel label_image_apercu = new JLabel("Image");
-		panel_image_apercu.add(label_image_apercu, "cell 0 0,alignx left,aligny top");
-		
-		JPanel panel_text_apercu = new JPanel();
-		panel_apercu.add(panel_text_apercu, BorderLayout.CENTER);
-		panel_text_apercu.setLayout(new BorderLayout(0, 0));
-		
-		JPanel panel_titre_paercu = new JPanel();
-		panel_text_apercu.add(panel_titre_paercu, BorderLayout.NORTH);
-		
-		JLabel label_titre_apercu = new JLabel("titre");
-		panel_titre_paercu.add(label_titre_apercu);
-		
-		JPanel panel_aliment_paercu = new JPanel();
-		panel_text_apercu.add(panel_aliment_paercu, BorderLayout.SOUTH);
-		
-		JLabel lblAliments = new JLabel("Aliments");
-		panel_aliment_paercu.add(lblAliments);
-		
-		JPanel panel_description_apercu = new JPanel();
-		panel_text_apercu.add(panel_description_apercu, BorderLayout.CENTER);
-		panel_description_apercu.setLayout(new BorderLayout(0, 0));
-		
-		JLabel label_score_apercu = new JLabel("Note nutri");
-		panel_description_apercu.add(label_score_apercu, BorderLayout.SOUTH);
-		
-		JLabel label_description_apercu = new JLabel("Description");
-		panel_description_apercu.add(label_description_apercu, BorderLayout.CENTER);
-		
-		
+
 		
 
 	}

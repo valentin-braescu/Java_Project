@@ -60,14 +60,25 @@ public class ListWorker implements Runnable {
 		        String currentTime = sdf.format(date);
 
 		        if(req == 6) {
-		        	// Receiving the image
-		            byte[] sizeAr = new byte[4];
-		            in.read(sizeAr);
-		            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-		            byte[] imageAr = new byte[size];
-		            in.read(imageAr);
-		            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
-					worker.storeInfos(data, image, currentTime);
+		        	
+		        	String[] parts = data.split("\t");
+					if( parts[parts.length-1] !="null")
+					{
+			        	// Receiving the image
+			            byte[] sizeAr = new byte[4];
+			            in.read(sizeAr);
+			            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+			            byte[] imageAr = new byte[size];
+			            in.read(imageAr);
+			            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
+						worker.storeInfos(data, image, currentTime);
+					}
+					else
+					{
+						BufferedImage image = null;
+						worker.storeInfos(data, image  , currentTime);
+					}
+
 		        }
 				else {
 					// Analyzing string data

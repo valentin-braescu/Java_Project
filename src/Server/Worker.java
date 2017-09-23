@@ -182,7 +182,7 @@ public class Worker implements Runnable {
 				String[] parts = data.split("\t");
 				String imageName = parts[3];
 				// Sending the image to the client
-				BufferedImage image = ImageIO.read(new File("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\images\\"+imageName+".png"));
+				BufferedImage image = ImageIO.read(new File("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\images\\"+imageName+".png"));
 		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		        ImageIO.write(image, "jpg", byteArrayOutputStream);
 		        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();

@@ -59,6 +59,10 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 	{
 		this.gui = gui;
 		this.client = client;
+		
+		filePath = null;
+		
+		
 		list_aliments = new LinkedList<CreateTab_NewAliment>();
 		aliments = new LinkedList<String>();
 		setLayout(new BorderLayout(0,0));
@@ -70,6 +74,7 @@ public class CreateTab extends JPanel implements ActionListener, DocumentListene
 		panel_nom_vue.setLayout(new GridLayout(0, 1, 2, 0));
 		
 		JLabel label_editeur = new JLabel("Editeur");
+		
 		label_editeur.setBorder(new LineBorder(new Color(0, 0, 0)));
 		label_editeur.setPreferredSize(new Dimension(200, 200));
 		label_editeur.setHorizontalAlignment(SwingConstants.CENTER);
