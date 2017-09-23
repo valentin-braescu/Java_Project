@@ -191,7 +191,7 @@ public class List extends JPanel implements ActionListener, FocusListener{
 	@Override
     public void paintComponent(Graphics g) {
     	// Add a background image
-    	Image bg = new ImageIcon("C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\listWallpaper.jpg").getImage();
+    	Image bg = new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\listWallpaper.jpg").getImage();
         g.drawImage(bg, 0, 0, getWidth(), getHeight(),this);
     }
 }

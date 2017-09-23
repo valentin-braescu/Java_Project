@@ -5,8 +5,10 @@ package Client;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -61,12 +63,12 @@ public class Editor extends JPanel implements ActionListener{
 		//setPreferredSize(new Dimension(500, 500));
 		list_aliments = new LinkedList<CreateTab_NewAliment>();
 
-		this.client= client;
 		this.gui = gui;
 		filePath = null;
 		
 		setLayout(new MigLayout());
 		JPanel containt = new JPanel();
+		containt.setOpaque(false);
 		containt.setMaximumSize(new Dimension( 500, 300));
 		containt.setMinimumSize(new Dimension( 500, 300));
 		containt.setLayout(new BorderLayout(0,0));
@@ -76,6 +78,7 @@ public class Editor extends JPanel implements ActionListener{
 		JPanel image_panel = new JPanel();
 		containt.add(image_panel, BorderLayout.WEST);
 		image_panel.setLayout(new GridLayout(3, 1, 0, 0));
+		image_panel.setOpaque(false);
 		
 		JPanel image_panel_useless = new JPanel();
 		image_panel.add(image_panel_useless);
@@ -136,11 +139,13 @@ public class Editor extends JPanel implements ActionListener{
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setOpaque(false);
 		aliment_panel.add(scrollPane, BorderLayout.CENTER);
 		
 		aliment_list = new JPanel();
 		aliment_list.setLayout(new GridLayout(1, 25));
 		scrollPane.setViewportView(aliment_list);
+		aliment_list.setOpaque(false);
 		
 		JPanel send_panel = new JPanel();
 		button_send = new JButton("Envoyer");
@@ -329,6 +334,12 @@ public class Editor extends JPanel implements ActionListener{
 			client.sendRequest(6,data);
 		}
 	}
+	
+    public void paintComponent(Graphics g) {
+    	// Add a background image
+    	Image bg = new ImageIcon("D:\\ISMIN\\S5\\Advanced_Java\\Java_Project\\editorWallpaper.jpg").getImage();
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(),this);
+    }
 	
 
 	@Override
