@@ -75,6 +75,7 @@ public class GUI extends JFrame implements ActionListener{
 		new JFrame();	
 		
 		JPanel panel = new JPanel();
+		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 	
 		JMenuBar menu_bar = new JMenuBar();
 		
@@ -143,7 +144,12 @@ public class GUI extends JFrame implements ActionListener{
 
 	    if( choix == 0)
 	    {
-	    	connexion(true,true,"", 2);
+	    	//connexion(true,true,"", 2);
+	    	// Saving login and password (temporarily, waiting for the server to acknowledge)
+	        client.setIDs("Seb","totoro");
+	        // Starting client - Send login and password to the server
+	        client.startClient(2, "Seb"+"\t"+"totoro");
+	        setVisible(true);
 	    }
 	    else if( choix == 1)
 	    {
@@ -243,6 +249,7 @@ public class GUI extends JFrame implements ActionListener{
 		if( s== deconnexion)
 		{
 			client.stopClient();
+			System.exit(0);
 			
 		}
 		if(s == mon_compte)

@@ -80,12 +80,12 @@ public class ClientListener implements Runnable {
 		try
 		{
 			entree.close();
+			thread = null;
 		}
 		catch( IOException e)
 		{
-			e.printStackTrace();
+			thread = null;
 		}
-		thread = null;
 	}
 	
 	public void newRecette(String data, BufferedImage image)

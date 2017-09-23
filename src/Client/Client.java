@@ -89,11 +89,7 @@ public class Client {
 		{
 			System.out.println("[x] Client aborted");
 		}
-		
-		System.exit(0);
-		
-		
-		
+		System.out.println("Client stopped");
 	}
 	
 	public void sendRequest(int req, String data)
@@ -115,7 +111,6 @@ public class Client {
 				try {
 					// Sending image to the server
 			        BufferedImage image = ImageIO.read(new File(parts[3+nbFood]));
-			        System.out.println("filePath done");
 			        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			        ImageIO.write(image, "jpg", byteArrayOutputStream);
 			        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
@@ -158,7 +153,7 @@ public class Client {
 			break;
 		case 21 :
 			System.out.println("[+] Connection ok");
-			sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\listWallpaper.jpg");
+			//sendRequest(6,"Mon titre !!! "+"\t"+"Rick's favorite food."+"\t"+"3"+"\t"+"prince"+"\t"+"petit beurre"+"\t"+"tresor"+"\t"+"C:\\Users\\Sébastien\\Desktop\\Cours\\3A\\Java\\JavaProject\\Java_Project\\listWallpaper.jpg");
 			gui.setVisible(true);
 			break;
 		case 40 :
