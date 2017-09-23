@@ -5,14 +5,18 @@ package Client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -60,8 +64,9 @@ public class GUI extends JFrame implements ActionListener{
 	private JButton button_create;
 	private JButton send_message;
 	
-	public JPanel chat_panel;
-	public JPanel chat_messages_panel;
+	private ListChat chat_panel;
+
+	private ListConnected connected_pane;
 	
 	
 	public GUI(Client client)
@@ -74,6 +79,9 @@ public class GUI extends JFrame implements ActionListener{
 		wall = new Wall(this, client);
 		createTab = new Editor(client,this);
 		list = new List(client);
+		
+		chat_panel = new ListChat();
+		connected_pane = new ListConnected();
 		
 		initialize();
 		accueil();
@@ -133,20 +141,10 @@ public class GUI extends JFrame implements ActionListener{
 		
 		//Chat panel
 		
-		chat_panel = new JPanel();
-		chat_panel.setLayout(new BorderLayout());
-		chat_messages_panel = new JPanel();
-		
-		JScrollPane scrollpane = new JScrollPane();
-		scrollpane.setViewportView(chat_messages_panel);
-		
-		chat_panel.add(scrollpane, BorderLayout.CENTER);
+
 		
 		
-		send_message = new JButton("Envoyer message");
-		send_message.addActionListener(this);
-		chat_messages_panel.add( send_message, BorderLayout.SOUTH);
-		
+		//Connected Panel
 		
 		
 		
@@ -155,6 +153,7 @@ public class GUI extends JFrame implements ActionListener{
 		setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		getContentPane().add(panel, BorderLayout.NORTH);
 		getContentPane().add(chat_panel, BorderLayout.EAST);
+		getContentPane().add(connected_pane, BorderLayout.WEST);
 		setTitle("Bouffe");
 		setVisible(false);
 		setBounds(100, 100, 450, 300);
@@ -386,5 +385,6 @@ public class GUI extends JFrame implements ActionListener{
 	{
 		return wall;
 	}
+
 	
 }
