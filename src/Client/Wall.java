@@ -121,9 +121,10 @@ public class Wall extends JPanel implements ActionListener{
 		int index = -1;
 		for(int i = 0; i < fil.size(); i++)
 		{
-			if( (recette.date.equals(fil.get(i).date) && (recette.username.equals(fil.get(i).username))) )
+			if( recette.ID == fil.get(i).ID)
 			{
 				found = true;
+				index = i;
 			}
 		}
 		if( found )

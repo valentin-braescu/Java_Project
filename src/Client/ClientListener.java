@@ -112,11 +112,14 @@ public class ClientListener implements Runnable {
 		String titre = parts[1];
 		String description = parts[2];
 		String date = parts[4];
-		int nb_aliments = Integer.parseInt(parts[5]);
+		int nb_aliments = Integer.valueOf(parts[5]);
 		//String score = parts[6 + nb_aliments];
-		String score = "a";
+		// ID puis score
+		
+		String ID = parts[6 + nb_aliments];
+		String score = parts[7 + nb_aliments];
 
-		Recette recette = new Recette(nb_aliments, titre, description, username, date, image, score);
+		Recette recette = new Recette(nb_aliments, titre, description, username, date, image, score, ID);
 		
 		//Detection of the aliments in the recipe
 		for( int i = 0; i < nb_aliments; i++)

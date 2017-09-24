@@ -29,6 +29,7 @@ public class Recette extends JPanel{
 	private String titre;
 	private String description;
 	private String score;
+	public int ID;
 	private int nb_aliments;
 	private JPanel aliments_panel;
 	public String date;
@@ -39,7 +40,7 @@ public class Recette extends JPanel{
 	
 	private List<String> aliment_list;
 	
-	Recette(int nb_aliment, String titre, String description, String username, String date, BufferedImage image, String score)
+	Recette(int nb_aliment, String titre, String description, String username, String date, BufferedImage image, String score, String ID)
 	{
 		this.titre= titre;
 		nb_aliments = nb_aliment;
@@ -49,6 +50,7 @@ public class Recette extends JPanel{
 		this.username=username;
 		this.date = date;
 		this.score=score;
+		this.ID = Integer.valueOf(ID);
 		
 		
 		
