@@ -601,7 +601,7 @@ public class SingleServer extends JFrame {
 				String imageName = res.getString("imageName");
 				String date = res.getString("date");
 				int idPost = res.getInt("idPost");
-				int nbFood = getNbFood(id, date);
+				int nbFood = getNbFood(idPost);
 				response+=login+"\t"+title+"\t"+description+"\t"+imageName+"\t"+date+"\t"+Integer.valueOf(nbFood);
 				for(int j=0;j<nbFood;j++) {
 					// We add the list of food associated with an image
@@ -626,7 +626,7 @@ public class SingleServer extends JFrame {
 		return response;
 	}
 	
-	public synchronized int getNbFood(int id, String date) {
+	public synchronized int getNbFood(int idPost) {
 		// Return the number of food associated with a post
 		PreparedStatement prepst;
 		String query = "";
@@ -634,11 +634,10 @@ public class SingleServer extends JFrame {
 		int nbFood = 0;
 		try {
 			// mysql SELECT prepared statement
-			query = "SELECT count(userId) as cpt FROM food_posts WHERE userId=? AND date=?";
+			query = "SELECT count(userId) as cpt FROM food_posts WHERE idPost=?";
 			// create mysql SELECT prepared Statement
 			prepst = con.prepareStatement(query);
-			prepst.setInt(1,id);
-			prepst.setString(2,date);
+			prepst.setInt(1,idPost);
 			// execute the prepared Statement
 			ResultSet res = prepst.executeQuery();
 			res.next();
