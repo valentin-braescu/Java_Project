@@ -60,10 +60,11 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	private JPanel aliment_list ;
 	private Font font;
 	public Timer timer;
+	private int IDpost;
 	
-	private boolean editing = false;
+	private boolean editing ;
 	
-	private boolean recipeSent = false;
+	private boolean recipeSent ;
 	
 	public LinkedList<CreateTab_NewAliment> list_aliments;
 	
@@ -73,13 +74,18 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 		//Linked list with all the aliments
 		list_aliments = new LinkedList<CreateTab_NewAliment>();
 
-		timer = new Timer(60*1000, this); //every 60 seconds
+		timer = new Timer(10*1000, this); //every 60 seconds
+		//IDPost ="";
 
 		//Members init
+		
+		recipeSent = false;
+		editing = false;
 		this.gui = gui;
 		this.client= client;
 		filePath = null;
 		font= new Font("Verdana",Font.ITALIC,17);
+		IDpost = 0;
 		
 		//Global panel
 		setLayout(new MigLayout());
@@ -356,13 +362,23 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	public void sendRecette()
 	{
 		System.out.println("EDITOR : start send recipe");
-		String data = textField_titre.getText()+'\t'+textField_description.getText()+'\t';
+		String titre = textField_titre.getText();
+		if( titre.equals(""))
+		{
+			titre = "null";
+		}
+		String description = textField_description.getText();
+		if( description.equals(""))
+		{
+			description = "null";
+		}
+		String data = titre+'\t'+description+'\t';
 		String aliment_string = "";
 		int aliment_length = 0;
 		System.out.println("List size : "+ list_aliments.size());
 		for( int i=0; i < list_aliments.size() ; i++ )
 		{
-			System.out.println(list_aliments.get(i).aliment + " "+list_aliments.get(i).boolean_flag +" "+ i);
+
 			if( list_aliments.get(i).boolean_flag == true )
 			{
 				aliment_string = aliment_string + list_aliments.get(i).aliment +'\t';
@@ -374,15 +390,15 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 		if( filePath != null)
 		{
 			filePath.replace("\\","\\\\");
-			data = data + String.valueOf(aliment_length) + '\t' + aliment_string + filePath ;
-			System.out.println(data);
+			data = data + String.valueOf(aliment_length) + '\t' + aliment_string + filePath +"\t"+ String.valueOf(IDpost);
+			System.out.println("EDITOR : "+data);
 			client.sendRequest(6,data);
 		}
 
 		else
 		{
-			data = data + String.valueOf(aliment_length) + '\t' + aliment_string + "null";
-			System.out.println(data);
+			data = data + String.valueOf(aliment_length) + '\t' + aliment_string + "null"+"\t"+ String.valueOf(IDpost);
+			System.out.println("EDITOR : "+data);
 			client.sendRequest(6,data);
 		}
 	}
@@ -470,14 +486,23 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	{
 		if( recipeSent)
 		{
-			
+			System.out.println("error during upload");
 		}
 	}
 	
-	public void succesfullUpload()
+	public void succesfullUpload(String data)
 	{
 		if( recipeSent)
-		cleanEditor();
+		{
+			cleanEditor();
+			IDpost = 0;
+		}
+		else
+		{
+			
+			IDpost = Integer.parseInt(data);
+			System.out.println("EDITOR : [o] succeful upload "+ IDpost);
+		}
 	}
 
 	@Override

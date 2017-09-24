@@ -412,9 +412,9 @@ public class GUI extends JFrame implements ActionListener{
 		createTab.errorUploading();
 	}
 	
-	public void successfullUpload()
+	public void successfullUpload(String data)
 	{
-		createTab.succesfullUpload();
+		createTab.succesfullUpload(data);
 	}
 	
     public void paintComponent(Graphics g) {

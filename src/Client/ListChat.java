@@ -4,7 +4,9 @@
 package Client;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -30,6 +32,8 @@ public class ListChat extends JPanel implements ActionListener{
 	private GUI gui;
 	private Client client;
 	private JScrollPane scrollpane;
+	private JPanel chat_messages_panel ;
+	private Font font= new Font("Verdana",Font.ITALIC,17);
 	
 	ListChat(GUI gui,Client client)
 	{
@@ -41,8 +45,9 @@ public class ListChat extends JPanel implements ActionListener{
 		setPreferredSize(new Dimension(200,100));
 		
 		//Container panel
-		JPanel chat_messages_panel = new JPanel();
+		chat_messages_panel = new JPanel();
 		chat_messages_panel.setOpaque(false);
+		chat_messages_panel.setLayout(new GridLayout(200, 1));
 		
 		//Scroll panel with all the messages
 		scrollpane = new JScrollPane();
@@ -71,11 +76,12 @@ public class ListChat extends JPanel implements ActionListener{
 		String msg = parts[1];
 		String msgToDisplay = "@"+sender+": "+msg;
 		System.out.println("Display: "+msgToDisplay);
-		JPanel chatPost = new JPanel();
+		//JPanel chatPost = new JPanel();
 		JLabel post = new JLabel(msgToDisplay);
-		chatPost.add(post);
+		post.setFont(font);
+		post.setForeground(Color.white);
+		chat_messages_panel.add(post);
 		//chatPost.setOpaque(false);
-		scrollpane.add(chatPost);
 		gui.revalidate();
 		gui.repaint();
 	}

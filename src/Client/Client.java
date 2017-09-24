@@ -48,7 +48,6 @@ public class Client {
 	private String user_id;
 	private String user_password;
 	private boolean foodFound = true;
-	private int idPost = 0;
 	
 	Client()
 	{
@@ -217,28 +216,34 @@ public class Client {
 			out.writeInt(req);
 			// If the user wants to upload an image
 			if(req == 6) {
+				System.out.println("Strat sending request 6");
 				boolean uploadImage = false;
 				// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ..., filePath
 				String[] parts = data.split("\t");
 				// We extract the filePath from the data
 				String newData = parts[0]+"\t"+parts[1]+"\t"+parts[2];
 				int nbFood = Integer.valueOf(parts[2]);
+				System.out.println("NB food : "+nbFood);
 				String filepath = parts[3+nbFood];
 				for(int i=0; i< nbFood;i++) {
 					newData += "\t"+parts[3+i];
+					System.out.println(parts[3+i]);
 				}
 				// The filepath can be "null" -> no image is uploaded. Send the id of the post (to work on the same post).
+				System.out.println("filepath : "+filepath);
 				if(filepath.equals("null") ) {
+					System.out.println("filepath is null");
 					newData+="\t"+"null";
 					uploadImage = false;
 				}
 				else {
-					
+					System.out.println("filepath is not null");
 					newData+="\t"+"notNull";
 					uploadImage = true;
 				}
-				newData+="\t"+String.valueOf(idPost);
+				newData+="\t"+parts[3+1+nbFood];
 				// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ...,alimentN,imageOrNot, idPost
+				System.out.println("final data without image : "+ newData);
 				out.writeUTF(newData);
 				if(uploadImage) {
 					try {
@@ -250,14 +255,22 @@ public class Client {
 				        out.write(size);
 				        out.write(byteArrayOutputStream.toByteArray());
 				        out.flush();
+				        System.out.println("[o] Data sent with picture");
 					} catch (IOException e) {
 						System.out.println("[x] Error when uploading an image.");
 						e.printStackTrace();
 					}
 				}
+				else
+				{
+					out.writeUTF(data);
+					System.out.println("[o] Data sent");
+				}
+
 			}
 			else {
 				out.writeUTF(data);
+				System.out.println("[o] Data sent");
 			}
 		} catch (IOException e) {
 			System.out.println("[x] Server down");
@@ -315,11 +328,13 @@ public class Client {
 			break;
 		case 60 :
 			System.out.println("[x] Error when uploading data on the server.");
+			System.out.println("data :" +data);
 			gui.errorUploadingData();
 			break;
 		case 61 :
 			System.out.println("[+] Data has been uploaded on the server.");
-			gui.successfullUpload();
+			System.out.println("data : "+data);
+			gui.successfullUpload(data);
 			break;
 		case 8 :
 			// Reception de texte et d'image (login, title, description, date, imageName)
@@ -344,7 +359,7 @@ public class Client {
 	
 	public void savePanel(String data, BufferedImage img) {
 		// Save the image
-		String[] parts = data.split("\t");
+		/*String[] parts = data.split("\t");
 		String imageName = parts[3];
 		if( img != null)
 		{
@@ -359,7 +374,7 @@ public class Client {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-		}
+		}*/
        
 	}
 	

@@ -28,7 +28,7 @@ public class InitialWall extends JPanel{
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout(0,0));
 		
-		JLabel label1 =  new JLabel("<html>Hi ! Bienvenu sur MY-FOOD !<br><br>Pour naviguer sur l'appli, rien de plus simple il te suffit de choisir un des trois onglets !<br><br><u>Wall :</u> affiche l'ensemble des recettes publiees par les autres internautes<br><u>List :</u> rechercher un aliment<br><u>Editeur :</u> publiez une recette<br><br>On espère que tu passera un bon moment avec nous !<br><br>Les auteurs : Seb et Val ;)</html>");
+		JLabel label1 =  new JLabel("<html>Hi ! Bienvenue sur MyFood !<br><br>Pour naviguer sur l'appli, rien de plus simple il te suffit de choisir un des trois onglets !<br><br><u>Wall :</u> affiche l'ensemble des recettes publiées par les autres internautes<br><u>List :</u> recherche un aliment<br><u>Editeur :</u> publie une recette<br><br>Les auteurs : Seb et Val ;)</html>");
 		label1.setFont(font);
 		label1.setHorizontalAlignment(SwingConstants.CENTER);
 		label1.setHorizontalTextPosition(SwingConstants.CENTER);
