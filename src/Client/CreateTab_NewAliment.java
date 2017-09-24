@@ -28,7 +28,7 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 	private Editor tab;
 	private Client client;
 	private JLabel flag_icon;
-	public boolean flag;
+	public boolean boolean_flag;
 	public String aliment;
 	private Font font = new Font("Verdana",Font.ITALIC,17);
 	
@@ -40,7 +40,7 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 		
 		aliment = new String("");
 		
-		flag = false;
+		boolean_flag = false;
 		
 		flag_icon = new JLabel();
 		//flag_icon.setPreferredSize(new Dimension(25, 25));
@@ -79,15 +79,14 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 			if(flag)
 			{
 				//add aliment to apercu
-				tab.list_aliments.addLast(this);
-				flag = true;
+				boolean_flag = true;
 				aliment = food;
 				flag_icon.setIcon(new ImageIcon(new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\ImageIcon\\G.gif").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
 			}
 			else
 			{
 				tab.newAliment(true, true, true, true, true, true, true, true, true);
-				flag = false;
+				boolean_flag = false;
 				aliment = "";
 				flag_icon.setIcon(new ImageIcon(new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\ImageIcon\\R.gif").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
 				

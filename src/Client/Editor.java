@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.Timer;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -31,6 +32,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.MigLayout;
@@ -39,7 +42,7 @@ import net.miginfocom.swing.MigLayout;
  * @author Valentin
  *
  */
-public class Editor extends JPanel implements ActionListener{
+public class Editor extends JPanel implements ActionListener, DocumentListener{
 
 	private Client client;
 	private GUI gui;
@@ -57,21 +60,25 @@ public class Editor extends JPanel implements ActionListener{
 	private JPanel aliment_list ;
 	private Font font;
 	
+	private boolean editing = false;
+	
+	private boolean recipeSent = false;
+	
 	public LinkedList<CreateTab_NewAliment> list_aliments;
 	
 
 	Editor(Client client, GUI gui)
 	{
-		
-		//setPreferredSize(new Dimension(500, 500));
+		//Linked list with all the aliments
 		list_aliments = new LinkedList<CreateTab_NewAliment>();
 
+		//Members init
 		this.gui = gui;
 		this.client= client;
 		filePath = null;
-		
 		font= new Font("Verdana",Font.ITALIC,17);
 		
+		//Global panel
 		setLayout(new MigLayout());
 		JPanel containt = new JPanel();
 		containt.setOpaque(false);
@@ -81,6 +88,7 @@ public class Editor extends JPanel implements ActionListener{
 		add(containt,"push, align center"  );
 		
 			
+		///Image part
 		JPanel image_panel = new JPanel();
 		containt.add(image_panel, BorderLayout.WEST);
 		image_panel.setLayout(new GridLayout(3, 1, 0, 0));
@@ -92,9 +100,6 @@ public class Editor extends JPanel implements ActionListener{
 		image_panel_container = new JPanel();
 		image_panel.add(image_panel_container);
 		
-		//JLabel image_label = new JLabel("New label");
-		//image_panel_container.add(image_label);
-		
 		JPanel image_button_panel = new JPanel();
 		image_panel.add(image_button_panel);
 		
@@ -103,10 +108,14 @@ public class Editor extends JPanel implements ActionListener{
 		button_select_image.setFont(font);
 		image_button_panel.add(button_select_image);
 		
+		
+		
+		//The other part of the container
 		JPanel editor_panel = new JPanel();
 		containt.add(editor_panel, BorderLayout.CENTER);
 		editor_panel.setLayout(new GridLayout(2, 1, 0, 0));
 		
+		//where there are the title and the description
 		JPanel text_panel = new JPanel();
 		editor_panel.add(text_panel);
 		text_panel.setLayout(new BorderLayout(0, 0));
@@ -120,22 +129,28 @@ public class Editor extends JPanel implements ActionListener{
 		
 		textField_titre = new JTextField();
 		textField_titre.setFont(font);
+		textField_titre.setText("");
 		titre_panel.add(textField_titre);
 		textField_titre.setColumns(10);
+		textField_titre.getDocument().addDocumentListener(this); 
 		
 		JPanel description_panel = new JPanel();
 		text_panel.add(description_panel, BorderLayout.CENTER);
 		description_panel.setLayout(new BorderLayout(0, 0));
-		
 		textField_description = new JTextField();
 		textField_description.setFont(font);
+		textField_description.getDocument().addDocumentListener(this); 
+		
+		textField_description.setText("");
 		description_panel.add(textField_description);
 		textField_description.setColumns(10);
 		
+		//Panel where thee aliments are managed
 		JPanel aliment_panel = new JPanel();
 		editor_panel.add(aliment_panel);
 		aliment_panel.setLayout(new BorderLayout(0, 0));
 		
+		//Two button to add and remove aliments
 		JPanel button_panel = new JPanel();
 		aliment_panel.add(button_panel, BorderLayout.NORTH);
 		
@@ -149,6 +164,7 @@ public class Editor extends JPanel implements ActionListener{
 		button_remove_aliment.setFont(font);
 		button_panel.add(button_remove_aliment);
 		
+		//Scroll panel where the aliment are drawn;
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setOpaque(false);
@@ -159,6 +175,7 @@ public class Editor extends JPanel implements ActionListener{
 		scrollPane.setViewportView(aliment_list);
 		aliment_list.setOpaque(false);
 		
+		//Button to send the recipe at the end of the edition
 		JPanel send_panel = new JPanel();
 		button_send = new JButton("Envoyer");
 		button_send.addActionListener(this);
@@ -169,9 +186,32 @@ public class Editor extends JPanel implements ActionListener{
 
 	}
 	
+	//timer to send the recipe every minute
+	public void timer()
+	{
+		System.out.println("start timer");
+		/*while(editing)
+		{
+			new java.util.Timer().schedule(
+					new java.util.TimerTask()
+					{
+						public void run() 
+						{
+							sendRecette();
+						}
+					}, 50);
+			
+		}*/
+	}
+	
+	//Selection of an image
 	private void selectionnerImage()
 	{
-		
+		if(!editing)
+		{
+			editing = true;
+			timer();
+		}
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("image","jpg","png","jpeg");
 		JFileChooser choix = new JFileChooser();
 		choix.setFileFilter(filter);
@@ -195,6 +235,8 @@ public class Editor extends JPanel implements ActionListener{
 		filePath = choix.getSelectedFile().getAbsolutePath();
 	}
 	
+	
+	
 	private void afficherImage()
 	{
 		image_panel_container.removeAll();
@@ -207,6 +249,7 @@ public class Editor extends JPanel implements ActionListener{
 		repaint();
 	}
 	
+	//If the aliment does not exist, it is created here and sent to the server
 	public void newAliment(boolean nomField,boolean marqueField,boolean valeurField,boolean acideField,boolean sucresField,boolean proteinesField,boolean fibresField,boolean selField,boolean teneurField)
 	{
         JPanel p = new JPanel(new BorderLayout(5,5));
@@ -324,10 +367,11 @@ public class Editor extends JPanel implements ActionListener{
 		String data = textField_titre.getText()+'\t'+textField_description.getText()+'\t';
 		String aliment_string = "";
 		int aliment_length = 0;
+		System.out.println("List size : "+ list_aliments.size());
 		for( int i=0; i < list_aliments.size() ; i++ )
 		{
-			System.out.println(list_aliments.get(i).aliment + " "+list_aliments.get(i).flag +" "+ i);
-			if( list_aliments.get(i).flag == true )
+			System.out.println(list_aliments.get(i).aliment + " "+list_aliments.get(i).boolean_flag +" "+ i);
+			if( list_aliments.get(i).boolean_flag == true )
 			{
 				aliment_string = aliment_string + list_aliments.get(i).aliment +'\t';
 				aliment_length++;
@@ -351,6 +395,7 @@ public class Editor extends JPanel implements ActionListener{
 		}
 	}
 	
+	//add the background
     public void paintComponent(Graphics g) {
     	// Add a background image
     	Image bg = new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\editorWallpaper.jpg").getImage();
@@ -364,6 +409,11 @@ public class Editor extends JPanel implements ActionListener{
 		Object s = e.getSource();
 		if( s == button_add_aliment)
 		{
+			if(!editing)
+			{
+				editing = true;
+				timer();
+			}
 			CreateTab_NewAliment newAliment = new CreateTab_NewAliment(this, client);
 			list_aliments.addLast(newAliment);
 			aliment_list.add(newAliment);
@@ -388,15 +438,75 @@ public class Editor extends JPanel implements ActionListener{
 		}
 		if ( s == button_send)
 		{
+			recipeSent = true;
 			sendRecette();
+			
 		}
 		
 		
 	}
 	
+	//Clean the editor when the recipe has been sent to the server by the user
 	public void cleanEditor()
 	{
+		textField_description.setText("");
+		textField_titre.setText("");
 		
+		for( int i = 0; i < list_aliments.size(); i++)
+		{
+			list_aliments.removeLast();
+		}
+		aliment_list.removeAll();
+		
+		image_panel_container.removeAll();
+		image= null;
+		filePath = null;
+		
+		gui.revalidate();
+		gui.repaint();
 	}
 	
+	public void errorUploading()
+	{
+		if( recipeSent)
+		{
+			
+		}
+	}
+	
+	public void succesfullUpload()
+	{
+		if( recipeSent)
+		cleanEditor();
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		// TODO Auto-generated method stub
+		if( !editing)
+		{
+			editing = true;
+			timer();
+		}
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		// TODO Auto-generated method stub
+		if( !editing)
+		{
+			editing = true;
+			timer();
+		}
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		// TODO Auto-generated method stub
+		if( !editing)
+		{
+			editing = true;
+			timer();
+		}
+	} 
 }

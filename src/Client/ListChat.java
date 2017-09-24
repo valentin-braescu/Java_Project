@@ -60,6 +60,16 @@ public class ListChat extends JPanel implements ActionListener{
 		send_panel.add(send_message, BorderLayout.SOUTH);
 		add( send_panel, BorderLayout.SOUTH);
 	}
+	
+	public void messageReceived(String data)
+	{
+		
+	}
+	
+	public void sendMessage(String data)
+	{
+		
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

@@ -399,6 +399,16 @@ public class GUI extends JFrame implements ActionListener{
 		}
 	}
 	
+	public void errorUploadingData()
+	{
+		createTab.errorUploading();
+	}
+	
+	public void successfullUpload()
+	{
+		createTab.succesfullUpload();
+	}
+	
     public void paintComponent(Graphics g) {
     	// Add a background image
     	Image bg = new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\connected.jpg").getImage();

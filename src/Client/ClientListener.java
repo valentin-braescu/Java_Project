@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 /**
  * @author Valentin and S�bastien 
@@ -81,7 +82,8 @@ public class ClientListener implements Runnable {
 			}
 			catch(IOException e)
 			{
-				
+				JOptionPane.showMessageDialog(client.gui , "Le serveur a interrompu la connection");
+				client.stopClient(0);
 			}
 		}
 	}

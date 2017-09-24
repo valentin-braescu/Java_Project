@@ -315,9 +315,11 @@ public class Client {
 			break;
 		case 60 :
 			System.out.println("[x] Error when uploading data on the server.");
+			gui.errorUploadingData();
 			break;
 		case 61 :
 			System.out.println("[+] Data has been uploaded on the server.");
+			gui.successfullUpload();
 			break;
 		case 8 :
 			// Reception de texte et d'image (login, title, description, date, imageName)
