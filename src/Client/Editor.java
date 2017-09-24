@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.util.Timer;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -32,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -59,6 +59,7 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	private JPanel image_panel_container;
 	private JPanel aliment_list ;
 	private Font font;
+	public Timer timer;
 	
 	private boolean editing = false;
 	
@@ -71,6 +72,8 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	{
 		//Linked list with all the aliments
 		list_aliments = new LinkedList<CreateTab_NewAliment>();
+
+		timer = new Timer(60*1000, this); //every 60 seconds
 
 		//Members init
 		this.gui = gui;
@@ -189,19 +192,8 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	//timer to send the recipe every minute
 	public void timer()
 	{
-		System.out.println("start timer");
-		/*while(editing)
-		{
-			new java.util.Timer().schedule(
-					new java.util.TimerTask()
-					{
-						public void run() 
-						{
-							sendRecette();
-						}
-					}, 50);
-			
-		}*/
+		editing = true;
+		timer.start();
 	}
 	
 	//Selection of an image
@@ -361,7 +353,7 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	}
 	
 	
-	private void sendRecette()
+	public void sendRecette()
 	{
 		System.out.println("EDITOR : start send recipe");
 		String data = textField_titre.getText()+'\t'+textField_description.getText()+'\t';
@@ -439,8 +431,16 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 		if ( s == button_send)
 		{
 			recipeSent = true;
+			editing = false;
+			timer.stop();
 			sendRecette();
 			
+		}
+		if( s == timer)
+		{
+			System.out.println("timer interrupt");
+			sendRecette();
+			timer.restart();
 		}
 		
 		
