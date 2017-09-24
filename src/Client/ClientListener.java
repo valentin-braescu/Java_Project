@@ -108,6 +108,7 @@ public class ClientListener implements Runnable {
 		//Parsing of the string data
 		System.out.println(data);
 		String[] parts = data.split("\t");
+		System.out.println(parts);
 		String username = parts[0];
 		String titre = parts[1];
 		String description = parts[2];
@@ -117,6 +118,7 @@ public class ClientListener implements Runnable {
 		// ID puis score
 		
 		String ID = parts[6 + nb_aliments];
+		System.out.println("ID newRecette() "+ID);
 		String score = parts[7 + nb_aliments];
 
 		Recette recette = new Recette(nb_aliments, titre, description, username, date, image, score, ID);

@@ -127,6 +127,14 @@ public class Recette extends JPanel{
 		text_panel.add(description_panel, BorderLayout.CENTER);
 		description_panel.setLayout(new BorderLayout(0, 0));
 		
+		if(score.equals("null"))
+		{
+			JLabel label_note = new JLabel("Pas d'aliment");
+		}
+		else
+		{
+			JLabel label_note = new JLabel(score);
+		}
 		JLabel label_note = new JLabel(score);
 		label_note.setFont(font);
 		description_panel.add(label_note, BorderLayout.SOUTH);
