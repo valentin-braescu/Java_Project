@@ -61,6 +61,7 @@ public class Wall extends JPanel implements ActionListener{
 		
 		//Panel with a scroll pane
 		scroll_pane = new JScrollPane();
+		scroll_pane.setOpaque(false);
 		scroll_pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		//scroll_pane.setPreferredSize(new Dimension(100, 100));
 		
