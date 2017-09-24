@@ -6,6 +6,7 @@ package Client;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -26,11 +28,13 @@ public class ListChat extends JPanel implements ActionListener{
 	private JButton send_message;
 	private JTextField message;
 	private GUI gui;
+	private Client client;
+	private JScrollPane scrollpane;
 	
-	ListChat(GUI gui)
+	ListChat(GUI gui,Client client)
 	{
 		this.gui = gui;
-		
+		this.client = client;
 		//general settings
 		setOpaque(false);
 		setLayout(new BorderLayout());
@@ -41,11 +45,10 @@ public class ListChat extends JPanel implements ActionListener{
 		chat_messages_panel.setOpaque(false);
 		
 		//Scroll panel with all the messages
-		JScrollPane scrollpane = new JScrollPane();
+		scrollpane = new JScrollPane();
 		scrollpane.setViewportView(chat_messages_panel);
 		scrollpane.setOpaque(false);
 		scrollpane.getViewport().setOpaque(false);
-		
 		add(scrollpane, BorderLayout.CENTER);
 		
 		
@@ -53,7 +56,7 @@ public class ListChat extends JPanel implements ActionListener{
 		JPanel send_panel = new JPanel();
 		send_panel.setLayout(new BorderLayout());
 		message = new JTextField(1);
-		message.setPreferredSize(new Dimension(200, 100));
+		message.setPreferredSize(new Dimension(200, 60));
 		send_message = new JButton("Envoyer message");
 		send_message.addActionListener(this);
 		send_panel.add(message, BorderLayout.NORTH);
@@ -63,21 +66,44 @@ public class ListChat extends JPanel implements ActionListener{
 	
 	public void messageReceived(String data)
 	{
-		
+		String[] parts = data.split("\t");
+		String sender = parts[0];
+		String msg = parts[1];
+		String msgToDisplay = "@"+sender+": "+msg;
+		System.out.println("Display: "+msgToDisplay);
+		JPanel chatPost = new JPanel();
+		JLabel post = new JLabel(msgToDisplay);
+		chatPost.add(post);
+		//chatPost.setOpaque(false);
+		scrollpane.add(chatPost);
+		gui.revalidate();
+		gui.repaint();
 	}
 	
 	public void sendMessage(String data)
 	{
-		
+		client.sendRequest(12, data);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		Object s = e.getSource();
 		if( s == send_message)
 		{
-			
+			String typed = message.getText();
+			message.setText("");
+			// Look for a recipient thanks to the symbol "@"
+			int recipientBegin = typed.indexOf("@");
+			int recipientEnd;
+			if(recipientBegin != -1) {
+				recipientEnd = typed.indexOf(" ",recipientBegin);
+				String recipient = typed.substring(recipientBegin+1, recipientEnd);
+				String msg = typed.substring(recipientEnd+1);
+				sendMessage(recipient+"\t"+msg);
+			}
+			else {
+				sendMessage("\t"+typed);
+			}
 		}
 	}
 	

@@ -160,12 +160,10 @@ public class Client {
 			sock = new Socket("localhost", 3456);
 			//sock = new Socket("192.168.127.222", 3456);
 			out = new DataOutputStream(sock.getOutputStream());
-			
-			
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			System.out.println("[x] Server down, connection failed");
 		}
 		
 		listener = new ClientListener(sock, this);
@@ -294,10 +292,12 @@ public class Client {
 			gui.setVisible(true);
 			break;
 		case 40 :
-			System.out.println("[+] Modification accepted");
+			System.out.println("[-] Modification refused");
 			break;
 		case 41 :
-			System.out.println("[-] Modification refused");
+			System.out.println("[+] Modification accepted");
+			String[] parts = data.split("\t");
+			setIDs(parts[0],parts[1]);
 			break;
 		case 30:
 			// The food the user is looking for doesn't exist in the database
@@ -325,12 +325,16 @@ public class Client {
 			// Reception de texte et d'image (login, title, description, date, imageName)
 			break;
 		case 91 :
-			//new user connected
+			//new user connected / or modification of a username
 			gui.updateConnectedList(data, 1);
 			break;
 		case 90 :
-			//user deconncted
+			//user disconnected
 			gui.updateConnectedList(data, 2);
+			break;
+		case 12:
+			//receiving a message on the chat
+			gui.chat_panel.messageReceived(data);
 			break;
 		default :
 			break;
@@ -338,9 +342,7 @@ public class Client {
 	}
 	
 	
-	public void displayPanel(String data, BufferedImage img) {
-		System.out.println("Display Panel function.");
-		System.out.println("Text re�u :"+data);
+	public void savePanel(String data, BufferedImage img) {
 		// Save the image
 		String[] parts = data.split("\t");
 		String imageName = parts[3];
@@ -367,7 +369,6 @@ public class Client {
 		user_password=password;
 		
 		writeFileLogin();
-		
 	}
 	
 	public String getIDUser()
@@ -375,7 +376,7 @@ public class Client {
 		return user_id;
 	}
 	
-	public String getIDPassoword()
+	public String getIDPassword()
 	{
 		return user_password;
 	}

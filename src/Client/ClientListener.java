@@ -66,13 +66,13 @@ public class ClientListener implements Runnable {
 			            entree.read(imageAr);
 			            BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageAr));
 				        newRecette(data, img);
-				        client.displayPanel(data, img);
+				        client.savePanel(data, img);
 					}
 					else
 					{
 						BufferedImage image = null;
 						newRecette(data, image);
-						client.displayPanel(data, image);
+						client.savePanel(data, image);
 					}
 				}
 				else {

@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
@@ -126,6 +127,32 @@ public class SingleServer extends JFrame {
 		return userId;
 	}
 	
+	public synchronized boolean isUsernameFound(String name) {
+		// Check if the user already exists in the database
+		boolean usernameFound = true;
+		try {
+			// mysql SELECT prepared statement
+			String query = "SELECT COUNT(login) as account FROM users WHERE login=?";
+			// create mysql SELECT prepared Statement
+			PreparedStatement prepst;
+			prepst = con.prepareStatement(query);
+			prepst.setString(1,name);
+			// execute the prepared Statement
+			ResultSet res = prepst.executeQuery();
+			// Get the first line
+			res.next();
+			if(res.getInt("account")!=0) {
+				usernameFound = true;
+			}
+			else {
+				usernameFound = false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return usernameFound;
+	}
+	
 	public synchronized boolean creaCompte(String data) {
 		String[] parts = data.split("\t");
 		String login = parts[0];
@@ -182,6 +209,7 @@ public class SingleServer extends JFrame {
 		return id;
 	}
 	
+	
 	public synchronized boolean modifCompte(String data) {
 		String[] parts = data.split("\t");
 		System.out.println("modifCompte: "+data);
@@ -198,21 +226,26 @@ public class SingleServer extends JFrame {
 		int id = checkLoginPass(oldLogin+"\t"+oldPass);
 		if(id!=0) {
 			try {
-				// mysql UPDATE prepared statement
-				query = "UPDATE users SET login=? AND password=? WHERE login=? AND password=?";
-				// create mysql UPDATE prepared Statement
-				prepst = con.prepareStatement(query);
-				prepst.setString(1,newLogin);
-				prepst.setString(2,newPass);
-				prepst.setString(3,oldLogin);
-				prepst.setString(4,oldPass);
-				// execute the prepared Statement
-				prepst.execute();
-				prepst.close();
+				// Check if the new username is already in use
+				boolean inUse = isUsernameFound(newLogin);
+				if(!inUse) {
+					// mysql UPDATE prepared statement
+					query = "UPDATE users SET login=?, password=? WHERE login=? AND password=?";
+					// create mysql UPDATE prepared Statement
+					prepst = con.prepareStatement(query);
+					prepst.setString(1,newLogin);
+					prepst.setString(2,newPass);
+					prepst.setString(3,oldLogin);
+					prepst.setString(4,oldPass);
+					// execute the prepared Statement
+					prepst.execute();
+					prepst.close();
+					modif = true;
+				}
+				else modif = false;
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			modif = true;
 		}
 		else {
 			modif = false;
@@ -280,7 +313,7 @@ public class SingleServer extends JFrame {
 			if(!title.equals("") && !description.equals("")) {
 				try {
 					// If both the title and the description are changed
-					String queryUpdate = "UPDATE posts SET title=? AND description=? AND date=? WHERE id=? AND idPost=?";
+					String queryUpdate = "UPDATE posts SET title=?, description=?, date=? WHERE id=? AND idPost=?";
 					PreparedStatement prepstUpdate = con.prepareStatement(queryUpdate);
 					prepstUpdate.setString(1,title);
 					prepstUpdate.setString(2,description);
@@ -296,7 +329,7 @@ public class SingleServer extends JFrame {
 			else if(!title.equals("")) {
 				try {
 					// Only the title is changed (the date is always updated)
-					String queryUpdate = "UPDATE posts SET title=? AND date=? WHERE id=? AND idPost=?";
+					String queryUpdate = "UPDATE posts SET title=?, date=? WHERE id=? AND idPost=?";
 					PreparedStatement prepstUpdate = con.prepareStatement(queryUpdate);
 					prepstUpdate.setString(1,title);
 					prepstUpdate.setString(2,date);
@@ -311,7 +344,7 @@ public class SingleServer extends JFrame {
 			else {
 				try {
 					// Only the title is changed (the date is always updated)
-					String queryUpdate = "UPDATE posts SET description=? AND date=? WHERE id=? AND idPost=?";
+					String queryUpdate = "UPDATE posts SET description=?, date=? WHERE id=? AND idPost=?";
 					PreparedStatement prepstUpdate = con.prepareStatement(queryUpdate);
 					prepstUpdate.setString(1,description);
 					prepstUpdate.setString(2,date);
@@ -839,6 +872,47 @@ public class SingleServer extends JFrame {
 			String login = worker.getLogin();
 			w.sendResponse(91,login);
 		}
+	}
+	
+	public synchronized void sendChat(String data, String sender) {
+		String[] parts = data.split("\t");
+		String targetName = parts[0];
+		String msg = parts[1];
+		if(targetName.equals("")) {
+			// the message is for everyone in chat
+			for(Worker w: colWorker) {
+				w.sendResponse(12,sender+"\t"+msg);
+			}
+		}
+		else {
+			// the message is intended to one person only (except the sender)
+			Worker workerFrom = findWorkerByName(sender);
+			Worker workerTo = findWorkerByName(targetName);
+			if(workerTo != null) {
+				if(targetName.equals(sender)) {
+					workerFrom.sendResponse(12,sender+"\t"+msg);
+				}
+				else {
+					workerFrom.sendResponse(12,sender+"\t"+msg);
+					workerTo.sendResponse(12,sender+"\t"+msg);
+				}
+			}
+		}
+	}
+	
+	public synchronized Worker findWorkerByName(String clientLogin) {
+		boolean found = false;
+		Worker worker = null;
+		Iterator<Worker> iterator = null;
+	    iterator = colWorker.iterator();
+		while(!found && iterator.hasNext()) {
+			worker = iterator.next();
+			String workerName = worker.getLogin();
+			if(workerName.equals(clientLogin)) {
+				found = true;
+			}
+		}
+		return worker;
 	}
 	
 	public void stopServer() {

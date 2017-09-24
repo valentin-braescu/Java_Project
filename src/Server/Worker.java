@@ -116,11 +116,14 @@ public class Worker implements Runnable {
 		case 4:
 			System.out.println("Request 4");
 			//Modify infos about the account
+			String[] parts = data.split("\t");
 			boolean modif;
 			modif = server.modifCompte(data);
 			if(modif) {
 				// Modifications accepted
-				sendResponse(41,"");
+				sendResponse(41,parts[2]+"\t"+parts[3]);
+				clientLogin = parts[2];
+				server.broadcastUsernameCo(parts[2]+"\t"+parts[0]);
 			}
 			else {
 				// Modifications refused
@@ -160,6 +163,10 @@ public class Worker implements Runnable {
 			else {
 				sendResponse(70,"");
 			}
+			break;
+		case 12:
+			// Message to send to someone on the Chat
+			server.sendChat(data, clientLogin);
 			break;
 		default:
 			System.out.println("Request default");

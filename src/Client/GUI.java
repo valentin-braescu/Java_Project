@@ -66,7 +66,7 @@ public class GUI extends JFrame implements ActionListener{
 	private JButton button_create;
 	private JButton send_message;
 	
-	private ListChat chat_panel;
+	public ListChat chat_panel;
 
 	private ListConnected connected_pane;
 	
@@ -83,7 +83,7 @@ public class GUI extends JFrame implements ActionListener{
 		createTab = new Editor(client,this);
 		list = new List(client);
 		
-		chat_panel = new ListChat(this);
+		chat_panel = new ListChat(this,client);
 		connected_pane = new ListConnected(this);
 		
 		initialize();
@@ -204,7 +204,7 @@ public class GUI extends JFrame implements ActionListener{
 		
 		if( flag == 1)
 		{
-			client.startClient(2, client.getIDUser()+'\t'+client.getIDPassoword() );
+			client.startClient(2, client.getIDUser()+'\t'+client.getIDPassword() );
 		}
 		else
 		{
@@ -308,14 +308,14 @@ public class GUI extends JFrame implements ActionListener{
         JPanel controls = new JPanel(new GridLayout(0,1,2,2));
         JTextField username = new JTextField(client.getIDUser());
         controls.add(username);
-        JTextField password = new JTextField(client.getIDPassoword());
+        JTextField password = new JTextField(client.getIDPassword());
         controls.add(password);
         p.add(controls, BorderLayout.CENTER);
 
         JOptionPane.showMessageDialog( frame, p, "Modification du compte", JOptionPane.QUESTION_MESSAGE);
         
         setVisible(true);
-        client.setIDs(username.getText(), password.getText());
+        client.sendRequest(4,client.getIDUser()+"\t"+client.getIDPassword()+"\t"+username.getText()+"\t"+password.getText());
 	}
 	
 	
@@ -378,6 +378,7 @@ public class GUI extends JFrame implements ActionListener{
 		repaint();
 	}
 	
+	
 	public List getList() {
 		return list;
 	}
@@ -389,9 +390,16 @@ public class GUI extends JFrame implements ActionListener{
 	
 	public void updateConnectedList(String name, int mode)
 	{
+		String[] parts = name.split("\t");
 		if( mode == 1)
 		{
-			connected_pane.addUser(name);
+			if(name.indexOf("\t")!=-1) {
+				connected_pane.removeUser(parts[1]);
+				connected_pane.addUser(parts[0]);
+			}
+			else {
+				connected_pane.addUser(name);
+			}
 		}
 		else
 		{

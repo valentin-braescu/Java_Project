@@ -165,6 +165,7 @@ public class List extends JPanel implements ActionListener, FocusListener{
 			valeur.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
 			valeur.setBorder(BorderFactory.createMatteBorder(0,0,0,1, Color.WHITE));
 			line.add(valeur);
+			
 			list.add(line);
 		}
 	}
