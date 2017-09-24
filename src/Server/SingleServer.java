@@ -101,7 +101,6 @@ public class SingleServer extends JFrame {
 		query = "";
 		int userId = 0;
 		// Check if the user already exists in the database
-		
 		// mysql SELECT prepared statement
 		query = "SELECT id FROM users WHERE login=? AND password=?";
 		// create mysql SELECT prepared Statement
@@ -228,7 +227,7 @@ public class SingleServer extends JFrame {
 			try {
 				// Check if the new username is already in use
 				boolean inUse = isUsernameFound(newLogin);
-				if(!inUse) {
+				if(!inUse || newLogin.equals(oldLogin)) {
 					// mysql UPDATE prepared statement
 					query = "UPDATE users SET login=?, password=? WHERE login=? AND password=?";
 					// create mysql UPDATE prepared Statement
