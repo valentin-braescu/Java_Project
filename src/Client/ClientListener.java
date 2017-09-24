@@ -85,7 +85,7 @@ public class ClientListener implements Runnable {
 			{
 				JOptionPane.showMessageDialog(client.gui , "Le serveur a interrompu la connection");
 				e.printStackTrace();
-				client.stopClient(0);
+				//client.stopClient(0);
 			}
 		}
 	}

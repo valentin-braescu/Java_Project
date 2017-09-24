@@ -37,6 +37,7 @@ public class Wall extends JPanel implements ActionListener{
 	private JPanel panel_list;
 	private JScrollPane scroll_pane;
 	
+	
 	Wall(GUI gui, Client client)
 	{
 		//Members init
@@ -84,14 +85,9 @@ public class Wall extends JPanel implements ActionListener{
 		Object s=e.getSource();
 		if( s == actualiser)
 		{
-			/*Recette recette = new Recette(2,"Recette example", "Miam une recette qu'elle est bonne");
-			System.out.println("actualiser clicked");*/
 			
 			client.sendRequest(5,"");
-			//panel_list.add(recette);
-			//gui.pack();
-			gui.revalidate();
-			gui.repaint();
+
 			
 		}
 	} 
@@ -114,12 +110,31 @@ public class Wall extends JPanel implements ActionListener{
 				panel_list.add( fil.get(i));
 			}
 		}
+		gui.revalidate();
+		gui.repaint();
 	}
 	
 	
 	public void addRecette(Recette recette)
 	{
-		fil.addFirst(recette);
+		boolean found = false;
+		int index = -1;
+		for(int i = 0; i < fil.size(); i++)
+		{
+			if( (recette.date.equals(fil.get(i).date) && (recette.username.equals(fil.get(i).username))) )
+			{
+				found = true;
+			}
+		}
+		if( found )
+		{
+			fil.remove(index);
+			fil.add(index, recette);
+		}
+		else
+		{
+			fil.addFirst(recette);
+		}
 		afficher();
 	}
 	
