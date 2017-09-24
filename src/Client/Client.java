@@ -344,7 +344,7 @@ public class Client {
 	
 	public void savePanel(String data, BufferedImage img) {
 		// Save the image
-		String[] parts = data.split("\t");
+		/*String[] parts = data.split("\t");
 		String imageName = parts[3];
 		if( img != null)
 		{
@@ -359,7 +359,7 @@ public class Client {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-		}
+		}*/
        
 	}
 	

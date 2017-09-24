@@ -54,8 +54,9 @@ public class ClientListener implements Runnable {
 				String data = entree.readUTF();
 				if(req == 8) {
 					
+					System.out.println("Request 8 :data : "+data);
 					String[] parts = data.split("\t");
-					if( parts[parts.length-1] !="null")
+					if( !parts[3].equals(""))
 					{
 						System.out.println("Request 8 recieved");
 						// Get image
@@ -83,6 +84,7 @@ public class ClientListener implements Runnable {
 			catch(IOException e)
 			{
 				JOptionPane.showMessageDialog(client.gui , "Le serveur a interrompu la connection");
+				e.printStackTrace();
 				client.stopClient(0);
 			}
 		}
@@ -111,8 +113,9 @@ public class ClientListener implements Runnable {
 		String description = parts[2];
 		String date = parts[4];
 		int nb_aliments = Integer.parseInt(parts[5]);
-		String score = parts[6 + nb_aliments];
-		
+		//String score = parts[6 + nb_aliments];
+		String score = "a";
+
 		Recette recette = new Recette(nb_aliments, titre, description, username, date, image, score);
 		
 		//Detection of the aliments in the recipe

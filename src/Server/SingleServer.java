@@ -566,7 +566,7 @@ public class SingleServer extends JFrame {
 		query = "";
 		boolean lineFound = true;
 		// mysql SELECT prepared statement
-		query = "SELECT u.login, u.id, p.title, p.description, p.imageName, p.date, p.score FROM users AS u INNER JOIN posts AS p ON u.id = p.id ORDER BY p.date DESC";
+		query = "SELECT u.login, u.id, p.title, p.description, p.imageName, p.date FROM users AS u INNER JOIN posts AS p ON u.id = p.id ORDER BY p.date DESC";
 		// create mysql SELECT prepared Statement
 		try {
 			prepst = con.prepareStatement(query);
@@ -601,14 +601,12 @@ public class SingleServer extends JFrame {
 				String description = res.getString("description");
 				String imageName = res.getString("imageName");
 				String date = res.getString("date");
-				String score = res.getString("score");
 				int nbFood = getNbFood(id, date);
 				response+=login+"\t"+title+"\t"+description+"\t"+imageName+"\t"+date+"\t"+Integer.valueOf(nbFood);
 				for(int j=0;j<nbFood;j++) {
 					// We add the list of food associated with an image
 					response += "\t"+getFoodUsed(id, date,j+1);
 				}
-				response += "\t"+score;
 			}
 			prepst.close();
 		} catch (SQLException e) {

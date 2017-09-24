@@ -141,7 +141,7 @@ public class Worker implements Runnable {
 				// Get the 10 last lines stored on the server
 				// Return a line with: "username,title,description,imageName,date,nbAliments,aliment1,aliment2,...s"
 				text = server.sendPostText(i+1);
-				if(text == "") loop = false;
+				if(text.equals("")) loop = false;
 				else {
 					/*AJOUTER SCORE NUTRI
 					String tempScore = "";
@@ -149,7 +149,8 @@ public class Worker implements Runnable {
 						tempScore += getFoodScore(parts[3+i]);
 					}
 					String finalScore = computeScore(tempScore);*/
-					sendResponse(8,text);
+					System.out.println("text  req 5 : "+text);
+					sendResponse(8,text+"\t"+"null");
 				}
 				i++;
 			}
@@ -195,16 +196,25 @@ public class Worker implements Runnable {
 			out.writeInt(req);
 			out.writeUTF(data);
 			if(req == 8) {
+				
+				
+				
 				String[] parts = data.split("\t");
 				String imageName = parts[3];
-				// Sending the image to the client
-				BufferedImage image = ImageIO.read(new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+imageName+".png"));
-		        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		        ImageIO.write(image, "jpg", byteArrayOutputStream);
-		        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
-		        out.write(size);
-		        out.write(byteArrayOutputStream.toByteArray());
-		        out.flush();
+				
+				if( !imageName.equals(""))
+				{
+					
+					// Sending the image to the client
+					BufferedImage image = ImageIO.read(new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+imageName+".png"));
+			        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			        ImageIO.write(image, "jpg", byteArrayOutputStream);
+			        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();
+			        out.write(size);
+			        out.write(byteArrayOutputStream.toByteArray());
+			        out.flush();
+				}
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -356,7 +356,17 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	public void sendRecette()
 	{
 		System.out.println("EDITOR : start send recipe");
-		String data = textField_titre.getText()+'\t'+textField_description.getText()+'\t';
+		String titre = textField_titre.getText();
+		if( titre.equals(""))
+		{
+			titre = "null";
+		}
+		String description = textField_description.getText();
+		if( description.equals(""))
+		{
+			description = "null";
+		}
+		String data = titre+'\t'+description+'\t';
 		String aliment_string = "";
 		int aliment_length = 0;
 		System.out.println("List size : "+ list_aliments.size());
@@ -470,7 +480,7 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	{
 		if( recipeSent)
 		{
-			
+			System.out.println("error during upload");
 		}
 	}
 	

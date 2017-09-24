@@ -32,6 +32,7 @@ public class Recette extends JPanel{
 	private JPanel aliments_panel;
 	private String date;
 	private String username;
+	private JPanel image_panel;
 	
 	private List<String> aliment_list;
 	
@@ -45,6 +46,7 @@ public class Recette extends JPanel{
 		this.username=username;
 		this.date = date;
 		this.score=score;
+		
 		
 		
 		/*########################################### 
@@ -72,12 +74,20 @@ public class Recette extends JPanel{
 		setVisible(true);
 		
 		//Image part of the panel
-		JPanel image_panel = new JPanel();
+		image_panel = new JPanel();
 		add(image_panel, BorderLayout.WEST);
 		image_panel.setLayout(new BorderLayout(0, 0));
 		
-		JLabel image_label = new JLabel(new ImageIcon(photo));
-		image_panel.add(image_label);
+		if( image != null)
+		{
+			JLabel image_label = new JLabel(new ImageIcon(photo));
+
+			Image scaled = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+			image_label.setIcon( new ImageIcon(scaled));
+			image_panel.add(image_label);
+		}
+		
+
 		
 		//Text area of the panel
 		JPanel text_panel = new JPanel();
