@@ -101,7 +101,6 @@ public class SingleServer extends JFrame {
 		query = "";
 		int userId = 0;
 		// Check if the user already exists in the database
-		
 		// mysql SELECT prepared statement
 		query = "SELECT id FROM users WHERE login=? AND password=?";
 		// create mysql SELECT prepared Statement
@@ -228,7 +227,7 @@ public class SingleServer extends JFrame {
 			try {
 				// Check if the new username is already in use
 				boolean inUse = isUsernameFound(newLogin);
-				if(!inUse) {
+				if(!inUse || newLogin.equals(oldLogin)) {
 					// mysql UPDATE prepared statement
 					query = "UPDATE users SET login=?, password=? WHERE login=? AND password=?";
 					// create mysql UPDATE prepared Statement
@@ -566,7 +565,7 @@ public class SingleServer extends JFrame {
 		query = "";
 		boolean lineFound = true;
 		// mysql SELECT prepared statement
-		query = "SELECT u.login, u.id, p.title, p.description, p.imageName, p.date FROM users AS u INNER JOIN posts AS p ON u.id = p.id ORDER BY p.date DESC";
+		query = "SELECT u.login, u.id, p.title, p.description, p.imageName, p.date, p.idPost FROM users AS u INNER JOIN posts AS p ON u.id = p.id ORDER BY p.date DESC";
 		// create mysql SELECT prepared Statement
 		try {
 			prepst = con.prepareStatement(query);
@@ -601,12 +600,21 @@ public class SingleServer extends JFrame {
 				String description = res.getString("description");
 				String imageName = res.getString("imageName");
 				String date = res.getString("date");
+				int idPost = res.getInt("idPost");
 				int nbFood = getNbFood(id, date);
 				response+=login+"\t"+title+"\t"+description+"\t"+imageName+"\t"+date+"\t"+Integer.valueOf(nbFood);
 				for(int j=0;j<nbFood;j++) {
 					// We add the list of food associated with an image
-					response += "\t"+getFoodUsed(id, date,j+1);
+					response += "\t"+getFoodUsed(idPost,j+1);
 				}
+				response += "\t"+idPost;
+				// Calcul du score nutritionnel 
+				String tempScore = "";
+				for(int i=0; i< nbFood; i++) {
+					tempScore += getFoodScore(getFoodUsed(idPost,i+1));
+				}
+				String finalScore = computeScore(tempScore);
+				response += "\t"+finalScore;
 			}
 			prepst.close();
 		} catch (SQLException e) {
@@ -703,7 +711,7 @@ public class SingleServer extends JFrame {
 		}
 		return cpt;
 	}
-	public synchronized String getFoodUsed(int id, String date, int line) {
+	public synchronized String getFoodUsed(int idPost, int line) {
 		// Return the name of the food associated with an image (if lots of food, refer to the line)
 		PreparedStatement prepst;
 		String foodName = "";
@@ -712,11 +720,10 @@ public class SingleServer extends JFrame {
 		int foodCode=0;
 		try {
 			// mysql SELECT prepared statement
-			query = "SELECT food_code FROM food_posts WHERE userId=? AND date=?";
+			query = "SELECT food_code FROM food_posts WHERE idPost=?";
 			// create mysql SELECT prepared Statement
 			prepst = con.prepareStatement(query);
-			prepst.setInt(1,id);
-			prepst.setString(2,date);
+			prepst.setInt(1,idPost);
 			// execute the prepared Statement
 			ResultSet res = prepst.executeQuery();
 			// Get the good line

@@ -1,6 +1,4 @@
-- revoir la GUI de wall
-- Design Pattern Interpreter
+
 - Server : calcul du score nutri à tester
-- envoi d'une recette sans image
 - video teaser
 

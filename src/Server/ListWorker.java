@@ -30,11 +30,13 @@ public class ListWorker implements Runnable {
 	private Thread th;
 	private boolean run;
 	private DataInputStream in;
+	private MsgParser parser;
 	
 	ListWorker(Worker worker, Socket socket){
 		this.worker = worker;
 		this.socket = socket;
 		this.run = true;	//Le listener écoute en boucle le client dès sa création
+		parser = new MsgParser();
 		th = new Thread(this);
 		th.start();
 	}
@@ -58,33 +60,40 @@ public class ListWorker implements Runnable {
 		        Date date = new Date();
 		        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		        String currentTime = sdf.format(date);
-
-		        if(req == 6) {
-		        	// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ...,alimentN, ImageOrNot,idPost
-		        	String[] parts = data.split("\t");
-					if( parts[parts.length-2] !="null"){
-						{
-				        	// Receiving the image
-				            byte[] sizeAr = new byte[4];
-				            in.read(sizeAr);
-				            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-				            byte[] imageAr = new byte[size];
-				            in.read(imageAr);
-				            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
-							worker.storeInfos(data, image, currentTime);
-						}
-					}
-					else
-					{
-						BufferedImage image = null;
-						worker.storeInfos(data, image , currentTime);
-					}
-
+		        String[] parts = data.split("\t");
+		        // First Step, parsing the data
+		        boolean parsValid = true;
+		        for(int i=0;i<parts.length;i++) {
+		        	parsValid = parsValid && parser.sqlParser(parts[i]) && parser.symbolParser(parts[i]);
 		        }
-				else {
-					// Analyzing string data
-					worker.analyzeReq(req, data);
-				}
+		        // Send the request to the worker if the parser is valid
+		        if(parsValid) {
+		        	if(req == 6) {
+			        	// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ...,alimentN, ImageOrNot,idPost
+						if( parts[parts.length-2] !="null"){
+							{
+					        	// Receiving the image
+					            byte[] sizeAr = new byte[4];
+					            in.read(sizeAr);
+					            int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+					            byte[] imageAr = new byte[size];
+					            in.read(imageAr);
+					            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
+								worker.storeInfos(data, image, currentTime);
+							}
+						}
+						else
+						{
+							BufferedImage image = null;
+							worker.storeInfos(data, image , currentTime);
+						}
+
+			        }
+					else {
+						// Analyzing string data
+						worker.analyzeReq(req, data);
+					}
+		        }
 			} catch (IOException e) {
 				System.out.println("[x] Client aborted");
 				e.printStackTrace();
