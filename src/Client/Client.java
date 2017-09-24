@@ -77,10 +77,8 @@ public class Client {
 				
 				if( (line = bufferReader.readLine()) != null)
 					user_id = line;
-				System.out.println(user_id);
 				if( (line = bufferReader.readLine()) != null)
 					user_password = line;
-				System.out.println(user_password);
 				bufferReader.close();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -216,34 +214,28 @@ public class Client {
 			out.writeInt(req);
 			// If the user wants to upload an image
 			if(req == 6) {
-				System.out.println("Strat sending request 6");
 				boolean uploadImage = false;
 				// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ..., filePath
 				String[] parts = data.split("\t");
 				// We extract the filePath from the data
 				String newData = parts[0]+"\t"+parts[1]+"\t"+parts[2];
 				int nbFood = Integer.valueOf(parts[2]);
-				System.out.println("NB food : "+nbFood);
 				String filepath = parts[3+nbFood];
 				for(int i=0; i< nbFood;i++) {
 					newData += "\t"+parts[3+i];
-					System.out.println(parts[3+i]);
 				}
 				// The filepath can be "null" -> no image is uploaded. Send the id of the post (to work on the same post).
 				System.out.println("filepath : "+filepath);
 				if(filepath.equals("null") ) {
-					System.out.println("filepath is null");
 					newData+="\t"+"null";
 					uploadImage = false;
 				}
 				else {
-					System.out.println("filepath is not null");
 					newData+="\t"+"notNull";
 					uploadImage = true;
 				}
 				newData+="\t"+parts[3+1+nbFood];
 				// Request : 6,NomDuPlat,Description, nombre_aliments [string], aliment1 [string], aliment2, ...,alimentN,imageOrNot, idPost
-				System.out.println("final data without image : "+ newData);
 				out.writeUTF(newData);
 				if(uploadImage) {
 					try {
@@ -328,12 +320,10 @@ public class Client {
 			break;
 		case 60 :
 			System.out.println("[x] Error when uploading data on the server.");
-			System.out.println("data :" +data);
 			gui.errorUploadingData();
 			break;
 		case 61 :
 			System.out.println("[+] Data has been uploaded on the server.");
-			System.out.println("data : "+data);
 			gui.successfullUpload(data);
 			break;
 		case 8 :

@@ -96,7 +96,6 @@ public class ListWorker implements Runnable {
 		        }
 			} catch (IOException e) {
 				System.out.println("[x] Client aborted");
-				e.printStackTrace();
 				worker.deconnection();
 			}
 		}

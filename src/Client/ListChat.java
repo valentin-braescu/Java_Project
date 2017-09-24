@@ -62,6 +62,7 @@ public class ListChat extends JPanel implements ActionListener{
 		send_panel.setLayout(new BorderLayout());
 		message = new JTextField(1);
 		message.setPreferredSize(new Dimension(200, 60));
+		message.addActionListener(this);
 		send_message = new JButton("Envoyer message");
 		send_message.addActionListener(this);
 		send_panel.add(message, BorderLayout.NORTH);
@@ -94,7 +95,7 @@ public class ListChat extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object s = e.getSource();
-		if( s == send_message)
+		if( s == send_message || s==message)
 		{
 			String typed = message.getText();
 			message.setText("");

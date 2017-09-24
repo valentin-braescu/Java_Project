@@ -49,6 +49,7 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 		
 		champ = new JTextField(10);
 		champ.setFont(font);
+		champ.addActionListener(this);
 		add(champ);
 		
 		
@@ -64,7 +65,7 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object s = e.getSource();
-		if( s == valider)
+		if( s == valider || s==champ)
 		{
 			// Search food on the server
 			String food = champ.getText();

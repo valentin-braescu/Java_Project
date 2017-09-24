@@ -53,12 +53,9 @@ public class ClientListener implements Runnable {
 				int req = entree.readInt();
 				String data = entree.readUTF();
 				if(req == 8) {
-					
-					System.out.println("Request 8 :data : "+data);
 					String[] parts = data.split("\t");
 					if( !parts[3].equals(""))
 					{
-						System.out.println("Request 8 recieved");
 						// Get image
 						byte[] sizeAr = new byte[4];
 			            entree.read(sizeAr);
@@ -83,9 +80,8 @@ public class ClientListener implements Runnable {
 			}
 			catch(IOException e)
 			{
-				JOptionPane.showMessageDialog(client.gui , "Le serveur a interrompu la connection");
+				JOptionPane.showMessageDialog(client.gui , "Le message semble être corrompu.");
 				e.printStackTrace();
-				//client.stopClient(0);
 			}
 		}
 	}
@@ -106,9 +102,7 @@ public class ClientListener implements Runnable {
 	public void newRecette(String data, BufferedImage image)
 	{
 		//Parsing of the string data
-		System.out.println(data);
 		String[] parts = data.split("\t");
-		System.out.println(parts);
 		String username = parts[0];
 		String titre = parts[1];
 		String description = parts[2];
@@ -118,7 +112,6 @@ public class ClientListener implements Runnable {
 		// ID puis score
 		
 		String ID = parts[6 + nb_aliments];
-		System.out.println("ID newRecette() "+ID);
 		String score = parts[7 + nb_aliments];
 
 		Recette recette = new Recette(nb_aliments, titre, description, username, date, image, score, ID);

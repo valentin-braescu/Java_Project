@@ -363,8 +363,9 @@ public class SingleServer extends JFrame {
 		while(cpt<nbFood) {
 			boolean foodInPost = isFoodInPost(parts[3+cpt],idPost);
 			if(!foodInPost) {
-				insertFoodInPost(clientId,date,data,idPost);
+				insertFoodInPost(clientId,date,parts[3+cpt],idPost);
 			}
+			cpt++;
 		}
 		
 	}
@@ -385,7 +386,7 @@ public class SingleServer extends JFrame {
 			}
 			prepstSelect.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("[x] SQL request cannot be executed");
 		}
 		return foodInPost;
 	}
@@ -395,9 +396,8 @@ public class SingleServer extends JFrame {
 		try {
         	// Image treatment
 			// The default extension is PNG (need to work on that)
-        	System.out.println("Uploading");
             // Save the image with a temporary name
-            File outputFile = new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+clientLogin+"_temp.png");
+            File outputFile = new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\"+clientLogin+"_temp.png");
 			if (outputFile.createNewFile()){
 				//System.out.println("File is created!");
 			}else{
@@ -406,15 +406,15 @@ public class SingleServer extends JFrame {
 			ImageIO.write(img, "png", outputFile);
 	          
             // Open the image as a file and hash it
-            File tempImage = new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+clientLogin+"_temp.png");
+            File tempImage = new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\"+clientLogin+"_temp.png");
             // Create message digest
             MessageDigest md = MessageDigest.getInstance("MD5");
             // Get the checksum
             checksum = getFileChecksum(md,tempImage);
 
             // Rename the image previously saved
-            File oldfile =new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+clientLogin+"_temp.png");
-    		File newfile =new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+checksum+".png");
+            File oldfile =new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\"+clientLogin+"_temp.png");
+    		File newfile =new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\"+checksum+".png");
     		if(oldfile.renameTo(newfile)){
     			//System.out.println("[+] Rename succesful");
     		}else{
@@ -467,11 +467,11 @@ public class SingleServer extends JFrame {
 		return idPost;
 	}
 	
-	public synchronized void insertFoodInPost(int clientId, String date, String data, int idPost) {
-		String[] parts = data.split("\t");
-		int nbFood = Integer.valueOf(parts[2]);
+	public synchronized void insertFoodInPost(int clientId, String date, String foodName, int idPost) {
 		// Create a link between the food and the users in the database
-		for(int i=0; i< nbFood; i++) {
+		// Only the food that exist can be added
+		int foodCode = getFoodCode(foodName);
+		if(foodCode!=0) {
 			try {
 				PreparedStatement prepstInsert2 = null;
 				String queryInsert2 = "";
@@ -482,7 +482,7 @@ public class SingleServer extends JFrame {
 				prepstInsert2 = con.prepareStatement(queryInsert2);
 				prepstInsert2.setInt(1,clientId);
 				prepstInsert2.setString(2,date);
-				int foodCode = getFoodCode(parts[3+i]);
+				foodCode = getFoodCode(foodName);
 				prepstInsert2.setInt(3,foodCode);
 				prepstInsert2.setInt(4,idPost);
 				// execute the prepared Statement

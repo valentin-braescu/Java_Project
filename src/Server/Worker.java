@@ -55,11 +55,9 @@ public class Worker implements Runnable {
 	public void analyzeReq(int req, String data) {
 		switch(req) {
 		case 0:
-			System.out.println("Request 0");
 			deconnection();
 			break;
 		case 1:
-			System.out.println("Request 1");
 			// Creating a new account
 			boolean crea;
 			crea = server.creaCompte(data);
@@ -74,7 +72,6 @@ public class Worker implements Runnable {
 			//deconnection();
 			break;
 		case 2:
-			System.out.println("Request 2");
 			//Connecting to an account
 			int conn;
 			// The server return the id of the connected user. If he's not connected, return 0.
@@ -95,7 +92,6 @@ public class Worker implements Runnable {
 			}
 			break;
 		case 3:
-			System.out.println(data);
 			// The user is looking for information about the food
 			int nbLines = server.searchFoodLines(data);
 			String info = "";
@@ -114,7 +110,6 @@ public class Worker implements Runnable {
 			}
 			break;
 		case 4:
-			System.out.println("Request 4");
 			//Modify infos about the account
 			String[] parts = data.split("\t");
 			boolean modif;
@@ -131,7 +126,6 @@ public class Worker implements Runnable {
 			}
 			break;
 		case 5:
-			System.out.println("Request 5");
 			// Refresh the wall
 			// Send the last 10 descriptions/images stored on the server
 			boolean loop = true;
@@ -169,7 +163,6 @@ public class Worker implements Runnable {
 	}
 	
 	public void storeInfos(String data,BufferedImage img, String date) {
-		System.out.println("Request 6");
 		// Client uploading Text
 		int upload = 0;
 		upload = server.upload(data, img, clientLogin, clientId, date);
@@ -199,7 +192,7 @@ public class Worker implements Runnable {
 				{
 					
 					// Sending the image to the client
-					BufferedImage image = ImageIO.read(new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\images\\"+imageName+".png"));
+					BufferedImage image = ImageIO.read(new File(Paths.get(".").toAbsolutePath().normalize().toString()+"\\"+imageName+".png"));
 			        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			        ImageIO.write(image, "jpg", byteArrayOutputStream);
 			        byte[] size = ByteBuffer.allocate(4).putInt(byteArrayOutputStream.size()).array();

@@ -221,16 +221,16 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 		   // chemin absolu du fichier choisi
 		   choix.getSelectedFile().
 		          getAbsolutePath();
+		   BufferedImage newImage = null;
+			try {
+				newImage = ImageIO.read(new File(choix.getSelectedFile().getAbsolutePath()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			image = newImage;
+			filePath = choix.getSelectedFile().getAbsolutePath();
 		}// pas de fichier choisi
-		BufferedImage newImage = null;
-		try {
-			newImage = ImageIO.read(new File(choix.getSelectedFile().getAbsolutePath()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		image = newImage;
-		filePath = choix.getSelectedFile().getAbsolutePath();
 	}
 	
 	
