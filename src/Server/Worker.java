@@ -139,18 +139,11 @@ public class Worker implements Runnable {
 			String text = "";
 			while(loop && i<10) {
 				// Get the 10 last lines stored on the server
-				// Return a line with: "username,title,description,imageName,date,nbAliments,aliment1,aliment2,...s"
+				// Return a line with: "username,title,description,imageName,date,nbAliments,aliment1,aliment2,..."
 				text = server.sendPostText(i+1);
 				if(text.equals("")) loop = false;
 				else {
-					/*AJOUTER SCORE NUTRI
-					String tempScore = "";
-					for(int i=0; i< nbFood; i++) {
-						tempScore += getFoodScore(parts[3+i]);
-					}
-					String finalScore = computeScore(tempScore);*/
-					System.out.println("text  req 5 : "+text);
-					sendResponse(8,text+"\t"+"null");
+					sendResponse(8,text);
 				}
 				i++;
 			}
