@@ -613,7 +613,10 @@ public class SingleServer extends JFrame {
 				for(int i=0; i< nbFood; i++) {
 					tempScore += getFoodScore(getFoodUsed(idPost,i+1));
 				}
-				String finalScore = computeScore(tempScore);
+				String finalScore = "";
+				if(nbFood!=0) {
+					finalScore = computeScore(tempScore);
+				}
 				response += "\t"+finalScore;
 			}
 			prepst.close();
