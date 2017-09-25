@@ -107,6 +107,7 @@ public class GUI extends JFrame implements ActionListener{
 		modifier_compte = new JMenuItem("Modifier compte");
 		modifier_compte.addActionListener(this);
 		change_user = new JMenuItem("Changer utilisateur");
+		change_user.setVisible(false);
 		change_user.addActionListener(this);
 		mon_compte.add(modifier_compte);
 		mon_compte.add(change_user);
@@ -157,7 +158,7 @@ public class GUI extends JFrame implements ActionListener{
 		getContentPane().add(panel, BorderLayout.NORTH);
 		getContentPane().add(chat_panel, BorderLayout.EAST);
 		getContentPane().add(connected_pane, BorderLayout.WEST);
-		setTitle("Bouffe");
+		setTitle("MyFood");
 		setVisible(false);
 		setBounds(100, 100, 450, 300);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -265,6 +266,7 @@ public class GUI extends JFrame implements ActionListener{
 	            else {
 	            	// Saving login and password (temporarily, waiting for the server to acknowledge)
 	    	        client.setIDs(login, pass);
+	    	     
 	    	        // Starting client - Send login and password to the server
 	    	        client.startClient(mode, login+'\t'+pass);
 	            }
