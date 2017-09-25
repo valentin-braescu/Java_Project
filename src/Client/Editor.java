@@ -248,16 +248,17 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 	}
 	
 	//If the aliment does not exist, it is created here and sent to the server
-	public void newAliment(boolean nomField,boolean marqueField,boolean valeurField,boolean acideField,boolean sucresField,boolean proteinesField,boolean fibresField,boolean selField,boolean teneurField)
+	public void newAliment(boolean nomField,boolean marqueField,boolean valeurField,boolean acideField,boolean sucresField,boolean proteinesField,boolean fibresField,boolean selField,boolean teneurField, boolean scoreB)
 	{
         JPanel p = new JPanel(new BorderLayout(5,5));
 	       
         JPanel labels = new JPanel(new GridLayout(0,1,2,2));
-        labels.add(new JLabel("Vous pouvez ajouter un nouvel aliment, ou vous rendre sur l'onglet List faire une recherche"));
+        //labels.add(new JLabel("Vous pouvez ajouter un nouvel aliment, ou vous rendre sur l'onglet List faire une recherche"));
         labels.add(new JLabel("Type de produit", SwingConstants.RIGHT));
         labels.add(new JLabel("Nom", SwingConstants.RIGHT));
         labels.add(new JLabel("Marque", SwingConstants.RIGHT));
         labels.add(new JLabel("Categorie", SwingConstants.RIGHT));
+        labels.add(new JLabel("Score", SwingConstants.RIGHT));
         labels.add(new JLabel("Valeur énergétique", SwingConstants.RIGHT));
         labels.add(new JLabel("Acides gras saturés", SwingConstants.RIGHT));
         labels.add(new JLabel("Sucres", SwingConstants.RIGHT));
@@ -282,7 +283,10 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 
         Object[] list_categorie = new Object[]{"aperitif", "biscuits", "cereales","boissons", "charcuterie","desserts","plat prepare","produits de la mer", "sauce","snacking"};
         JComboBox categorie = new JComboBox(list_categorie);
-        controls.add(type_de_produit);
+        controls.add(categorie);
+        
+        JTextField score = new JTextField();
+        controls.add(score);
         
         JTextField valeur_energetique = new JTextField();
         controls.add(valeur_energetique);
@@ -307,7 +311,7 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
         controls.add(teneur);
         
         
-        p.add(controls, BorderLayout.CENTER);
+        p.add(controls, BorderLayout.EAST);
 
 
         // Dialog : OK to send the credentials, or CANCEL the operation
@@ -319,7 +323,7 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
 
             if( nom.getText().isEmpty() || marque.getText().isEmpty() || valeur_energetique.getText().isEmpty() || 
             		acides_grs_satures.getText().isEmpty() || sucres.getText().isEmpty()
-            		|| proteines.getText().isEmpty() || fibres.getText().isEmpty() || sel.getText().isEmpty() || teneur.getText().isEmpty()) {
+            		|| proteines.getText().isEmpty() || fibres.getText().isEmpty() || sel.getText().isEmpty() || teneur.getText().isEmpty() || score.getText().isEmpty()) {
             	// One of the fields is empty
             	// By default, the fields are considered filled
             	nomField = true;
@@ -331,7 +335,8 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
             	fibresField = true;
             	selField =true; 
             	teneurField = true;
-            	
+            	scoreB = true;
+            	System.out.println("empty stuff");
             	if(nom.getText().isEmpty() ) nomField = false;
             	if( marque.getText().isEmpty()) marqueField = false;
             	if( valeur_energetique.getText().isEmpty() ) valeurField= false;
@@ -341,14 +346,16 @@ public class Editor extends JPanel implements ActionListener, DocumentListener{
             	if( fibres.getText().isEmpty()) fibresField =false;
             	if( sel.getText().isEmpty()) selField = false;
             	if( teneur.getText().isEmpty()) teneurField = false;
+            	if( score.getText().isEmpty()) scoreB = false;
             	
-            	newAliment(nomField ,marqueField ,valeurField ,acideField ,sucresField ,proteinesField ,fibresField ,selField , teneurField );
+            	newAliment(nomField ,marqueField ,valeurField ,acideField ,sucresField ,proteinesField ,fibresField ,selField , teneurField, scoreB );
             }
             else {
             	String data = String.valueOf(type_de_produit.getSelectedItem()) +'\t'+
-            			nom.getText()+'\t'+marque.getText()+'\t'+ categorie.getSelectedItem()+
+            			nom.getText()+'\t'+marque.getText()+'\t'+ categorie.getSelectedItem()+'\t'+score.getText()+'\t'+
             			valeur_energetique.getText()+'\t'+acides_grs_satures.getText()+'\t'+sucres.getText()+'\t'+
             			proteines.getText()+'\t'+fibres.getText()+'\t'+sel.getText()+'\t'+teneur.getText();
+            	System.out.println("Nouvel aliment : " +data);
     	        client.sendRequest(7, data);
             }
         }

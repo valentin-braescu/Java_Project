@@ -86,7 +86,7 @@ public class CreateTab_NewAliment extends JPanel implements ActionListener{
 			}
 			else
 			{
-				tab.newAliment(true, true, true, true, true, true, true, true, true);
+				tab.newAliment(true, true, true, true, true, true, true, true, true, true);
 				boolean_flag = false;
 				aliment = "";
 				flag_icon.setIcon(new ImageIcon(new ImageIcon(Paths.get(".").toAbsolutePath().normalize().toString()+"\\ImageIcon\\R.gif").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
